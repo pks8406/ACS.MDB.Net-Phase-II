@@ -1,0 +1,164 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{67DD7C08-BE27-4627-A58C-CF723ED63911}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ACS.MDB.Library</RootNamespace>
+    <AssemblyName>ACS.MDB.Library</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Activities" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\Constants.cs" />
+    <Compile Include="DataAccess\AccountDAL.cs" />
+    <Compile Include="DataAccess\ActivityCategoryDAL.cs" />
+    <Compile Include="DataAccess\ActivityCodeDAL.cs" />
+    <Compile Include="DataAccess\ActualRevenueReportDAL.cs" />
+    <Compile Include="DataAccess\ApproveMaintenanceDAL.cs" />
+    <Compile Include="DataAccess\AuditReasonDAL.cs" />
+    <Compile Include="DataAccess\BaseDAL.cs" />
+    <Compile Include="DataAccess\BillingLineTagDAL.cs" />
+    <Compile Include="DataAccess\ChargingFrequencyDAL.cs" />
+    <Compile Include="DataAccess\CompanyDAL.cs" />
+    <Compile Include="DataAccess\ContractDAL.cs" />
+    <Compile Include="DataAccess\ContractLineDAL.cs" />
+    <Compile Include="DataAccess\ContractMaintenanceDAL.cs" />
+    <Compile Include="DataAccess\ContractMaintenanceGroupDAL.cs" />
+    <Compile Include="DataAccess\CostCenterDAL.cs" />
+    <Compile Include="DataAccess\CurrencyDAL.cs" />
+    <Compile Include="DataAccess\CustomerCommentDAL.cs" />
+    <Compile Include="DataAccess\DivisionDAL.cs" />
+    <Compile Include="DataAccess\EndUserDAL.cs" />
+    <Compile Include="DataAccess\InflationIndexDAL.cs" />
+    <Compile Include="DataAccess\InflationIndexRateDAL.cs" />
+    <Compile Include="DataAccess\InvoiceCustomerDAL.cs" />
+    <Compile Include="DataAccess\JobCodeDAL.cs" />
+    <Compile Include="DataAccess\LINQ\MDB.cs">
+      <DependentUpon>MDB.dbml</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\LINQ\MDB.designer.cs">
+      <DependentUpon>MDB.dbml</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Include="DataAccess\MilestoneDAL.cs" />
+    <Compile Include="DataAccess\MilestoneStatusDAL.cs" />
+    <Compile Include="DataAccess\ProductDAL.cs" />
+    <Compile Include="DataAccess\ProfitLossDAL.cs" />
+    <Compile Include="DataAccess\ReleaseNoteDAL.cs" />
+    <Compile Include="DataAccess\SubProductDAL.cs" />
+    <Compile Include="DataAccess\TheoreticalRevenueReportDAL.cs" />
+    <Compile Include="DataAccess\UserDAL.cs" />
+    <Compile Include="Common\DatabaseConnection.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="ValueObjects\AccountVO.cs" />
+    <Compile Include="ValueObjects\ActivityCategoryVO.cs" />
+    <Compile Include="ValueObjects\ActivityCodeVO.cs" />
+    <Compile Include="ValueObjects\ApproveMaintenanceVO.cs" />
+    <Compile Include="ValueObjects\AuditReasonVO.cs" />
+    <Compile Include="ValueObjects\BaseVO.cs" />
+    <Compile Include="ValueObjects\BillingLineTagVO.cs" />
+    <Compile Include="ValueObjects\ChargingFrequencyVO.cs" />
+    <Compile Include="ValueObjects\CompanyVO.cs" />
+    <Compile Include="ValueObjects\ContractLineVO.cs" />
+    <Compile Include="ValueObjects\ContractMaintenanceVO.cs" />
+    <Compile Include="ValueObjects\ContractVO.cs" />
+    <Compile Include="ValueObjects\CostCentreVO.cs" />
+    <Compile Include="ValueObjects\CurrencyVO.cs" />
+    <Compile Include="ValueObjects\CustomerCommentVO.cs" />
+    <Compile Include="ValueObjects\DivisionVO.cs" />
+    <Compile Include="ValueObjects\EndUserVO.cs" />
+    <Compile Include="ValueObjects\InflationIndexRateVO.cs" />
+    <Compile Include="ValueObjects\InflationIndexVO.cs" />
+    <Compile Include="ValueObjects\InvoiceBillingLineVO.cs" />
+    <Compile Include="ValueObjects\InvoiceCustomerVO.cs" />
+    <Compile Include="ValueObjects\InvoiceDetailVO.cs" />
+    <Compile Include="ValueObjects\InvoiceGLDetailVO.cs" />
+    <Compile Include="ValueObjects\InvoiceHeaderVO.cs" />
+    <Compile Include="ValueObjects\JobCodeVO.cs" />
+    <Compile Include="ValueObjects\MaintenanceBillingLineVO.cs" />
+    <Compile Include="ValueObjects\MilestoneBillingLineVO.cs" />
+    <Compile Include="ValueObjects\MilestoneStatusVO.cs" />
+    <Compile Include="ValueObjects\MilestoneVO.cs" />
+    <Compile Include="ValueObjects\OAPeriodVO.cs" />
+    <Compile Include="ValueObjects\OpenAccountVO.cs" />
+    <Compile Include="ValueObjects\ProductVO.cs" />
+    <Compile Include="ValueObjects\ProfitLossVO.cs" />
+    <Compile Include="ValueObjects\RecalculationVO.cs" />
+    <Compile Include="ValueObjects\SubProductVO.cs" />
+    <Compile Include="ValueObjects\UserCompanyVO.cs" />
+    <Compile Include="ValueObjects\UserVO.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DataAccess\LINQ\MDB.dbml">
+      <Generator>MSLinqToSQLGenerator</Generator>
+      <LastGenOutput>MDB.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="DataAccess\LINQ\MDB.dbml.layout">
+      <DependentUpon>MDB.dbml</DependentUpon>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

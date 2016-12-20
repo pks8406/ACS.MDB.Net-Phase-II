@@ -1,0 +1,1346 @@
+﻿ @using ACS.MDB.Net.App.Common
+@model ACS.MDB.Net.App.Models.Contract
+
+@{
+    ViewBag.Title = "MDB::Contract Details";
+}
+
+@*<style type="text/css">
+    div#spinner { display: none; width: 100%; height: 100%; position: fixed; text-align: center; border: 0px; vertical-align: central; left: 0; top: 0; z-index: 1000; background: rgba( 255, 255, 255, .8 ) url('/Images/Loading.gif') 50% 50% no-repeat; }
+</style>*@
+
+<script src="/Scripts/jquery.dataTables.js" type="text/javascript"></script>
+<script src="/Scripts/jquery.dataTable.editTable.js" type="text/javascript"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+@*<div style="padding: 0px 0px 0px 40px">
+    <a href="/Home/Index" title="Home" class="parentPageLink">Home</a> ->
+        <a href="/Contract/ContractIndex title="Home" class="parentPageLink">Contract</a> ->
+        <a href="#" class="currentPage">Contract Details</a>
+</div>*@
+
+<form id="frmContractDetails">
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(m => m.CompanyId)
+    @Html.HiddenFor(m => m.ID)
+    @*@Html.HiddenFor(m => m.CurrencyId, new { @id = "txtCurrencyId" })*@
+
+    <fieldset style="width: auto; border: 1px solid black;">
+
+        <legend>
+            @if (Model.ID == 0)
+            {
+                @Html.Label("Add Contract Details", new { style = "color: #23487d" })
+            }
+            else
+            {
+                @Html.Label("Edit Contract Details", new { style = "color: #23487d" })
+            }
+        </legend>
+        <table style="width: 100%">
+            <tr>
+               <td >
+                    @Html.LabelFor(model => model.ContractNumber, new { @class = "mandatoryLabel", style="width:100px;" })
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.ContractNumber, new { @maxlength = "25", Id = "txtContractNumber", style = "width:210px;height:15px" , @tabindex = "1"})
+                </td>
+
+                <td>
+                    @Html.LabelFor(model => model.POReferenceNumber)
+                </td>
+               <td >
+                    @Html.TextBoxFor(model => model.POReferenceNumber, new { @maxlength = "30", Id = "txtPORefNumber", style = "width:210px;height:15px" , @tabindex = "2" })
+                </td>
+
+                <td >
+                    @Html.LabelFor(model => model.CompanyName, new { @class = "mandatoryLabel" })
+                </td>
+                <td >
+                    <b>@Html.ValueFor(model => model.CompanyName)</b>
+                     @*@Html.TextBoxFor(model => model.CompanyName, new { @readonly = true, style = "width:300px;height:10px" })*@
+                                   @* @Html.DropDownListFor(model => model.CompanyId, new SelectList(Model.OAcompanyList, "ID", "Name",
+                                                    Model.CompanyId), "Select company",
+                                                    new { Id = "ddlCompany", style = "width:350px; height:25px" })*@
+                </td>
+               
+                
+               <td style="width:60px;">
+                    @Html.LabelFor(model => model.DivisionId, new { @class = "mandatoryLabel" })
+                </td>
+                <td >
+                    @Html.DropDownListFor(model => model.DivisionId, new SelectList(Model.DivisionList, "ID", "DivisionName"), "Select Division",
+                                                    new { Id = "ddlDivision", @class = "ContractDropDownListBox", @visible = Model.Visible ,style="width:160px;"  , @tabindex = "3"})
+                </td>
+                @*<td></td>*@
+            </tr>
+
+            <tr>
+                <td></td>
+                <td>
+                    @Html.ValidationMessageFor(model => model.ContractNumber)
+                </td>
+
+                <td></td>
+                <td>
+                    @Html.ValidationMessageFor(model => model.POReferenceNumber)
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                
+            </tr>
+
+            <tr>
+
+                <td style="padding:1px;">
+                    @Html.LabelFor(model => model.InvoiceCustomer, new { @class = "mandatoryLabel" })
+                </td>
+                <td >
+                    @Html.DropDownListFor(model => model.InvoiceCustomerId, new SelectList(Model.InvoiceCustomerList, "ID", "CustomerNameCodeAndShortName", Model.InvoiceCustomerId), "Select Invoice Customer",
+                                                            new { @id = "ddlInvCustomer", @class = "ContractDropDownListBox" , @tabindex = "4" })
+                    @Html.Hidden("txtInvoiceCustomerId", Model.InvoiceCustomerId)
+                </td>
+                <td>
+                    @Html.LabelFor(model => model.EndUser, new { @class = "mandatoryLabel" })
+                </td>
+                <td>
+                    @Html.DropDownListFor(model => model.EndUserId, new SelectList(Model.EndUserList, "EndUserId", "EndUserNameWithCode", Model.EndUserId), "Select End User",
+                                                                                    new { @id = "ddlEndUser", @class = "ContractDropDownListBox" , @tabindex = "5" })
+                </td>
+                <td>
+                    @Html.LabelFor(model => model.Currency, new { @class = "mandatoryLabel" })
+                </td>
+                <td >
+                    @Html.TextBoxFor(m => m.Currency, new { @maxlength = "50", style = "width:50px;height:15px;", @id = "txtCurrency", @readonly = "true", @class = "readOnlyTextBox" })
+                    
+                     &nbsp;&nbsp;
+                     @Html.LabelFor(model => model.AtRisk)
+                    
+                     &nbsp;
+                     @Html.DropDownListFor(m => m.AtRisk, new SelectList( new List<Object>{ 
+                                                                               new { value = 0 , text = "N"  },
+                                                                               new { value = 1 , text = "Y" }
+                                                                               
+                                                                            },
+                                                                          "value",
+                                                                          "text",
+                                                                           Model.AtRisk), new { @id = "ddlAtRisk", style = "width:35px;height:25px;float:center;" , @tabindex = "6" }) 
+                    </td>
+                         
+                 
+                <td >
+                    @Html.LabelFor(model => model.EarlyTerminationDate, new { @id = "lblEarlyTerminationDate" })
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.EarlyTerminationDate, string.Format(@ACS.MDB.Net.App.Common.Constants.DATE_FORMAT_FOR_VIEWPAGE, Model.EarlyTerminationDate), new { @id = "txtEarlyTerminationDate", @class = "datepicker" })
+                                        @Html.HiddenFor(model => model.EarlyTerminationDate, new { @id = "dtEarlyTerminationDate"  , @tabindex = "7"})
+                 </td>
+                
+                @*<td></td>*@
+                <td style="width: 30px;">
+                    <button id="btnSave" value="Save" onclick="SaveContract(); return false;" style="margin-top: 0px; float: right;" tabindex = "8" />
+                    Save
+                    </td>
+                <td style="width: 30px;">
+                    <button id="btnCancel" value="Cancel" onclick="RedirectToContract(); return false;" style="float:none;" />
+                    Cancel
+                </td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td>
+                    @Html.ValidationMessageFor(model => model.InvoiceCustomerId)
+                </td>
+
+                <td></td>
+                <td>
+                    @Html.ValidationMessageFor(model => model.EndUserId)
+                </td>
+
+                <td></td>
+                <td>
+                    @*@Html.ValidationMessageFor(model => model.CurrencyId)*@
+                    @Html.ValidationMessageFor(model => model.Currency)
+                </td>
+                <td></td>
+                <td>
+                    @Html.ValidationMessageFor(model => model.DivisionId)
+                </td>
+                
+            </tr>
+        </table>
+    </fieldset>
+</form>
+
+<div id="ShowProcessing" style="display: none; width: 100%; height: 100%; position: fixed; text-align: center; border: 0px; vertical-align: central; left: 0; top: 0; z-index: 1000; background: rgb(255,255,255) url('/Images/Loading.gif') 50% 50% no-repeat; -ms-filter: 'alpha(opacity = 50)'; filter: alpha(opacity=50); opacity: 0.6; }">
+</div>
+@*<table style="width: 100%">
+    <tr>
+        <td>
+            <div id ="ShowProcessing" class="spinner">
+            </div>
+        </td>
+    </tr>
+</table>*@
+
+@if (Model.ID != 0)
+{
+    <div id="tabs">
+        <ul>
+            <li><a id="contractLinesLink" href="#divContractLines">Coding Detail</a></li>
+            <li><a id="maintenanceLinesLink" href="#divMaintenance">Billing Detail</a></li>
+            <li><a id="milestoneLinesLink" href="#divMilestones">Milestones</a></li>
+        </ul>
+        <div id="divContractLines">
+            @Html.Partial("ContractLineIndex")                        
+        </div>
+        <div id="divMaintenance">
+            <table style="width: 100%;">
+                <tr>
+                    <td>
+                        <table id="tblCodingDetailControls" style="margin-top: 0px;">
+                            <tr>
+                                @*                    <td>
+                        <b>@Html.Label("Show All Billing Lines") </b>
+                    </td>
+                    <td>
+                        @Html.RadioButton("rdbShowAll", new { @value = true }, true)
+                    </td>*@
+
+                                <td style="width: auto;">
+                                    <b>@Html.Label("Coding Detail :") </b>
+                                </td>
+                                <td>
+                                    <div id="txtActivityCodeForMaintenance" style="color: #004bff" />
+                                </td>
+
+                                <td style="width: auto;">
+                                    <b>@Html.Label("| Job Code No :") </b>
+                                </td>
+                                <td>
+                                    <div id="txtJobCodeForMaintenance" style="color: #004bff" />
+                                </td>
+
+                                <td style="width: auto;">
+                                    <b>@Html.Label("| Account :") </b>
+                                </td>
+                                <td>
+                                    <div id="txtAccountForMaintenance" style="color: #004bff" />
+                                </td>
+
+                                <td style="width: auto;">
+                                    <b>@Html.Label(" | Cost Centre :") </b>
+                                </td>
+                                <td>
+                                    <div id="txtCostCenterForMaintenance" style="color: #004bff" />
+                                </td>
+
+                                @* <td style="width: auto;">
+                                    <b>@Html.Label(" | Qty :") </b>
+                                </td>
+                                <td>
+                                    <div id="txtQtyForMaintenance" style="color: #004bff" />
+                                </td>*@
+
+                            </tr>
+                        </table>
+                    </td>
+                    <td style="width: 28%;">
+                        <div id='div_toolbar_contractMaintenance' class="DatatableGridButtonStyle" style="margin-top: 0px;">
+                            <button id="btnGenerateMilestones" style="margin-top: 0px; float: right;" value="Calculate Milestones">
+                                Calculate Milestones
+                            </button>
+                            <button id="btnCopyBillingDetails" value="Copy" style="margin-top: 0px; float: left;">Copy</button>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            @Html.Partial("ContractMaintenanceIndex")            
+        </div>
+        <div id="divMilestones">
+            <table style="width: 100%;">
+                <tr>
+                    <td>
+                        <table id="tblCodingDetailControlsForMileStone" style="margin-top: 0px;">
+                            <tr>
+                                <td style="width: auto">
+                                    <b>@Html.Label("Coding Detail :") </b>
+                                </td>
+                                <td>
+                                    <div id="txtActivityCodeForMilestone" style="color: #004bff" />
+                                </td>
+
+                                <td style="width: auto">
+                                    <b>@Html.Label(" | Job Code No :") </b>
+                                </td>
+                                <td>
+                                    <div id="txtJobCodeForMilestone" style="color: #004bff" />
+                                </td>
+
+                                <td style="width: auto">
+                                    <b>@Html.Label(" | Account :") </b>
+                                </td>
+                                <td>
+                                    <div id="txtAccountForMilestone" style="color: #004bff" />
+                                </td>
+
+                                <td style="width: auto">
+                                    <b>@Html.Label(" | Cost Centre :") </b>
+                                </td>
+                                <td>
+                                    <div id="txtCostCenterForMilestone" style="color: #004bff" />
+                                </td>
+                                @*<td style="width: auto">
+                                    <b>@Html.Label(" | Qty :") </b>
+                                </td>
+                                <td>
+                                    <div id="txtQtyForMilestone" style="color: #004bff" />
+                                </td>*@
+                            </tr>
+                        </table>
+                    </td>
+                    <td>
+                        <div id='div_toolbar_milestone' class="DatatableGridButtonStyle" style="margin-top: 0px;"></div>
+                    </td>
+                </tr>
+            </table>
+
+            @* This Feature is not implemented. Here you will find all milestones for selected Billing detail.*@
+            @Html.Partial("MilestoneIndex")            
+        </div>
+    </div>
+}
+
+@if (Model.ID != 0)
+{
+    <table style="width:100%">
+        <tr>
+            <td style="width: 100px;">@Html.LabelFor(m => m.CustomerComment)</td>          
+        
+            @if (string.IsNullOrEmpty(Model.CustomerComment))
+            {
+                <td colspan="6"><b>@Html.TextAreaFor(m => m.CustomerComment, 2, 1, new { @id = "txtCustomerNote", @readonly = true, @class = "readOnlyTextBox", style = "width:500px;height:30px; resize: none;" })</b></td>
+            }
+            else
+            {
+                <td colspan="6">@Html.TextAreaFor(m => m.CustomerComment, 2, 1, new { @id = "txtCustomerNote", @readonly = true, style = "background-color:yellow;width:500px;height:30px; resize: none;color:blue;font-weight:bold;" })</td>
+            }
+
+            <td></td>
+
+            <td id="defaultLineLegend" align="right" style="vertical-align:top;">
+                <table>
+                     @*Khushboo*@
+                    <tr>
+                        <td style = "background-color:#00CCFF; width:15px; height:10px; text-align:left;padding:4px;">                            
+                        </td>
+                       
+                        <td style="text-align:left; width: 0px;padding-left:6px;">
+                            @Html.Name(@ACS.MDB.Net.App.Common.Constants.DEFAULT_LINE_LEGEND)
+                            @*@Html.Label("The Billing line having this backround colour is Default Billing line.",new { style = "background-color:#00CCFF; width:150px;height:30px;" })*@
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+
+                        </td>
+                        <td style="text-align:left;width:450px;padding-left:6px;">
+                            @Html.Label("Note: Please recalculate milestone for grouped items", new { style = "color:blue;font-weight:bold;font-size:10pt;" })
+                        </td>
+                    </tr>
+                    @* Khushboo *@
+                </table>
+            </td>
+         
+        </tr>
+    </table>
+}
+
+<div id="dialog-message" title="Contract Details">
+    <p>
+        Contract saved successfully
+    </p>
+</div>
+<div id="spinnerContractDetails" style="display: none; width: 100%; height: 100%; position: fixed; text-align: center; border: 0px; vertical-align: central; left: 0; top: 0; z-index: 1000; background: rgb(255,255,255) url('/Images/Loading.gif') 50% 50% no-repeat; -ms-filter: 'alpha(opacity = 50)'; filter: alpha(opacity=50); opacity: 0.6; }" />
+
+<script type="text/javascript">
+    var selectedCompanyId = -1;
+    var selectedInvoiceCustomerId = -1;
+    var contractLineTbl = null;
+    var contractMaintenanceTbl = null;
+    var newContractLineDialaogUrl = '';
+    var newContractMaintenanceDialaogUrl = '';
+
+    ////setup the table and other features required for this page
+    $(document).ready(function () {
+
+       @* if ('@Model.ID' <= 0) {
+            $('#txtEarlyTerminationDate').hide();
+            $('#lblEarlyTerminationDate').hide();
+        }*@
+        $('.datepicker').datepicker({
+            //showOn: 'button',
+            //buttonImage: '../../images/Calender1.png',
+            showOptions: { speed: 'fast' },
+            //buttonImageOnly: true,
+            //changeDay: true,
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: 'dd/mm/yy',
+            gotoCurrent: true,
+            onClose: function () {
+                $(this).valid();
+            }
+        });
+
+        //Disable cache
+        $.ajaxSetup({ cache: false });
+
+        // Variables
+        var milestoneTbl = null;
+        var selectedContractLineId = -1;
+        var selectedActivityCodeId = -1;
+        var selectedContractMaintenanceId = -1;
+        var selectedActivityCode = '';
+        var sImageUrl = "/Images/";
+        var anOpen = [];
+
+        //column defination for contract lines
+        var contractLinecolumnDefs = [
+                { sWidth: '1%', bSortable: false, aTargets: [0] },
+                { bVisible: false, aTargets: [1] },
+                {
+                    bSortable: true, aTargets: [2], "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                        OpenEditDialog(contractLineTbl, iRow, nTd, sData);
+                    }
+                },
+                { bSortable: true, aTargets: [3] },
+                { bSortable: true, bVisible: false, aTargets: [4] },
+                { bSortable: true, aTargets: [5] },
+                { bSortable: true, aTargets: [6] },
+                //{ bSortable: true, sClass: 'right-align', aTargets: [7] },
+                { bVisible: false, aTargets: [7] },
+                { bVisible: false, aTargets: [8] },
+                { bVisible: false, aTargets: [9] }
+        ];
+
+        //column defination for contract maintenance lines
+        var contractMaintenanceColumnDefs = [
+                    { sWidth: '1%', bSortable: false, aTargets: [0] },
+                    { sWidth: '1%', bVisible: false, aTargets: [1] },
+
+                    {
+                        sWidth: '22%', bSortable: true, aTargets: [2], "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                            OpenEditDialog(contractMaintenanceTbl, iRow, nTd, sData);
+                        }
+                    },
+                    { sWidth: '9%', bVisible: true, bSortable: true, aTargets: [3] },
+                    {
+                        sWidth: '8%', bSortable: true, sClass: 'right-align', aTargets: [4],
+                        "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                            if (sData < "0") {
+                                $(nTd).addClass('redText');
+                            }
+                        }
+                    },
+                    { sWidth: '7%', bSortable: true, aTargets: [5] },
+                    {
+                        sWidth: '8%', bSortable: true, sClass: 'right-align', aTargets: [6],
+                        "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                            if (sData < "0") {
+                                $(nTd).addClass('redText');
+                            }
+                        }
+                    },
+                    { sWidth: '9%', bSortable: true, aTargets: [7] },
+                    { sWidth: '9%', bSortable: true, aTargets: [8] },
+                    { sWidth: '9%', bSortable: true, aTargets: [9] },
+                    { sWidth: '8%', bSortable: true, aTargets: [10] },
+                    {
+                        sWidth: '10%', bSortable: true, sClass: 'right-align', aTargets: [11],
+                        "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                            if (sData < "0") {
+                                $(nTd).addClass('redText');
+                            }
+                        }
+                    },
+                    { sWidth: '1%', bVisible: false, aTargets: [12] },
+                    { sWidth: '1%', bVisible: false, aTargets: [13] },
+                    { sWidth: '1%', bVisible: false, aTargets: [14] },
+                    { sWidth: '1%', sClass: 'right-align', bVisible: true, bSortable: true, aTargets: [15] },
+                    //{ sWidth: '1%', sClass: 'right-align', bVisible: false, aTargets: [16] },
+                    { sWidth: '1%', bVisible: false, aTargets: [16] },
+
+                    {
+                        sWidth: '1%',
+                        aTargets: [17],
+                        bSortable: false,
+                        sClass: "control center",
+                        sDefaultContent: '<img src="' + sImageUrl + 'details_open.png' + '" title = "Other Details">'
+                    },
+                    { sWidth: '1%', bSortable: false, bVisible: false, aTargets: [18] },
+                    {
+                        sWidth: '1%', bVisible: false, bSortable: true, aTargets: [19], aaSortingFixed: [[19, "asc"]]
+                    },
+                    {
+                        sWidth: '8%', bSortable: false, bVisible: true, aTargets: [20], "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                            if (sData == "") {
+                                sData = "Group";
+                            }
+                            else {
+                                sData = "Ungroup";
+                            }
+                            var selectedcontractId = '@Model.ID';
+
+                            OpenGroup(contractMaintenanceTbl, iRow, nTd, sData, oData, selectedcontractId);
+                        }
+                    },
+                    {
+                        sWidth: '1%', bVisible: false, aTargets: [21], "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                            if (sData == true) {
+                                //$(nTr).css('background-color', 'red')
+                                var nodes = contractMaintenanceTbl.fnGetNodes();
+                                var i = nodes.length - 1;
+                                $(nodes[i]).css('background-color', '#00CCFF')
+                            }
+                        }
+                    },
+                    { sWidth: '1%', bVisible: false, aTargets: [22] }
+                   
+        ];
+
+        //column defination for milestones
+        var milestoneColumnDefs = [
+            { sWidth: '1%', bSortable: false, aTargets: [0] },
+            { sWidth: '1%', bVisible: false, aTargets: [1] },
+            {
+                bSortable: true, aTargets: [2], "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                    OpenEditDialog(milestoneTbl, iRow, nTd, sData);
+                }
+            },
+            { bSortable: true, aTargets: [3] },
+            { bSortable: true, aTargets: [4] },
+            { bSortable: true, aTargets: [5] },
+            {
+                sClass: 'right-align', bSortable: true, aTargets: [6], "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                    if (sData < "0") {
+                        $(nTd).addClass('redText');
+                    }
+                }
+            },
+            { sClass: 'right-align', bSortable: true, aTargets: [7] },
+            { bSortable: true, aTargets: [8] }
+        ];
+
+        //Show Coding details tab OR Billing details tabs
+        var tabs = $("#tabs").tabs();
+        if ('@ViewBag.showCodingDetailTab' == 'False') {
+            tabs.tabs('select', 1);
+            $("#defaultLineLegend").show();
+        }
+        else {
+            tabs.tabs('select', 0);            
+            $("#defaultLineLegend").hide();
+        }
+        //Disable dialog-message
+        $('#dialog-message').hide();
+
+        //Set the menu item as selected
+        HighlightSelectedMenuItem("ContractsMenu");
+
+        //Set the focus on contract number if creating new contract
+        if ($('#txtContractNumber').val() == '')
+            $('#txtContractNumber').focus();
+
+        //If create new contract then set default value to GBP
+        @*if ('@Model.ID' == '0') {
+            $("#ddlCurrency").val(4).selected = true;
+        }*@
+
+        contractLineTbl = $('#contracLine_tbl').editTable({
+            sListURL: '/Contract/GetContractLineByContractId',
+            fnServerData: ContractLineParameter,
+            sDeleteURL: '/Contract/ContractLineDelete',
+            sAddURL: '/Contract/ContractLineSave',
+            sUpdateURL: '/Contract/ContractLineSave',
+            sNewDialogLoadURL: '/Contract/ContractLineCreate/',
+            sEditDialogLoadURL: '/Contract/ContractLineEdit',
+            sDialogDivId: 'contractLine_dialog',
+            sToolbarSelector: '#div_toolbar_contractLine',
+            sAddButtonId: 'btn_newcontractLine',
+            sEditButtonId: 'btn_editcontractLine',
+            sDeleteButtonId: 'btn_deletecontractLine',
+            iDialogWidth: 530,
+            iDialogHeight: 350,
+            bAutoWidth: false,
+            oColumnDefs: contractLinecolumnDefs,
+            //fnRowSelected: UpdateMaintenanceLines,
+            //fnAfterDelete: UpdateSubProductsAfterDelete,
+            sEntityName: 'Coding Details',
+            sCheckBoxItemSelector: '#selectContractLine',
+            sDeleteMessage: '@ACS.MDB.Net.App.Common.Constants.DELETE_MESSAGE_FOR_CONTRACT_LINE'
+        });
+
+        contractMaintenanceTbl = $('#contractMaintenance_tbl').editTable({
+            sListURL: '/Contract/ContractMaintenanceList/',
+            sDeleteURL: '/Contract/ContractMaintenanceDelete',
+            fnServerData: ContractMaintenanceListParameter,
+            //fnRowSelected: UpdateMilestones,
+            sAddURL: '/Contract/ContractMaintenanceSave',
+            sUpdateURL: '/Contract/ContractMaintenanceSave',
+            sNewDialogLoadURL: '/Contract/ContractMaintenanceCreate/',
+            sEditDialogLoadURL: '/Contract/ContractMaintenanceEdit',
+            sDialogDivId: 'contractMaintenance_dialog',
+            sToolbarSelector: '#div_toolbar_contractMaintenance',
+            sAddButtonId: 'btn_newContractMaintenance',
+            sEditButtonId: 'btn_editContractMaintenance',
+            sDeleteButtonId: 'btn_deleteContractMaintenance',
+            iDialogWidth: 1200,
+            iDialogHeight: 590,
+            iDialogOffset: 70,
+            bAutoWidth: false,
+            fnRowSelected: UpdateMilestones,
+            oColumnDefs: contractMaintenanceColumnDefs,
+            sEntityName: 'Billing Details',
+            sCheckBoxItemSelector: '#selectallMaintenanceLine',
+            sDeleteMessage: '@ACS.MDB.Net.App.Common.Constants.DELETE_MESSAGE_FOR_MAINTENANCE_LINE',
+            sSpinnerForSaveDivId: 'spinnerContractMaintenance',
+            sRowGroupingApplied: true
+            //sScrollY: 500,
+            //bScrollCollapse: true,
+            //bPaginate: true            
+        });
+
+        milestoneTbl = $('#milestone_tbl').editTable({
+            sListURL: '/Contract/GetContractMilestoneList/',
+            fnServerData: MilestoneListParameter,
+            sDeleteURL: '/Contract/MilestoneDelete',
+            // sAddURL: '/Contract/MilestoneSave',
+            sUpdateURL: '/Contract/MilestoneSave',
+            //sNewDialogLoadURL: '/Contract/MilestoneCreate/',
+            sEditDialogLoadURL: '/Contract/MilestoneEdit',
+            sDialogDivId: 'milestone_dialog',
+            sToolbarSelector: '#div_toolbar_milestone',
+            //sAddButtonId: 'btn_newmilestone',
+            sEditButtonId: 'btn_editmilestone',
+            sDeleteButtonId: 'btn_deletemilestone',
+            iDialogWidth: 650,
+            iDialogHeight: 520,
+            bAutoWidth: false,
+            oColumnDefs: milestoneColumnDefs,
+            sEntityName: 'Milestone',
+            sCheckBoxItemSelector: '#selectallMilestone',
+            sDeleteMessage: '@ACS.MDB.Net.App.Common.Constants.DELETE_MESSAGE_FOR_MILESTONE',
+            sSpinnerForDeleteDivId: 'spinnerForMilestone'
+        });
+
+        //Set default focus on search text box and Disable invalid keys for search text box (Keys like <,>,~)
+        SetFocus('#contracLine_tbl_filter label input:text');
+        DisableInvalidKeyForControl('#contracLine_tbl_filter label input:text');
+
+        //Set default focus on search text box and Disable invalid keys for search text box (Keys like <,>,~)
+        SetFocus('#contractMaintenance_tbl_filter label input:text');
+        DisableInvalidKeyForControl('#contractMaintenance_tbl_filter label input:text');
+        $('#contractMaintenanceGroupConnfirmationDialog').hide();
+        $('#contractMaintenanceCopy').hide();
+        $('#contractMaintenance_tbl_paginate').hide();
+
+        //Disable invalid keys for search text box (Keys like <,>,~)
+        DisableInvalidKeyForControl('#milestone_tbl_filter label input:text');
+
+        //Hide datatable toolbar
+        //contractMaintenanceTbl.fnShowToolBar(false);
+        //milestoneTbl.fnShowToolBar(false);
+        $('#tblCodingDetailControls').hide();
+        $('#tblCodingDetailControlsForMileStone').hide();
+
+        //$('#btn_editContractMaintenance').hide();
+
+        //Disable New and Delete button for Viewer
+        DisableButton("#btnGenerateMilestones");
+        DisableButton("#btnCopyBillingDetails");
+        DisableButton("#btn_newcontractLine");
+        DisableButton("#btn_deletecontractLine");
+        ChangeEditCaptionToView("#btn_editcontractLine");
+        DisableButton("#btn_newContractMaintenance");
+        DisableButton("#btn_deleteContractMaintenance");
+        ChangeEditCaptionToView("#btn_editContractMaintenance");
+        DisableButton("#btn_deletemilestone");
+        ChangeEditCaptionToView("#btn_editmilestone");
+        DisableButton("#btnSave");
+        DisableBackspaceKeyForControl('#txtCustomerNote');
+        DisableBackspaceKeyForControl('#txtCurrency');
+
+        //Set new dialog url for creating new contract line
+        newContractLineDialaogUrl = '/Contract/ContractLineCreate?companyId=' + @Model.CompanyId + '&customerId=' + '@Model.InvoiceCustomerId' + '&contractId=' + '@Model.ID'
+        contractLineTbl.fnSetNewDialogURL(newContractLineDialaogUrl);
+        
+        //Set new dialog url for creating new contract maintenance
+        newContractMaintenanceDialaogUrl = '/Contract/ContractMaintenanceCreate?companyId=' + @Model.CompanyId + '&contractId=' + '@Model.ID' + '&invoiceCustomerId=' + '@Model.InvoiceCustomerId'; //+ '&contractLineId=' + selectedContractLineId + '&activityCodeId=' + selectedActivityCodeId + '&activityCode=' + escape(selectedActivityCode);
+        contractMaintenanceTbl.fnSetNewDialogURL(newContractMaintenanceDialaogUrl);
+        //contractMaintenanceTbl.fnDraw(false);
+
+        // Function used to pass any additional parameters required
+        // for the List function
+        function ContractLineParameter(sSource, aoData, fnCallBack) {
+
+            var selectedcontractId = @Model.ID
+
+            //add the additional data to be sent to the server
+            aoData.push({ "name": "contractId", "value": selectedcontractId });
+            //aoData.push({ "name": "param.iDisplayLength", "value": 5 });
+
+            $.getJSON(sSource, aoData, function (json) {
+            }).done(function (json) {
+
+                fnCallBack(json);
+
+                //To set checkbox column header selector to false
+                contractLineTbl.fnSetCheckBoxItemSelector();
+
+                //Clear contract maintenance table
+                ClearContractMaintenanceTable(aoData);
+
+            }).fail(function (json) {
+                DisplayErrorMessage(json, false);
+            });
+        }
+
+        //Function to contract maintenance table
+        function ClearContractMaintenanceTable(aoData) {
+
+            selectedContractLineId = 0;
+            selectedActivityCodeId = 0;
+            //contractMaintenanceTbl.fnDraw(false);
+            //contractMaintenanceTbl.fnClearTable(true);
+            //contractMaintenanceTbl.fnShowToolBar(false);
+        }
+
+        // Function used to pass any additional parameters required
+        // for the List function
+        function ContractMaintenanceListParameter(sSource, aoData, fnCallBack) {
+
+            var selectedcontractId = @Model.ID
+
+                    //add the additional data to be sent to the server
+              aoData.push({ "name": "contractId", "value": selectedcontractId });
+
+            //aoData.push({ "name": "contractLineId", "value": selectedContractLineId });
+            //aoData.push({ "name": "showAll", "value": true });
+            //aoData.push({ "name": "activityCodeId", "value": selectedActivityCodeId });
+            $.getJSON(sSource, aoData, function (json) {
+            }).done(function (json) {
+
+                fnCallBack(json);
+
+                //To set checkbox column header selector to false
+                contractMaintenanceTbl.fnSetCheckBoxItemSelector();
+
+                $('#tblCodingDetailControls').hide();
+                $('#tblCodingDetailControlsForMileStone').hide();
+                $('#btn_editmilestone').hide();
+                $('#btn_editcontractLine').hide();
+
+                //Clear Milestone table
+                ClearMilestoneTable(aoData);
+
+            }).fail(function (json) {
+                DisplayErrorMessage(json, false);
+            });
+        }
+      
+        //Function to contract maintenance table
+        function ClearMilestoneTable(aoData) {
+
+            selectedContractMaintenanceId = 0;
+            //milestoneTbl.fnClearTable(true);
+            //milestoneTbl.fnShowToolBar(false);
+        }
+
+        // Function used to pass any additional parameters required
+        // for the List function
+        function MilestoneListParameter(sSource, aoData, fnCallBack) {
+
+            //add the additional data to be sent to the server
+            aoData.push({ "name": "contractMaintenanceId", "value": selectedContractMaintenanceId });
+
+            $.getJSON(sSource, aoData, function (json) {
+            }).done(function (json) {
+
+                fnCallBack(json);
+
+                //To set checkbox column header selector to false
+                milestoneTbl.fnSetCheckBoxItemSelector();
+
+            }).fail(function (json) {
+                DisplayErrorMessage(json, false);
+            });
+        }
+
+        // Updates the Maintenance lines grid when contract line gets selected
+        function UpdateMaintenanceLines() {
+            //var rowId = -1;
+            //contractMaintenanceTbl.fnDraw(false);
+            //showAll = false;
+            //$("#rdbShowAll")[0].checked = false;
+            //$("#rdbShowAll").checked(false);
+
+            rowId = $('#contracLine_tbl').find('tr.row_selected').index();// || $('#product_tbl').find('tr').index();
+
+            selectedContractLineId = contractLineTbl.fnGetData(rowId, 1);
+            selectedActivityCodeId = contractLineTbl.fnGetData(rowId, 8);
+            selectedActivityCode = contractLineTbl.fnGetData(rowId, 9);
+            jobCode = contractLineTbl.fnGetData(rowId, 10);
+            var contractLineCode = contractLineTbl.fnGetData(rowId, 3);
+
+            //$('#txtActivityCodeForMaintenance').html(selectedActivityCode);
+            //$(txtJobCode').html(jobCode);
+
+            //Set selected contract line
+            //$('#txtActivityCodeForMaintenance').html(contractLineCode);
+            //$('#txtActivityCodeForMilesone').html(contractLineCode);
+
+            //contractMaintenanceTbl.fnChangeEntityName(contractLineCode);
+
+            contractMaintenanceTbl.fnPageChange(0, false);
+
+            var newContractMaintenanceDialaogUrl = '/Contract/ContractMaintenanceCreate?companyId=' + @Model.CompanyId + '&contractId=' + '@Model.ID'; //+ '&contractLineId=' + selectedContractLineId + '&activityCodeId=' + selectedActivityCodeId + '&activityCode=' + escape(selectedActivityCode);
+            contractMaintenanceTbl.fnSetNewDialogURL(newContractMaintenanceDialaogUrl);
+
+           @* var newContractMaintenanceDialaogUrl = '/Contract/ContractMaintenanceCreate?companyId=' + @Model.CompanyId + '&contractId=' + @Model.ID + '&contractLineId=' + selectedContractLineId + '&activityCodeId=' + selectedActivityCodeId + '&activityCode=' + escape(selectedActivityCode);
+            contractMaintenanceTbl.fnSetNewDialogURL(newContractMaintenanceDialaogUrl);*@
+            contractMaintenanceTbl.fnDraw(false);
+
+            //Hide datatable toolbar
+            //contractMaintenanceTbl.fnShowToolBar(true);
+        }
+
+        // This function returns the index of the row selected from
+        // the datatable.
+        function fnGetSelectedRowIndex() {
+            var index = -1;
+            var aTrs = contractMaintenanceTbl.fnGetNodes();
+
+            for (var i = 0; i < aTrs.length; i++) {
+                if ($(aTrs[i]).hasClass('row_selected')) {
+                    index = i;
+                    break;
+                }
+            }
+            return index;
+        }
+
+        // Updates the Milestone grid when contract maintenance gets selected
+        function UpdateMilestones() {
+
+            var rowId = fnGetSelectedRowIndex();            
+
+            // rowId = $('#contractMaintenance_tbl').find('tr.row_selected').index();
+            if (rowId != -1) {
+                selectedContractMaintenanceId = contractMaintenanceTbl.fnGetData(rowId, 1);
+                $('#tblCodingDetailControls').show();
+                $('#tblCodingDetailControlsForMileStone').show();
+
+                var contractLineDetails = contractMaintenanceTbl.fnGetData(rowId, 12);
+                if (contractLineDetails.length >= 26) {
+                    contractLineDetails = contractLineDetails.substring(0, 26);
+                    contractLineDetails += " *";
+                }
+                var jobCode = contractMaintenanceTbl.fnGetData(rowId, 3);
+                var Account = contractMaintenanceTbl.fnGetData(rowId, 13);
+                if (Account.length >= 26) {
+                    Account = Account.substring(0, 26);
+                    Account += " *";
+                }
+                var CostCenter = contractMaintenanceTbl.fnGetData(rowId, 14);
+                if (CostCenter.length >= 26) {
+                    CostCenter = CostCenter.substring(0, 26);
+                    CostCenter += " *";
+                }
+                var Qty = contractMaintenanceTbl.fnGetData(rowId, 15);
+
+                var backlog = contractMaintenanceTbl.fnGetData(rowId, 16);
+
+                if ('@SessionHelper.GetUserType(Session)' != 'Viewer') {
+                    if (backlog == 0) {
+                        $('#btnGenerateMilestones').prop('disabled', false);
+                    }
+                    else {
+                        $('#btnGenerateMilestones').prop('disabled', true);
+                    }
+                }
+
+                //If Charge Frequency is Credit and Final billing information is not available it will disable the calculate milestone button
+                if ('@SessionHelper.GetUserType(Session)' != 'Viewer') {
+                    var periodFrequencyId = contractMaintenanceTbl.fnGetData(rowId, 22);
+                    if (periodFrequencyId == '@Convert.ToInt32(@ACS.MDB.Net.App.Common.Constants.ChargeFrequency.CREDIT)') {
+                        var finalBillingPeriodStartDate = contractMaintenanceTbl.fnGetData(rowId, 9);
+                        var finalBillingPeriodEndDate = contractMaintenanceTbl.fnGetData(rowId, 10);
+                        if (finalBillingPeriodStartDate == null || finalBillingPeriodEndDate == null) {
+                            $('#btnGenerateMilestones').prop('disabled', true);
+                        }
+                        else {
+                            $('#btnGenerateMilestones').prop('disabled', false);
+                        }
+                    }
+                }
+                //Khushboo
+                var IsGrouped = contractMaintenanceTbl.fnGetData(rowId, 20);
+                var periodFrequencyId = contractMaintenanceTbl.fnGetData(rowId, 22);
+                //For Credit and Adhoc charge frequency grouped item the Copy button must be disabled
+                if (IsGrouped == true) {
+                    if ((periodFrequencyId == '@Convert.ToInt32(@ACS.MDB.Net.App.Common.Constants.ChargeFrequency.CREDIT)') || (periodFrequencyId == '@Convert.ToInt32(@ACS.MDB.Net.App.Common.Constants.ChargeFrequency.AD_HOC)')) {
+                        $('#btnCopyBillingDetails').prop('disabled', true);
+                    }
+                    else {
+                        $('#btnCopyBillingDetails').prop('disabled', false);
+                    }
+                } else {
+                    $('#btnCopyBillingDetails').prop('disabled', false);
+                }
+
+            }
+            else {
+                $('#tblCodingDetailControls').hide();
+                $('#tblCodingDetailControlsForMileStone').hide();
+                selectedContractMaintenanceId = -1;
+            }
+
+            $('#txtActivityCodeForMaintenance').html(contractLineDetails);
+            $('#txtJobCodeForMaintenance').html(jobCode);
+            $('#txtAccountForMaintenance').html(Account);
+            $('#txtCostCenterForMaintenance').html(CostCenter);
+            // $('#txtQtyForMaintenance').html(Qty);
+
+            $('#txtActivityCodeForMilestone').html(contractLineDetails);
+            $('#txtJobCodeForMilestone').html(jobCode);
+            $('#txtAccountForMilestone').html(Account);
+            $('#txtCostCenterForMilestone').html(CostCenter);
+            //$('#txtQtyForMilestone').html(Qty);
+
+            //contractMaintenanceTbl.fnChangeEntityName(contractLineDetails);
+            milestoneTbl.fnPageChange(0, false);
+            milestoneTbl.fnDraw(false);
+
+            //Hide data table toolbar
+            //milestoneTbl.fnShowToolBar(true);
+        }
+
+        var $tabs = $('#tabs').tabs();
+
+        //Hide default Billing Line legend on coding detail tab load
+        $('#contractLinesLink').click(function () { // bind click event to link            
+            $("#defaultLineLegend").hide();
+        });
+
+        //Show default Billing Line legend on billing detail tab load
+        $('#maintenanceLinesLink').click(function () { // bind click event to link            
+            $("#defaultLineLegend").show();
+        });
+
+        //Handle click event of Milestone tab
+        $('#milestoneLinesLink').click(function () { // bind click event to link            
+            $("#defaultLineLegend").hide();
+            if (selectedContractMaintenanceId <= 0) {
+                $tabs.tabs('select', 1);                
+                alert("Please select Billing Line");
+                $("#defaultLineLegend").show();
+                return false;
+            }
+        });
+
+        $('#btnGenerateMilestones').click(function () { // bind click event to link
+            if (selectedContractMaintenanceId <= 0) {
+                alert("Please select Billing Detail");
+                return false;
+            }
+            else {
+
+                $("#ShowProcessing").show();
+                //Show processing image
+                ShowProgress("ShowProcessing");
+
+                var postData = { id: selectedContractMaintenanceId };
+
+                $.ajax({
+                    url: '/Contract/GenerateMilestones',
+                    data: postData,
+                    type: 'POST',
+                    dataType: 'text',
+                    success: function (response) {
+                        //Hide processing image
+                        HideProgress("ShowProcessing");
+                        $("#ShowProcessing").hide();
+                        $("#defaultLineLegend").hide();
+                        UpdateMilestones();
+                        $tabs.tabs('select', 2);                        
+                        SetFocus('#milestone_tbl_filter label input:text');                        
+                    },
+                    error: function (response, status, error) {
+
+                        //Hide processing image
+                        HideProgress("ShowProcessing");
+                        $("#ShowProcessing").hide();
+                        //Display error message
+                        DisplayErrorMessage(response, true);
+                    }
+                });
+            }
+        });
+
+        //Function to Copy billing lines
+        $('#btnCopyBillingDetails').click(function () {
+            var rowId = fnGetSelectedRowIndex();
+            if (rowId != -1) {
+                selectedContractMaintenanceId = contractMaintenanceTbl.fnGetData(rowId, 1);
+                var periodFrequencyId = contractMaintenanceTbl.fnGetData(rowId, 22);
+
+                if (periodFrequencyId != '@Convert.ToInt32(@ACS.MDB.Net.App.Common.Constants.ChargeFrequency.CREDIT)') {
+
+                    _fnInitializeDialogForCopyBillingLine(selectedContractMaintenanceId);
+                    $('#contractMaintenanceCopy').dialog('open');
+                }
+                else {
+                    var isCreditRecord = false;
+                    CopyBillingLine(selectedContractMaintenanceId, isCreditRecord);
+                }
+
+            }
+            else {
+                alert("Please select record");
+                return false;
+            }
+        });
+
+        //Function to Copy Billing lines based on given parameters
+        function CopyBillingLine(contractMaintenanceId, isCreditRecord) {
+            var postData = { contractMaintenanceId: contractMaintenanceId, isCreditRecord: isCreditRecord };
+            $.ajax({
+                url: '/Contract/SaveContractMaintenanceCopy',
+                type: 'POST',
+                data: postData,
+                traditional: true,
+                success: function (response) {
+                    contractMaintenanceTbl.fnDraw(false);
+                },
+                error: function (response, status, error) {
+                    DisplayErrorMessage(response, true);
+                }
+            });
+        }
+
+        //Intialize dialog for copy billing lines
+        function _fnInitializeDialogForCopyBillingLine(selectedContractMaintenanceId) {
+            var contractMaintenanceCopy = $("#contractMaintenanceCopy").dialog({
+                modal: true,
+                //show: "blind",
+                //hide: "explode",
+                autoOpen: false,
+                resizable: false,
+                closeOnEscape: false,
+                title: "Billing Details Copy",
+                width: 300,
+                height: 125,
+                open: function (event, ui) {
+                    $.ajaxSetup({ cache: false })
+                    $('body').css('overflow', 'hidden'); $('.ui-widget-overlay').css('width', '100%');
+                },
+                close: function (event, ui) {
+                    $('body').css('overflow', 'auto');
+                    $(this).dialog("destroy");
+                },
+                buttons: {
+                    'Invoice': function () {
+                        var isCreditRecord = false;
+                        CopyBillingLine(selectedContractMaintenanceId, isCreditRecord);
+                        contractMaintenanceCopy.dialog('close');
+
+                    },
+                    'Credit': function () {
+                        var isCreditRecord = true;
+                        CopyBillingLine(selectedContractMaintenanceId, isCreditRecord);
+                        contractMaintenanceCopy.dialog('close');
+                    },
+
+                    'Cancel': function () {
+                        contractMaintenanceCopy.dialog('close');
+                    }
+                }
+            });
+        }
+
+        //To display other details on billing detail grid on image click
+        $('#contractMaintenance_tbl td.control').live('click', function () {
+
+            var nTr = this.parentNode;
+            var i = $.inArray(nTr, anOpen);
+
+            if (i === -1) {
+                $('img', this).attr('src', sImageUrl + "details_close.png");
+                var nDetailsRow = contractMaintenanceTbl.fnOpen(nTr, fnFormatDetails(contractMaintenanceTbl, nTr), 'details');                
+
+                $('div.innerDetails', nDetailsRow).slideDown();
+                                
+                anOpen.push(nTr);                
+            }
+            else {
+                $('img', this).attr('src', sImageUrl + "details_open.png");
+                $('div.innerDetails', $(nTr).next()[0]).slideUp(function () {
+                    contractMaintenanceTbl.fnClose(nTr);
+
+                    anOpen.splice(i, 1);
+                });
+            }
+        });
+
+        //returns billing lines for selected maintenance line
+        function fnFormatDetails(oTable, nTr) {
+            var oData = oTable.fnGetData(nTr);
+            var sOut =
+              '<div class="innerDetails" style=" border:none">'
+                 + oData[18] +
+              '</div>';
+            return sOut;
+        }
+
+
+        // Function called when the change in selection of a invoice customer take place and used to fill end users based on 
+        // company and invoice customer.
+        $("#ddlInvCustomer").change(function () {
+
+            selectedInvoiceCustomerId = $("#ddlInvCustomer").val();
+            selectedCompanyId = '@Model.CompanyId';
+
+            $("#spinnerContractDetails").show();
+            ShowProgress("spinnerContractDetails");
+
+            if ($("#ddlInvCustomer option:selected").text() == "Select Invoice Customer") {
+                selectedInvoiceCustomerId = 0;
+                selectedCompanyId = -1;
+            }
+
+            //Append end users filtered on the base of company and inv customer into end user drop down
+            GetFilteredEndUsersByCompanyAndInvoiceCustomer(selectedCompanyId, selectedInvoiceCustomerId);
+
+
+
+            if (selectedInvoiceCustomerId != -1 && selectedInvoiceCustomerId != 0) {
+                var postData = { invoiceCustomerId: selectedInvoiceCustomerId };
+                //Get account code and account id based on selected activity code
+                $.getJSON("/Contract/GetCurrencyByCustomer", postData, function (response) {
+                }).done(function (response) {
+                    if (response != null) {
+                        //$("#txtCurrencyId").val(response.CurrencyId);
+                        $("#txtCurrency").val(response);
+                    }
+                }).fail(function (response) {
+                    //alert(response.statusText);
+                    //$("#txtCurrencyId").val('0');
+                    $("#txtCurrency").val('');
+                });
+            }
+            else {
+                //selectedActivityCode = 0;
+                //$("#txtCurrencyId").val('0');
+                $("#txtCurrency").val('');
+            }
+
+        });
+    });
+
+    //Append end users filtered on the base of company and inv customer into end user drop down
+    function GetFilteredEndUsersByCompanyAndInvoiceCustomer(selectedCompanyId, selectedInvoiceCustomerId) {
+
+        var postData = { companyId: selectedCompanyId, invoiceCustomerId: selectedInvoiceCustomerId };
+        $.getJSON("/Contract/GetEndUsersByCompanyAndInvoiceCustomer", postData, function (response) {
+        }).done(function (response) {
+            $("#ddlEndUser").empty();
+            $("#ddlEndUser").length = -1;
+            AddOption("Select End User", "-1", "#ddlEndUser");
+            if (response.length > 0) {
+                for (var i in response) {
+                    AddOption(response[i].EndUserNameWithCode, response[i].EndUserId, "#ddlEndUser");
+                }
+                $('#ddlEndUser').val(selectedInvoiceCustomerId);
+            }
+            HideProgress("spinnerContractDetails");
+            $("#spinnerContractDetails").hide();
+
+        }).fail(function (response) {
+            $("#ddlEndUser").empty();
+            $("#ddlEndUser").length = -1;
+            AddOption("Select End User", "-1", "#ddlEndUser");
+            DisplayErrorMessage(response, false);
+
+            HideProgress("spinnerContractDetails");
+            $("#spinnerContractDetails").hide();
+        });
+    }
+
+    //Function called to save contract
+    function SaveContract() {
+
+        var $form = $('#frmContractDetails');
+
+        //if form is valid
+        if ($form.valid()) {
+            $.ajax({
+                url: '/Contract/ContractSave',
+                data: $form.serialize(),
+                type: 'POST',
+                dataType: 'JSON',
+                success: function (entityObj) {
+
+                    //Show success message as dialogue
+                    //OpenDialog("dialog-message", 250, 150, RedirectToContractDetails(entityObj));
+                    $("#dialog-message").dialog({
+                        modal: true,
+                        resizable: false,
+                        closeOnEscape: false,
+                        width: 250,
+                        height: 150,
+                        open: function (event, ui) {
+                            $('body').css('overflow', 'hidden'); $('.ui-widget-overlay').css('width', '100%');
+                            $('.ui-dialog-titlebar-close').css('display', 'none');
+                        },
+                        close: function (event, ui) {
+                            $('body').css('overflow', 'auto');
+                        },
+                        buttons: {
+                            Ok: function () {
+                                $(this).dialog("close");
+                                RedirectToContractDetails(entityObj);
+                            }
+                        },
+                    });
+                },
+                error: function (response, status, error) {
+                    alert(response.statusText);
+                }
+            });
+        }
+    }
+
+    /////Function to open model dialog
+    //function OpenDialog(title, width, height, RedirectOnClose)
+    //{
+    //    $("#"+title).dialog({
+    //        modal: true,
+    //        resizable: false,
+    //        closeOnEscape: false,
+    //        width: width,
+    //        height: height,
+    //        open: function (event, ui) {
+    //            $('body').css('overflow', 'hidden'); $('.ui-widget-overlay').css('width', '100%');
+    //            $('.ui-dialog-titlebar-close').css('display', 'none');
+    //        },
+    //        close: function (event, ui) {
+    //            $('body').css('overflow', 'auto');
+    //        },
+    //        buttons: {
+    //            Ok: function () {
+    //                $(this).dialog("close");
+    //                RedirectOnClose;
+    //                //RedirectToContractDetails(entityObj);
+    //            }
+    //        },
+    //    });
+    //}
+
+
+    //Redirect to contract page
+    function RedirectToContract() {
+        var newCustomerID = '@Model.InvoiceCustomerId';
+        if (newCustomerID != $("#txtInvoiceCustomerId").val()) {
+            newCustomerID = $("#txtInvoiceCustomerId").val();
+        }
+        window.location.href = "@Url.Action("ContractIndex", "Contract")" + "?companyId=" + '@Model.CompanyId' + "&invoiceCustomerId=" + newCustomerID;
+    }
+
+    //Redirect to contract details page only for newly created contract
+    function RedirectToContractDetails(entityObj) {
+        if (entityObj[2] == true) {
+            window.location.href = "@Url.Action("ContractDetails", "Contract")" + "?companyId=" + entityObj[0] + "&contractId=" + entityObj[1] + "&showCodingDetailTab=" + true;            
+        }
+        else if (entityObj[2] == false) {
+
+            ResetNewDialogUrl(entityObj)
+        }
+    }
+
+    //Reset New Dialog Url for contractmaintenance and contractline
+    function ResetNewDialogUrl(entityObj)
+    {
+        $("#txtInvoiceCustomerId").val(entityObj[3]);
+        $("#txtCustomerNote").val(entityObj[4]);
+
+        // Variables
+        //Set new dialog url for creating new contract line
+        newContractLineDialaogUrl = '/Contract/ContractLineCreate?companyId=' + @Model.CompanyId + '&customerId=' + entityObj[3] + '&contractId=' + '@Model.ID'
+        contractLineTbl.fnSetNewDialogURL(newContractLineDialaogUrl);
+
+        //Set new dialog url for creating new contract maintenance
+        newContractMaintenanceDialaogUrl = '/Contract/ContractMaintenanceCreate?companyId=' + entityObj[0] + '&contractId=' + entityObj[1] + '&invoiceCustomerId=' + entityObj[3]; //+ '&contractLineId=' + selectedContractLineId + '&activityCodeId=' + selectedActivityCodeId + '&activityCode=' + escape(selectedActivityCode);
+        contractMaintenanceTbl.fnSetNewDialogURL(newContractMaintenanceDialaogUrl);
+    }
+
+    //Contract is opened in Edit mode
+    if ('@Model.ID' > 0) {
+
+        //Only SuperAdmin is allowd to change the AtRisk value
+        if ('@SessionHelper.GetUserType(Session)' != 'SuperUser') {
+            $('#ddlAtRisk').prop('disabled', true);
+        }
+        else {
+            $('#ddlAtRisk').prop('disabled', false);
+        }
+
+        //to show/hide EarlyTerminationDate in edit mode
+        if ('@Model.EarlyTerminationDate' != '') {
+            $('#txtEarlyTerminationDate').show();
+            $('#lblEarlyTerminationDate').show()
+        }
+        else {
+            $('#txtEarlyTerminationDate').hide();
+            $('#lblEarlyTerminationDate').hide()
+        }
+    }
+    else {
+        $('#txtEarlyTerminationDate').hide();
+        $('#lblEarlyTerminationDate').hide();
+    }
+
+
+    //ARBS-137: to have ATRisk and Early Termination Date
+    $('#ddlAtRisk').change(function () {
+        var atRisk = $('#ddlAtRisk').val();
+
+        if (atRisk == 1) {
+            $('#lblEarlyTerminationDate').show();
+            $('#txtEarlyTerminationDate').show();
+            $('#txtEarlyTerminationDate').datepicker('setDate', new Date());
+        }
+        else {
+            $('#txtEarlyTerminationDate').hide();
+            $('#lblEarlyTerminationDate').hide();
+        }
+
+    });
+
+    //function DisableControl(control, disable) {
+    //    if (disable) {
+    //        $(control).prop('disabled', true);
+    //    }
+    //    else {
+    //        $(control).prop('disabled', false);
+    //    }
+    //}
+
+    @* $('#btnSave').prop('disabled', @Html.ValueFor(Model.IsReadOnly));*@
+</script>
+
+@*@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}*@

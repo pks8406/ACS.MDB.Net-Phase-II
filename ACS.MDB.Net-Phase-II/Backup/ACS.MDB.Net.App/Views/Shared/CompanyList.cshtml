@@ -1,0 +1,14 @@
+﻿@model ACS.MDB.Net.App.Models.BaseModel
+
+@if (Model != null && Model.OAcompanyList != null)
+{
+
+    <div>
+        @Html.Label("Select Company:", new { @class = "labelforDropdownList" })
+        @Html.DropDownListFor(x => x.OAcompanyList,
+                    new SelectList(Model.OAcompanyList, "ID", "Name"),
+                    "Select Company",
+                    new { @id = "ddlCompany", @class = "DropdownListStyle" })
+    </div>
+
+}

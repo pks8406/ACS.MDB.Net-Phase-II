@@ -1,0 +1,149 @@
+﻿@model IEnumerable<MVCRazor.Models.Contract>
+@{
+    ViewBag.Title = "ContractDetailsJquery";
+    Layout = "~/Views/Shared/_JqueryGridLayout.cshtml";
+}
+
+@*<h3>Contract Details</h3>*@
+
+@section head{
+
+<script language  ="javascript" type="text/javascript">
+
+    $(document).ready(function () {
+        $('#myDataTable').dataTable({
+            "bProcessing": true,
+            "bServerSide": true,
+            //$: ("#myDataTable_filter").attr("style", "display:block"),
+            "sAjaxSource": '@Url.Action("AjaxDataProvider", "Contract")',//'AjaxDataProvider',
+             
+            "aoColumns": [
+                                    {
+                                        "sName": "ID",
+                                        //"bSearchable": false,
+                                        "bSortable": false,
+                                        "bVisible": false
+
+                                    },
+                                    {
+                                        "sName": "CONTRACT_NUMBER",
+                                        //"bSearchable": false,
+                                        //"bSortable": false,
+                                        //"bVisible": false
+
+                                    },
+                                    {
+                                        "sName": "COMPANY_NAME",
+                                        //"bSearchable": false,
+                                        //"bSortable": false,
+                                        //"bVisible": false
+
+                                    },
+                                    {
+                                        "sName": "INVOICE_CUSTOMER",
+                                        //"bSearchable": false,
+                                        "bSortable": false,
+                                        //"bVisible": false
+
+                                    },
+                                    //{ "sName": "COMPANY_NAME" },
+			                        //{ "sName": "CONTRACT_NUMBER" },
+			                        //{ "sName": "INVOICE_CUSTOMER" },
+			                        { "sName": "ENDUSER" }
+            ]            
+        }).makeEditable();       
+    });
+
+</script>
+}
+
+<div id="demo">    
+    
+    <table style="width:100%" id="myDataTable" class="display">
+        <thead>
+            <tr>
+                <th>ContractID</th>
+                <th>Contract Number</th>
+                <th>Company name</th>
+                <th>Invoice Customer</th>
+                <th>EndUser</th>
+                @*<th>(format: (item) => Html.ActionLink("View / Edit", "ContractDetails", new { contractId = item.ContractID }, new { @class = "edit" }))</th>*@
+            </tr>
+        </thead>
+        <tbody>
+            @*    @foreach (var item in Model)
+            {
+                <tr id="@item.ContractID">
+                    <td>@item.ContractNumber</td>
+                    <td>@item.CompanyName</td>                    
+                    <td>@item.InvoiceCustomer</td>
+                    <td>@item.EndUser</td>
+                </tr>
+            }*@
+        </tbody>
+    </table>
+    @*<button id="btnAddNewRow" value="Ok">Add new company...</button> 
+    <button id="btnDeleteRow" value="cancel">Delete selected company</button>*@
+   
+</div>
+ <div class="add_delete_toolbar" style="width:200px"/>
+
+    <form id="formAddNewRow" action="#"  title="Add new contract">    
+        
+            @*@Html.Partial("_CreateContract")*@
+            
+        <table style="width: 100%">            
+                <tr>
+                    <td>
+                        @Html.Label("Contract Number")                   
+                    </td>
+                    <td>
+                        <input type="text" name="contracNumber" id="contracNumber" style="width:100px" rel="0" />
+                        @*@Html.TextBox("txtContractNo", new { @id = "contracNumber", @name = "contracNumber", @rel= "0",@class="contractLargeTextbox"  })                    *@
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.Label("Company Name")                   
+                        @*@Html.LabelFor(m => m.contract.CompanyId, new { @class = "mandatoryLabel" })*@
+                    </td>
+                    <td>
+                        <input type="text" name="companyName" id="companyName" style="width:100px" rel="1" />
+                        @*@Html.TextBox("txtCompanyName", new { @id = "companyName", @name = "companyName", @rel= "1",@class="contractLargeTextbox"  })*@
+                        @*@Html.DropDownListFor(m => m.contract.CompanyId, new SelectList(Model.companyList, "ID", "Name", Model.contract.CompanyId), ".. Select Company..")*@
+                     @*   @Html.ValidationMessageFor(model => model.contract.CompanyId)*@
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.Label("Invoice Customer")                   
+                        @*@Html.LabelFor(m => m.contract.DivisionId, new { @class = "mandatoryLabel" })*@
+                    </td>
+                    <td>
+                        <input type="text" name="invoiceCustomer" id="invoiceCustomer" style="width:100px"  rel="2" />
+                        @*@Html.TextBox("txtInvoiceCustomer",new { @id = "invoiceCustomer", @name = "invoiceCustomer", @rel= "2",@class="contractLargeTextbox" })                    *@
+                        @*@Html.DropDownListFor(model => model.contract.DivisionId, new SelectList(Model.divisionList, "ID", "Name", Model.contract.DivisionId), ".. Select Division..")*@
+                     @*   @Html.ValidationMessageFor(model => model.contract.DivisionId)*@
+                    </td>
+                </tr>
+            
+            <tr>
+                <td>
+                        @Html.Label("End User")               
+                        @*@Html.LabelFor(m => m.contract.DivisionId, new { @class = "mandatoryLabel" })*@
+                    </td>
+                    <td>
+                        <input type="text" name="endUser" id="endUser" style="width:100px" rel="3" />
+                        @*@Html.TextBox("txtEndUser",new { @id = "endUser", @name = "endUser", @rel= "3",@class="contractLargeTextbox" })*@
+                        @*@Html.DropDownListFor(model => model.contract.DivisionId, new SelectList(Model.divisionList, "ID", "Name", Model.contract.DivisionId), ".. Select Division..")*@
+                     @*   @Html.ValidationMessageFor(model => model.contract.DivisionId)*@
+                    </td>
+            </tr>
+            
+            <tr></tr>
+        </table>
+        
+        
+        
+    </form>
+

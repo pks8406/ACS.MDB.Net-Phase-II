@@ -1,0 +1,104 @@
+﻿@model ACS.MDB.Net.App.Models.ReportModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    ViewBag.Title = "Reports";
+}
+
+@section Scripts {
+    <script type="text/javascript" charset="utf-8">
+
+        var selectedCompanyId = -1;
+        var selectedDivisionId = -1;
+        // function called to handle the change in selection
+        // of a company.
+        $("#ddlCompany").change(function () {
+            selectedCompanyId = $(this).val();
+            if ($("#ddlCompany option:selected").text() == "ALL") {
+                selectedCompanyId = -1;
+            }
+            if (selectedCompanyId != -1 && selectedCompanyId != 0) {
+
+                var postData = { companyId: selectedCompanyId };
+                //Get Division List based on selected company id
+                $.post("/Report/GetDivisionList", postData, function (response) {
+
+                    if (response != null) {
+                        $("#ddlDivision").empty();
+                        $("#ddlDivision").length = -1;
+                        if (response == '') {
+                            AddOption("No division exists", "-1", "#ddlDivision");
+                            $('#btnGenerate').prop('disabled', true);
+                        } else {
+                            AddOption("ALL", "-1", "#ddlDivision");
+                            $('#btnGenerate').prop('disabled', false);
+                        }
+                        for (var i in response) {
+                            AddOption(response[i].DivisionName, response[i].DivisionId, "#ddlDivision");
+                        }
+                    }
+                });
+            } else {
+                $("#ddlDivision").empty();
+                selectedCompanyId = 0;
+                selectedDivisionId = 0;
+                AddOption("ALL", "0", "#ddlDivision");
+            }
+        });
+
+        $(document).ready(function () {
+            SetFocus('#ddlCompany');
+
+        });
+
+        //Set the menu item as selected
+        HighlightSelectedMenuItem("ReportsMenu")
+    </script>
+}
+
+
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+<div class="pageTitle">
+    Backlog Report
+    <hr />
+</div>
+@using (Html.BeginForm("GenerateMonthForecastReport", "Report", FormMethod.Post))
+{
+    @Html.ValidationSummary(true)
+
+    <div id="InputParameters" style="border: solid; border-width: 1px; width: auto; margin: 0 auto; text-align: center; margin-bottom: 2px;">
+
+        <table style="margin: 0 auto; width: 75%; text-align: left; margin-top: 2px; margin-top: 5px; margin-bottom: 5px;">
+            <tr>
+                <td>@Html.LabelFor(model => model.CompanyName)</td>
+                <td>
+                    @Html.DropDownListFor(x => x.CompanyID, new SelectList(Model.OAcompanyList, "ID", "NameWithID", Model.CompanyID),
+                             "ALL", new { @id = "ddlCompany", @class = "DropdownListStyle", @tabindex = "1" })
+                </td>
+
+                <td>@Html.LabelFor(model => model.DivisionName)</td>
+                <td>
+                    @Html.DropDownListFor(x => x.DivisionID, new SelectList(Model.DivisionList, "DivisionId", "DivisionName", Model.DivisionID),
+                                   "ALL", new { @id = "ddlDivision", @class = "DropdownListStyle", @tabindex = "2" })
+                </td>
+                <td colspan="3">
+                    <button value="Generate" type="submit" id="btnGenerate" tabindex="3" />
+                    Generate
+                </td>
+            </tr>
+        </table>
+    </div>
+}
+
+<div>
+    @if (Model != null && Model.CompanyID != null && Model.DivisionID != null)
+    {
+        <iframe id="reportFrame" name="reportFrame" src="~/Reports/MonthForecast.aspx?CompanyID=@Model.CompanyID&DivisionID=@Model.DivisionID&UserID=@Model.UserID" style="height: 70%; width: 99%; overflow-y:hidden; position: absolute; border: none"></iframe>
+    }
+</div>
+

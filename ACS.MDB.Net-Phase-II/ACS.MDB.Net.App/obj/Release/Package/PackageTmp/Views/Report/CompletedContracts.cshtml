@@ -1,0 +1,137 @@
+﻿@model ACS.MDB.Net.App.Models.ReportModel
+@{
+    // Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    ViewBag.Title = "Reports";
+}
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+<div class="pageTitle">
+    Completed Contracts
+    <hr />
+</div>
+@using (Html.BeginForm("GenerateCompletedContractsReport", "Report", FormMethod.Post))
+{
+    @Html.ValidationSummary(true)
+
+    <div id="InputParametes" style="border: solid; border-width: 1px; width: auto; margin: 0 auto; text-align: center">
+
+        <table style="margin: 0 auto; width: 75%; text-align: left">
+            <tr>
+                <td>@Html.LabelFor(model => model.StartDate, new { @class = "mandatoryLabel" })</td>
+
+                <td style="text-align: left; width: 175px">
+                    @Html.TextBoxFor(m => m.StartDate, string.Format(@ACS.MDB.Net.App.Common.Constants.DATE_FORMAT_FOR_VIEWPAGE, Model.StartDate), 
+                    new { style = "width:130px", @class = "datepicker", @id="txtStartDate", @tabindex = "1" })
+                </td>
+                <td></td>
+                <td style="text-align: left; width: 150px" colspan="3">
+                    @Html.ValidationMessageFor(m => m.StartDate)
+                </td>
+                <td>@Html.LabelFor(model => model.CompanyName)</td>
+                <td>
+                    @Html.DropDownListFor(x => x.CompanyID, new SelectList(Model.OAcompanyList, "ID", "NameWithID", Model.CompanyID),
+                             "ALL", new { @id = "ddlCompany",  @class = "DropdownListStyle", @tabindex = "3" })
+                </td>
+            </tr>
+            <tr>
+                <td>@Html.LabelFor(model => model.EndDate, new { @class = "mandatoryLabel" })</td>
+
+                <td style="text-align: left; width: 175px">
+                    @Html.TextBoxFor(m => m.EndDate, string.Format(@ACS.MDB.Net.App.Common.Constants.DATE_FORMAT_FOR_VIEWPAGE, Model.EndDate), 
+                    new { style = "width:130px", @class = "datepicker", @tabindex = "2" })
+                </td>
+                <td></td>
+                <td style="text-align: left; width: 150px" colspan="3">
+                    @Html.ValidationMessageFor(m => m.EndDate)
+                </td>
+
+                <td>@Html.LabelFor(model => model.DivisionName)</td>
+                <td>
+                    @Html.DropDownListFor(x => x.DivisionID, new SelectList(Model.DivisionList, "DivisionId", "DivisionName", Model.DivisionID),
+                                   "ALL", new { @id = "ddlDivision", @class = "DropdownListStyle", @tabindex = "4" })
+                </td>
+                <td colspan="3">
+                    <button value="Generate" type="submit" id="btnGenerate" tabindex="5"/> Generate
+                </td>
+            </tr>
+        </table>
+    </div>
+}
+<div>
+    @if (Model != null && Model.StartDate != null && Model.EndDate != null)
+    {
+        <iframe id="reportFrame" name="reportFrame" src="~/Reports/CompletedContracts.aspx?StartDate=@Model.StartDate&EndDate=@Model.EndDate&CompanyID=@Model.CompanyID&DivisionID=@Model.DivisionID&UserID=@Model.UserID" style="height:64%;width:99%;position:absolute; border:none"></iframe>
+    }
+</div>
+
+@section Scripts {
+
+    <script type="text/javascript" charset="utf-8">
+        //Set the menu item as selected
+        HighlightSelectedMenuItem("ReportsMenu")
+
+        var selectedCompanyId = -1;
+        var selectedDivisionId = -1;
+        // function called to handle the change in selection
+        // of a company.
+        $("#ddlCompany").change(function() {
+
+            selectedCompanyId = $(this).val();
+            if ($("#ddlCompany option:selected").text() == "ALL") {
+                selectedCompanyId = -1;
+            }
+            if (selectedCompanyId != -1 && selectedCompanyId != 0) {
+
+                var postData = { companyId: selectedCompanyId };
+
+                //Get Division List based on selected company id
+                $.post("/Report/GetDivisionList", postData, function(response) {
+
+                    if (response != null) {
+                        $("#ddlDivision").empty();
+                        $("#ddlDivision").length = -1;
+                        if (response == '') {
+                            AddOption("No division exists", "-1", "#ddlDivision");
+                            $('#btnGenerate').prop('disabled', true);
+                        } else {
+                            AddOption("ALL", "-1", "#ddlDivision");
+                            $('#btnGenerate').prop('disabled', false);
+                        }
+                        for (var i in response) {
+                            AddOption(response[i].DivisionName, response[i].DivisionId, "#ddlDivision");
+                        }
+                    }
+                });
+            } else {
+                $("#ddlDivision").empty();
+                selectedCompanyId = 0;
+                selectedDivisionId = 0;
+                AddOption("ALL", "0", "#ddlDivision");
+            }
+        });
+
+        $(document).ready(function() {
+            $('.datepicker').datepicker({
+                showOptions: { speed: 'fast' },
+                //changeDay: true,
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: 'dd/mm/yy',
+                gotoCurrent: false,
+                showOn: 'button',
+                onClose: function() { $(this).valid(); },
+                buttonImage: '../../images/Calender1.png',
+                buttonImageOnly: true
+            });
+            
+            // set focus on first field on page
+            SetFocus('#txtStartDate');
+
+        });
+    </script>
+}

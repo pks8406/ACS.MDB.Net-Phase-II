@@ -1,0 +1,211 @@
+﻿@model ACS.MDB.Net.App.Models.ReportModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Theoretical Revenue Forecast</title>
+    @* <style type="text/css">
+        #reportFrame
+        {
+            width: 1325px;
+            height: 450px;
+        }
+    </style>*@
+    <script type="text/javascript">
+
+        var selectedCompanyId = -1;
+        var startDate = "";
+        var endDate = "";
+
+        $(document).ready(function () {
+            $('.datepicker').datepicker({
+                showOptions: { speed: 'fast' },
+                //changeDay: true,
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: 'dd/mm/yy',
+                onClose: function () { $(this).valid(); },
+                //gotoCurrent: false,
+                showOn: 'button',
+                buttonImage: '../../images/Calender1.png',
+                buttonImageOnly: true
+            });
+
+            //Disable Export button on page load and set focus on Start Date
+            $("#btnExport").prop('disabled', true);
+            SetFocus('#txtStartDate');
+
+            //Fill End date based on start date validation 
+            $('#txtStartDate').focusout(function () {
+
+                if ($('#txtStartDate').val().match(/^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[1,3-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/)) {
+                    if ($('#txtStartDate').val() != null) {
+                        var d = $.datepicker.parseDate('dd/mm/yy', $('#txtStartDate').val());
+                        d.setFullYear(d.getFullYear() + 1);
+                        d.setDate(d.getDate() - 1);
+                        $('#txtEndDate').datepicker('setDate', d);
+                    }
+                }
+                else {
+                    //alert("Start Date should not be blank and has to be in dd/MM/yyyy format");
+                    $('#txtEndDate').val('');
+                    SetFocus('#txtStartDate');
+                }
+            });
+
+            // function called to handle the change in selection of a company.
+            $("#ddlCompany").change(function () {
+                selectedCompanyId = $(this).val();
+                if (selectedCompanyId != -1) {
+                    $("#btnExport").prop('disabled', false);
+                }
+            });
+
+
+            var $form = $('#frmRevenueForeCost');
+
+            //After clicking on Export Button
+            $('#btnExport').click(function () { // bind click event to link
+
+                startDate = $('#txtStartDate').val();
+                endDate = $('#txtEndDate').val();
+
+                //Get Year of given End date
+                var endDateYear = $.datepicker.parseDate('dd/mm/yy', endDate);
+                endDateYear.setFullYear(endDateYear.getFullYear());
+
+                var chkEndDate = $.datepicker.parseDate('dd/mm/yy', startDate);
+                chkEndDate.setFullYear(chkEndDate.getFullYear() + 5);
+
+                var sDate = convertDate(startDate);
+                var eDate = convertDate(endDate);
+
+                if (sDate <= eDate) {
+                    if (endDateYear.getFullYear() < chkEndDate.getFullYear()) {
+
+                        var postData = { startDate: startDate, endDate: endDate, companyId: selectedCompanyId };
+
+                        if ($form.valid()) {
+                            //Show Processing image
+                            $("#spinnerRevenueReport").show();
+                            ShowProgress("spinnerRevenueReport");
+
+                            $.ajax({
+                                url: '/Report/ExportToExcel',
+                                data: postData,
+                                type: 'POST',
+                                dataType: 'text',
+                                success: function (response) {
+                                    $("#spinnerRevenueReport").hide();
+                                    HideProgress("spinnerRevenueReport");
+                                },
+                                error: function (response, status, error) {
+                                    //Display error message
+                                    $("#spinnerRevenueReport").hide();
+                                    HideProgress("spinnerRevenueReport");
+                                    DisplayErrorMessage(response, true);
+                                }
+                            });
+                        }
+                    }
+                    else {
+                        $("#txtEndDate").val('');
+                        $("#txtEndDate").focus();
+                        alert("Please enter valid 'End date', It should not  be more than 5 years from Start Date");
+                    }
+                }
+                else {
+                    $("#txtStartDate").focus();
+                    alert('@ACS.MDB.Net.App.Common.Constants.START_DATE_SHOULD_NOT_BE_GREATER_THAN_END_DATE');
+                }
+            });
+
+            //Convert date to DD/MM/YYYY Format
+            function convertDate(inputFormat) {
+
+                var dateArray = inputFormat.split("/");
+
+                var sDate = (dateArray[1] + "/" + dateArray[0] + "/" + dateArray[2]);
+
+                // Convert date to 20th century date 
+                var formatedDate = new Date(sDate.replace(/\/(\d\d)$/, "/20$1"));
+
+                formatedDate = [formatedDate.getMonth() + 1,
+                                formatedDate.getDate(),
+                                formatedDate.getFullYear()].join('/');
+
+                return new Date(formatedDate.replace(/\/(\d\d)$/, "/20$1"));
+            }
+        });
+
+        //Set the menu item as selected
+        HighlightSelectedMenuItem("ReportsMenu")
+
+
+    </script>
+</head>
+
+@{
+    ViewBag.Title = "Reports";
+}
+<body>
+    <div class="pageTitle">
+        Theoretical Revenue Forecast
+    <hr />
+    </div>
+    <form id="frmRevenueForeCost">
+
+        @Html.ValidationSummary(true)
+
+        <div id="InputParametes" style="border: solid; border-width: 1px; width: auto; margin: 0 auto; text-align: center">
+            <table style="margin: 0 auto; width: 90%; text-align: left">
+                <tr>
+                    <td>@Html.LabelFor(model => model.StartDate, new { @class = "mandatoryLabel" })</td>
+
+                    <td style="text-align: left; width: 175px">
+                        @Html.TextBoxFor(m => m.StartDate, string.Format(@ACS.MDB.Net.App.Common.Constants.DATE_FORMAT_FOR_VIEWPAGE, Model.StartDate),
+                        new { style = "width:130px", @class = "datepicker", @id = "txtStartDate", @tabindex = "1" })
+                    </td>
+                    <td>@Html.LabelFor(model => model.EndDate, new { @class = "mandatoryLabel" })</td>
+                    <td style="text-align: left; width: 175px">
+                        @Html.TextBoxFor(m => m.EndDate, string.Format(@ACS.MDB.Net.App.Common.Constants.DATE_FORMAT_FOR_VIEWPAGE, Model.EndDate),
+                        new { style = "width:130px", @class = "datepicker", @id = "txtEndDate", @tabindex = "2" })
+                    </td>
+
+                    @*  <td>@Html.LabelFor(model => model.RevenueStartDate, new { @class = "mandatoryLabel" })</td>
+
+                    <td>@Html.TextBoxFor(m => m.RevenueStartDate, string.Format(@ACS.MDB.Net.App.Common.Constants.DATE_FORMAT_FOR_VIEWPAGE, Model.RevenueStartDate), new { style = "width:130px", @class = "datepicker" })
+*@
+                    <td>@Html.LabelFor(model => model.CompanyName)</td>
+
+                    <td>@Html.DropDownList("CompanyID",
+                         new SelectList(Model.OAcompanyList, "ID", "NameWithID", Model.CompanyID), "Select Company",
+                         new { @class = "DropdownListStyle", @id = "ddlCompany", @tabindex = "3" })</td>
+                    <td colspan="2" style="text-align: center">
+                        <button id="btnExport" value="Export" type="submit" tabindex="4" />
+                        Export To Excel
+                    </td>
+                    <tr>
+                        <td></td>
+                        <td style="text-align: left; width: 150px">
+                            @Html.ValidationMessageFor(m => m.StartDate)
+                        </td>
+                        <td></td>
+
+                        <td style="text-align: left; width: 150px">
+                            @Html.ValidationMessageFor(m => m.EndDate)
+                        </td>                        
+                    </tr>
+            </table>
+        </div>
+    </form>
+    <div id="spinnerRevenueReport" style="display: none; width: 100%; height: 100%; position: fixed; text-align: center; border: 0px; vertical-align: central; left: 0; top: 0; z-index: 1000; background: rgb(255,255,255) url('/Images/Loading.gif') 50% 50% no-repeat; -ms-filter: 'alpha(opacity = 50)'; filter: alpha(opacity=50); opacity: 0.6; }" />
+</body>
+</html>

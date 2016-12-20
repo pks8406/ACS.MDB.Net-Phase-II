@@ -1,0 +1,271 @@
+﻿@model ACS.MDB.Net.App.Models.Milestone
+@{
+    ViewBag.Title = "Approve Maintenance Details";
+}
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+<div style="background: #F9F7FB">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+
+        //hidden field
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CompanyID)
+        @Html.HiddenFor(m => m.ContractID)
+        @Html.HiddenFor(m => m.ContractLineID)
+        @Html.HiddenFor(m => m.ContractMaintenanceID)
+
+        <table style="width: 100%">
+            <tr>
+                <td>
+                    <table style="width: 100%">
+
+                        <tr>
+                            <td>
+                                @Html.LabelFor(m => m.InvoiceDate, new { style = "width:250px" })
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => m.InvoiceDate, string.Format(@ACS.MDB.Net.App.Common.Constants.DATE_FORMAT_FOR_VIEWPAGE, Model.InvoiceDate), new
+                           {
+                               style = "width:100px;height:15px",
+                               @readonly = true,
+                               @id = "txtInvoiceDate",
+                               @class = "readOnlyTextBox"
+                           })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.LabelFor(m => m.RenewalStartDate, new { style = "width:250px" })
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => m.RenewalStartDate, string.Format(@ACS.MDB.Net.App.Common.Constants.DATE_FORMAT_FOR_VIEWPAGE, Model.RenewalStartDate),
+                                new { style = "width:100px;height:15px", @readonly = true, @id = "txtRenewalStartDate", @class = "readOnlyTextBox" })
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                @Html.LabelFor(m => m.RenewalEndDate, new { style = "width:250px" })
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => m.RenewalEndDate, string.Format(@ACS.MDB.Net.App.Common.Constants.DATE_FORMAT_FOR_VIEWPAGE, Model.RenewalEndDate),
+                                new { style = "width:100px;height:15px", @readonly = true, @id = "txtRenewalEndDate", @class = "readOnlyTextBox" })
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+
+                <td>
+                    <table style="width: 100%">
+                        <tr>
+                            <td>
+                                @Html.LabelFor(m => m.Amount, new { @class = "mandatoryLabel", style = "margin-left: 10px" })
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => m.Amount, new { @maxlength = "12", style = "width:100px;", @id = "txtAmount" })
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td></td>
+                            <td>@Html.ValidationMessageFor(m => m.Amount)</td>
+                        </tr>
+                        <tr>
+
+                            <td>
+                                @Html.LabelFor(m => m.IsApproved, new { style = "margin-left: 10px" })
+                            </td>
+                            <td>
+                                @*@Html.TextBoxFor(m => m.ApprovedStatus, new { @maxlength = "12", style = "width:100px", @id = "txtAmount" })*@
+                                @Html.CheckBoxFor(m => m.IsApproved, new { @id = "chkApproved" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+
+                            <td style="width: 155px">
+                                @Html.LabelFor(m => m.MilestoneStatus, new
+                           {
+                               @class = "mandatoryLabel",
+                               style = "width:300px; margin-left: 10px"
+                           })
+                            </td>
+                            <td style="height: 35px">
+                                @Html.DropDownListFor(m => m.MilestoneStatusID, new SelectList(Model.MilestoneStatusList, "ID", "Description",
+                                                                                               Model.MilestoneStatusID), "Select Milestone Status",
+                                                                                               new { @id = "ddlMilestoneStatusList", style = "width:165px;height:25px" })
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td></td>
+                            <td>@Html.ValidationMessageFor(m => m.MilestoneStatusID)</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>        
+    }
+</div>
+@* ReSharper disable AssignedValueIsNeverUsed *@
+<script type="text/javascript">
+    //$('body').css('overflow', 'auto');
+    //Disable Save button of pop up for viewer
+    DisableSaveButton();
+
+    var selectedMilestoneStatus = "";
+    var initialMilestoneStatus = "";
+    var approvedStatus = "";
+
+    $(document).ready(function () {
+        //Set default focus on search text box
+        SetFocus('#ddlMilestoneStatusList');
+        selectedMilestoneStatus = $("#ddlMilestoneStatusList").val();
+        initialMilestoneStatus = selectedMilestoneStatus;
+        approvedStatus = document.getElementById("chkApproved").checked;
+    });
+
+    DisableBackspaceKeyForControl('#txtInvoiceDate');
+    DisableBackspaceKeyForControl('#txtRenewalStartDate');
+    DisableBackspaceKeyForControl('#txtRenewalEndDate');
+    DisableInvalidKeyForControl('#txtComments');
+
+    $("#chkApproved").change(function () {
+        var isApproved = document.getElementById("chkApproved").checked;
+        if (isApproved) {
+            selectedMilestoneStatus = $("#ddlMilestoneStatusList").val();
+
+            if (selectedMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.READY_FOR_CALCULATING)') {
+                alert("Milestone status is not 'Ready For Invoicing'. You may have to do a calculation first.");
+                $('#chkApproved').prop('checked', false);
+            }
+                //12 = Ready For Invoicing
+                // If Approved & milestone status is Ready For Invoicing then change status to "Approved for Payment"
+            else if (selectedMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.READY_FOR_INVOICING)') {
+                $("#ddlMilestoneStatusList").val(1);
+                //prevSelectedMilestoneStatus = 1;
+                selectedMilestoneStatus = 1;
+            }
+            else if (initialMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.APPROVED_FOR_PAYMENT)'
+                    || initialMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.COMPLETED_BY_USER)' 
+                    || selectedMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.COMPLETED_BY_USER)'
+                    || initialMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.CANCELLED)'
+                    || selectedMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.CANCELLED)') {
+
+            }
+        } else {
+
+            if (selectedMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.IN_PROGRESS)') {
+                alert("Status cannot be changed to Unapproved for 'In Progress'.");
+                $('#chkApproved').prop('checked', true);
+            }
+
+            //If milestone status is link loaded then user can not change to Unapproved.
+            if (selectedMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.LINK_LOADED)') {
+                alert("Status cannot be changed to Unapproved for 'Link Loaded'.");
+                $('#chkApproved').prop('checked', true);
+            }
+
+            //If milestone status is Completed by user then user can not change to Unapproved.
+            if (selectedMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.COMPLETED_BY_USER)') {
+                alert("Status cannot be changed to Unapproved for 'Completed by user'.");
+                $('#chkApproved').prop('checked', true);
+            }
+
+            //If milestone status is Cancelled then user can not change to Unapproved.
+            if (selectedMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.CANCELLED)') {
+                alert("Status cannot be changed to Unapproved for 'Cancelled'.");
+                $('#chkApproved').prop('checked', true);
+            }
+
+            //If Milestone status is Approved for Payment and user select unapprove then status back to Ready for Invoiceing
+            if (selectedMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.APPROVED_FOR_PAYMENT)') {
+                $("#ddlMilestoneStatusList").val('@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.READY_FOR_INVOICING)');
+                selectedMilestoneStatus = '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.READY_FOR_INVOICING)';
+            }
+        }
+    });
+
+    $("#ddlMilestoneStatusList").change(function () {
+        selectedMilestoneStatus = $("#ddlMilestoneStatusList").val();
+
+        var msg = "";
+        var isValid = true;
+
+        if (initialMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.READY_FOR_CALCULATING)'
+            && selectedMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.APPROVED_FOR_PAYMENT)') {
+            alert("Approved for Payment can not change manually.");
+            $("#ddlMilestoneStatusList").val(initialMilestoneStatus);
+            return false;
+        }
+
+        if (initialMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.LINK_LOADED)'
+            && selectedMilestoneStatus != '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.LINK_LOADED)') {
+
+            alert("Link Loaded status cannot be changed to any other status.");
+            $("#ddlMilestoneStatusList").val(initialMilestoneStatus);
+            selectedMilestoneStatus = initialMilestoneStatus;
+            return false;
+        }
+
+        if (selectedMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.CANCELLED)'
+            || selectedMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.COMPLETED_BY_USER)'
+            || selectedMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.APPROVED_FOR_PAYMENT)') {
+            $('#chkApproved').prop('checked', true);
+        }
+
+        //if milestone status is not "Ready For Invoicing" or
+        //"Ready for Calculating" then set Approve status as Unapproved.
+        if (selectedMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.READY_FOR_INVOICING)'
+            || selectedMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.READY_FOR_CALCULATING)') {
+            $('#chkApproved').prop('checked', false);
+        }
+
+        if (initialMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.READY_FOR_CALCULATING)'
+            && selectedMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.APPROVED_FOR_PAYMENT)') {
+            alert("Milestone status is not 'Ready For Invoicing'. You may have to do a calculation first.");
+            $("#ddlMilestoneStatusList").val(initialMilestoneStatus);
+            $('#chkApproved').prop('checked', approvedStatus);
+            return false;
+        }
+
+        //If initial status is In Progress then allow to change status to Approve for Payment
+        if ((initialMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.IN_PROGRESS)'
+            && selectedMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.APPROVED_FOR_PAYMENT)')) {
+            $('#chkApproved').prop('checked', true);
+        }
+        else if (initialMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.IN_PROGRESS)'
+            && selectedMilestoneStatus != '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.APPROVED_FOR_PAYMENT)') {
+            $('#chkApproved').prop('checked', approvedStatus);
+            alert("In Progress status cannot be changed to any other status.");
+            $("#ddlMilestoneStatusList").val(initialMilestoneStatus);
+            return false;
+        }
+
+        //Link Loaded can not set manually
+        if (selectedMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.LINK_LOADED)') {
+            isValid = false;
+            msg = "Link Loaded";
+        }
+
+        // In Progress can not set manually
+        if (selectedMilestoneStatus == '@Convert.ToInt32(ACS.MDB.Net.App.Common.Constants.MilestoneStatus.IN_PROGRESS)') {
+            isValid = false;
+            msg = "In Progress";
+        }
+
+        if (!isValid) {
+            alert(msg + " status cannot be changed manually.");
+            $("#ddlMilestoneStatusList").val(initialMilestoneStatus);
+            $('#chkApproved').prop('checked', approvedStatus);
+            selectedMilestoneStatus = initialMilestoneStatus;
+        }
+    });
+</script>

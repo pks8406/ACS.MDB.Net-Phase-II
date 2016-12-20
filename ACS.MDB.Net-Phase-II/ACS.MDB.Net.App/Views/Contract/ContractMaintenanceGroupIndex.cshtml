@@ -1,0 +1,212 @@
+﻿@model ACS.MDB.Net.App.Models.ContractMaintenanceGroup
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+<script type="text/javascript">
+
+    var contractMaintenanceGroupTbl = null;
+    var selectedGroupName = '@Model.GroupName';
+
+    var columnDefs = [
+            {
+                sWidth: '1%', bSortable: false, aTargets: [0]
+            },
+            {
+                sWidth: '1%', bVisible: false, aTargets: [1]
+            },
+
+            {
+                sWidth: '28%', bSortable: false, aTargets: [2]
+            },
+            { sWidth: '12%', bVisible: true, bSortable: false, aTargets: [3] },
+            {
+                sWidth: '8%', bSortable: false, sClass: 'right-align', aTargets: [4],
+                "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                    if (sData < "0") {
+                        $(nTd).addClass('redText');
+                    }
+                }
+            },
+            { sWidth: '7%', bSortable: false, aTargets: [5] },
+            { sWidth: '8%', bSortable: false, aTargets: [6] },
+            { sWidth: '9%', bSortable: false, aTargets: [7] },
+            { sWidth: '9%', bSortable: false, aTargets: [8] },
+            { sWidth: '5%', bSortable: false, aTargets: [9] },
+            {
+                sWidth: '1%', bSortable: false, aTargets: [10]
+            },
+            { sWidth: '1%', bVisible: false, aTargets: [11] },
+            { sWidth: '1%', bVisible: false, aTargets: [12] },
+            { sWidth: '1%', bVisible: false, aTargets: [13] },
+            { sWidth: '1%', bVisible: false, aTargets: [14] },
+            {
+                sWidth: '1%', bVisible: false, aTargets: [15],
+                "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                    if (sData == true) {
+                        $("#selectall").prop('disabled', true);
+                    }
+                }
+            }
+    ];
+
+    //setup the table and other features required for this page
+    $(document).ready(function () {
+        //Disable cache
+        $.ajaxSetup({ cache: false });
+
+        contractMaintenanceGroupTbl = $('#contractMaintenanceGroup_tbl').editTable({
+
+            sListURL: '/Contract/GetContractMaintenanceGroupList',
+            fnServerData: ContractMaintenanceGroupListParameter,
+            //bJQueryUI: true,
+            //sDeleteURL: '',
+            //sAddURL: '/Administration/CurrencySave',
+            //sUpdateURL: '/Administration/CurrencySave',
+            //sNewDialogLoadURL: '/Administration/CurrencyCreate',
+            //sEditDialogLoadURL: '/Administration/CurrencyEdit',
+            //sDialogDivId: 'currency_dialog',
+            //sToolbarSelector: '#div_toolbar',
+            //sAddButtonId: 'btn_newcurrency',
+            //sEditButtonId: 'btn_editcurrency',
+            ////sDeleteButtonId: 'btn_deletecurrency',
+            //iDialogWidth: 400,
+            //iDialogHeight: 300,
+            //iDialogOffset: 450,
+            //bAutoWidth: false,
+            //fnRowSelected: UpdateGroup,
+            oColumnDefs: columnDefs
+            //sEntityName: 'ContractMaintenanceGroup'
+        });
+
+        //Hide the search text box
+        $("#contractMaintenanceGroup_tbl_filter").hide();
+        //SetFocus('#contractMaintenanceGroup_tbl_filter label input:text');
+        //DisableInvalidKeyForControl('#contractMaintenanceGroup_tbl_filter label input:text');
+
+        //Hide Dropdown if group is not existing
+        if ('@Model.IsExistingGroup' == "True") {
+            $("#groupNameList").show();
+        }
+        else {
+            $("#groupNameList").hide();
+        }
+
+        if ('@Model.IsExistingGroup' != "True" && '@Model.GroupName' != "") {
+
+            $("#selectall").prop('checked', true);
+        }
+
+    });
+
+
+    //Function to set checkbox column header selector to false
+    //Call after we do sorting,paging,searching, save (create/edit) of record
+    function ContractMaintenanceGroupListParameter(sSource, aoData, fnCallBack) {
+        //add the additional data to be sent to the server
+
+        aoData.push({ "name": "contractId", "value": '@Model.ContractId' });
+        aoData.push({ "name": "periodFrequencyId", "value": '@Model.PeriodFrequencyId' });
+        aoData.push({ "name": "firstPeriodStartDate", "value": '@Model.FirstPeriodStartDate' });
+        aoData.push({ "name": "firstRenewalDate", "value": '@Model.FirstRenewalDate' });   
+        aoData.push({ "name": "finalBillingPeriodStartDate", "value": '@Model.FinalRenewalStartDate' });
+        aoData.push({ "name": "finalBillingPeriodEndDate", "value": '@Model.FinalRenewalEndDate' });
+        aoData.push({ "name": "documentTypeId", "value": '@Model.DocumentTypeId' });
+        aoData.push({ "name": "invoiceAdvancedArrears", "value": '@Model.InvoiceAdvancedArrears' });
+        aoData.push({ "name": "invoiceInAdvance", "value": '@Model.InvoiceInAdvance' });
+        aoData.push({ "name": "isGroupNew", "value": '@Model.IsNewGroup' });
+        aoData.push({ "name": "isGroupExisting", "value": '@Model.IsExistingGroup' });
+        aoData.push({ "name": "groupName", "value": selectedGroupName });
+
+        $.getJSON(sSource, aoData, function (json) {
+        }).done(function (json) {
+            fnCallBack(json);
+
+        }).fail(function (json) {
+            alert('Fail');
+            DisplayErrorMessage(json, false);
+        });
+    }
+
+
+    // function called to handle the change in selection
+    // of a company.
+    $("#ddlGroupName").change(function () {
+        //selectedGroupName = $(this).val();
+        selectedGroupName = $(this).children('option').filter(':selected').text();
+        contractMaintenanceGroupTbl.fnDraw(false);
+        contractMaintenanceGroupTbl.fnPageChange(0, false);
+    })
+
+
+    //Set the menu item as selected
+    //HighlightSelectedMenuItem("AdminMenu")
+</script>
+
+<div style="background: #F9F7FB">
+    @using (Html.BeginForm())
+    {
+        <div class="pageTitle">
+            Billing Details Group
+    <hr />
+        </div>
+        <table id="groupNameList" style="width: 60%;">
+            <tr>
+                <td>                    
+                        @if (Model != null && Model.GroupNameList != null)
+                        {                            
+                                @Html.Label("Select Group:", new { @class = "labelforDropdownList" })
+                                @Html.DropDownListFor(x => x.GroupName,
+                                                        new SelectList(Model.GroupNameList),
+                                                        "Select Group Name",
+                                                        new { @id = "ddlGroupName", @class = "DropdownListStyle" })                                
+                                                                
+                        }                    
+                </td>           
+                <td>
+                    @Html.ValidationMessageFor(model => model.GroupName)                            
+                </td>     
+            </tr>            
+        </table>         
+        
+        <table style="width: 100%">
+            <tr>
+                <td>
+                    <div id='div_toolbar' class="DatatableGridButtonStyle" style="margin-bottom: 10px; margin-top: 0px;"></div>
+                    <div>
+                        <table cellpadding="0" cellspacing="0" border="0" class="display" id="contractMaintenanceGroup_tbl" width="100%">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2">
+                                        <input type="checkbox" id="selectall" />
+                                    </th>
+                                    <th rowspan="2">@Html.DisplayNameFor(model => model.ID) </th>
+                                    <th rowspan="2">@Html.DisplayNameFor(model => model.ActivityCode) </th>
+                                    <th rowspan="2">@Html.DisplayNameFor(model => model.OAJobCodeId)</th>
+                                    <th rowspan="2">@Html.Label("Annual Amount") </th>
+                                    <th rowspan="2">@Html.DisplayNameFor(model => model.PeriodFrequency) </th>
+                                    <th rowspan="2">@Html.DisplayNameFor(model => model.FirstPeriodStartDate) </th>
+                                    <th class="ui-state-default" style="text-align: center" colspan="3">@Html.Label("Final Billing Period")</th>
+                                    <th rowspan="2">@Html.Label("Default Billing Line")</th>
+                                    <th rowspan="2"></th>
+                                    <th rowspan="2"></th>
+                                    <th rowspan="2"></th>
+                                    <th rowspan="2"></th>
+                                    <th rowspan="2"></th>
+                                </tr>
+
+                                <tr>
+                                    <th>@Html.DisplayNameFor(model => model.FinalRenewalStartDate) </th>
+                                    <th>@Html.DisplayNameFor(model => model.FinalRenewalEndDate) </th>
+                                    <th>@Html.DisplayNameFor(model => model.EndAmount) </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table> 
+    }
+</div>

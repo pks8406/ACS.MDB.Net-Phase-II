@@ -1,0 +1,166 @@
+﻿@model ACS.MDB.Net.App.Models.ProfitLoss
+
+@{
+    ViewBag.Title = "MDB::P&L";
+}
+
+@section Scripts {
+    <script src="/Scripts/jquery.dataTables.js" type="text/javascript"></script>
+    <script src="/Scripts/jquery.dataTable.editTable.js" type="text/javascript"></script>
+
+    <script type="text/javascript" charset="utf-8">
+
+        // the profitLoss data table
+        var profitlossTbl = null;
+
+        //the company whose P&L need to be listed
+        var selectedCompanyId = -1;
+        var selectedCompanyName = '';
+        var selectedCostCenterId = -1;
+        var columnDefs = [
+                { sWidth: '1%', bSortable: false, bVisible: true, aTargets: [0] },
+                { sWidth: '10%', bSortable: false, bVisible: false, aTargets: [1] },
+                {
+                    sWidth: '30%', aTargets: [2], "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                        OpenEditDialog(profitlossTbl, iRow, nTd, sData);
+                    }
+                },
+                {
+                    sWidth: '30%', aTargets: [3]
+                }
+        ];
+
+        //setup the table and other features required for this page
+        $(document).ready(function () {
+
+            //Disable cache
+            $.ajaxSetup({ cache: false });
+
+            profitlossTbl = $('#ProfitLoss_tbl').editTable({
+                sListURL: '/Administration/ProfitLossList/',
+                fnServerData: ProfitLossListParameter,
+                sDeleteURL: '/Administration/ProfitLossDelete',
+                sAddURL: '/Administration/ProfitLossSave',
+                sUpdateURL: '/Administration/ProfitLossSave',
+                sNewDialogLoadURL: '/Administration/ProfitLossCreate/',
+                sEditDialogLoadURL: '/Administration/ProfitLossEdit',
+                sDialogDivId: 'profitloss_dialog',
+                sToolbarSelector: '#div_toolbar',
+                sAddButtonId: 'btn_newprofitloss',
+                sEditButtonId: 'btn_editprofitloss',
+                sDeleteButtonId: 'btn_deleteprofitloss',
+                iDialogWidth: 500,
+                iDialogHeight: 240,
+                bAutoWidth: false,
+                oColumnDefs: columnDefs,
+                sEntityName: 'P and L',
+                iDialogOffset: 450
+            });
+
+            //Set default focus on search text box and Disable invalid keys for search text box (Keys like <,>,~)
+            SetFocus('#ProfitLoss_tbl_filter label input:text');
+            DisableInvalidKeyForControl('#ProfitLoss_tbl_filter label input:text');
+
+
+            //Hide toolbar
+            profitlossTbl.fnShowToolBar(false);
+
+            // function called to handle the change in selection
+            // of a company.
+            $("#ddlCompany").change(function () {
+                selectedCompanyId = $(this).val();
+                selectedCompanyName = $(this).children('option').filter(':selected').text();
+                profitlossTbl.fnPageChange(0, false);
+
+                if (selectedCompanyId != -1 && selectedCompanyId != 0) {
+                    profitlossTbl.fnShowToolBar(true);
+                    var newDialaogUrl = '/Administration/ProfitLossCreate?companyId=' + selectedCompanyId + '&companyName=' + escape(selectedCompanyName);
+                    profitlossTbl.fnSetNewDialogURL(newDialaogUrl);
+                    profitlossTbl.fnDraw(false);
+                }
+                else {
+                    profitlossTbl.fnShowToolBar(false);
+                    profitlossTbl.fnDraw(false);
+                }
+            })
+        });
+
+        //Set the menu item as selected
+        HighlightSelectedMenuItem("AdminMenu")
+
+        // Function used to pass any additional parameters required
+        // for the List function
+        function ProfitLossListParameter(sSource, aoData, fnCallBack) {
+            //add the additional data to be sent to the server
+            aoData.push({ "name": "companyId", "value": selectedCompanyId });
+            $.getJSON(sSource, aoData, function (json) {
+            }).done(function (json) {
+
+                fnCallBack(json);
+
+                //To set checkbox column header selector to false
+                profitlossTbl.fnSetCheckBoxItemSelector();
+
+            }).fail(function (json) {
+                DisplayErrorMessage(json, false);
+            });
+        }
+    </script>
+}
+
+<div class="pageTitle">
+    Manage P&L
+    <hr />
+</div>
+
+@*<table style="margin-bottom: 10px">
+    @if (Model != null)
+    {
+        <tr>
+            <td style="padding: 0px 0px 0px 10px" class="nonMandatoryLabel">@Html.Label("Select Company:", new { style = "font-size: 15px" }) </td>
+            <td></td>
+            <td style="padding: 5px 0px 0px 0px">
+                <div>
+                    @Html.DropDownListFor(x => x.CompanyId, new SelectList(Model.companyList.OrderBy(x => x.Name), "CompanyId", "Name"), "Select Company", new { @id = "ddlCompany", style = "width:250px;height:25px" })
+                </div>
+            </td>
+        </tr>
+    }
+</table>*@
+
+@Html.HiddenFor(m => m.CompanyId)
+@Html.HiddenFor(m => m.CostCenterId)
+
+<table style="width: 100%">
+    <tr>
+        <td colspan="2">
+            <table style="margin-bottom: 10px; margin-top: 0px; width: 100%">
+                <tr>
+                    <td>@Html.Partial("CompanyList")</td>
+
+                    <td style="text-align: right;">
+                        <div id='div_toolbar' class="DatatableGridButtonStyle" style="margin-top: 0px;"></div>
+                    </td>
+                </tr>
+            </table>
+            <div id="profitloss_dialog" title="Add P&L"></div>
+            <div>
+                <table cellpadding="0" cellspacing="0" border="0" class="display" id="ProfitLoss_tbl" width="100%">
+
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="selectall" />
+                            </th>
+                            <th>@Html.DisplayNameFor(model => model.ID) </th>
+                            <th>@Html.DisplayNameFor(model => model.CostCenterName) </th>
+                            <th>@Html.DisplayNameFor(model => model.ProfitLossName) </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </td>
+    </tr>
+</table>

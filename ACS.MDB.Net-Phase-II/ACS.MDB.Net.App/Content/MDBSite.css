@@ -1,0 +1,191 @@
+﻿html { margin: 0; padding: 0; /*background-color: whitesmoke;*/ }
+body { margin: 0; padding: 0; color: #333; font-weight: normal; font-size: 8pt; font-family: Verdana, Arial, serif; }
+#body { clear: both; padding-right: 10px; padding-bottom: 35px; padding-left: 10px; font-size: 8pt; font-family: Verdana, Arial, serif;  }
+
+a { padding-right: 3px; padding-left: 3px; outline: none; color: #333; text-decoration: underline; }
+    a:link, a:visited, a:active, a:hover { color: #333; }
+    a:hover { color: blue; cursor:pointer; }
+
+header, footer, hgroup, nav, section { display: block; }
+
+mark { padding-right: 5px; padding-left: 5px; /*background-color: whitesmoke;*/ }
+
+.float-left { float: left; }
+.float-right { float: right; }
+.clear-fix:after { display: block; visibility: hidden; clear: both; height: 0; content: "."; }
+
+h1, h2, h3, h4, h5, h6 { margin-bottom: 0; padding-bottom: 0; color: #000; }
+h1 { font-size: 2em; }
+h2 { font-size: 1.75em; }
+h3 { }
+h4 { }
+h5, h6 { font-size: 1em; }
+    h5 a:link, h5 a:visited, h5 a:active { padding: 0; text-decoration: none; }
+
+/* main layout
+----------------------------------------------------------*/
+footer { clear: both; height: 100px; font-size: .8em; /*background-color: whitesmoke;*/ }
+
+/* page title
+----------------------------------------------------------*/
+.pageTitle { padding-top: 5px; padding-bottom:2px; padding-left:5px; padding-right:5px; color: darkblue; font-weight: bold; font-size: 15px; }
+
+.label { font-weight: 700; }
+label { display: inline; /*font-weight: 600;*/ }
+label.checkbox { display: inline; }
+
+input, textarea { margin: 5px 0 6px 0; padding: 5px; width: auto; border: 1px solid #e2e2e2; background: #fff; color: #333; font-size: 8pt; font-family: Verdana, Arial, serif; }
+
+textarea { width: 500px; }
+
+input:focus, textarea:focus { border: 1px solid #7ac0da; }
+input[type="checkbox"] { width: auto; border: inherit; border-style: none; background: transparent;   
+  padding: 0px 0px 0px 0px; 
+}
+input[type="submit"],
+input[type="button"],
+
+button { margin-right: 8px; padding: 7px; width: auto; border: 1px solid #787878; background-color: #d3dce0; font-weight: 600; cursor: pointer; }
+
+td input[type="submit"],
+td input[type="button"],
+td button { margin-right: 4px; padding: 4px; font-size: 8pt; font-family: Verdana, Arial, serif; }
+
+/* styles for validation helpers */
+.field-validation-error { color: #b8253f; font-size: 1em; /* */ /*font-weight: bold;*/ }
+.field-validation-valid { display: none; }
+
+input.input-validation-error { border: 1px solid #e80c4d; }
+input[type="checkbox"].input-validation-error { border: 0 none; }
+.validation-summary-errors { color: #e80c4d; font-weight: bold; }
+.validation-summary-valid { display: none; }
+
+/* tables
+----------------------------------------------------------*/
+table { margin-top: 0.75em; border: 0 none; border-spacing: 0; border-collapse: collapse; }
+th { padding-left: 0; border: none 0px; text-align: left; }
+    th a { position: relative; display: block; }
+        th a:link, th a:visited, th a:active, th a:hover { padding: 0; color: #333; text-decoration: none; font-weight: 600; }
+        th a:hover { color: #000; }
+    th.asc a, th.desc a { margin-right: .75em; }
+        th.asc a:after, th.desc a:after { position: absolute; top: 0; right: 0em; display: block; font-size: 0.75em; }
+        th.asc a:after { content: '▲'; }
+        th.desc a:after { content: '▼'; }
+
+td { padding: 2px; border: 0 none; }
+    td input[type="checkbox"] { margin: 0px 0px 0px 0px; }
+
+tr.pager td { padding: 0 0.25em 0 0; }
+
+/* forms - Contracts screen
+----------------------------------------------------------*/
+.nonMandatoryLabel { display: block; font-weight: 600; }
+.mandatoryLabel { display: inline; padding-bottom: 0.3em; /*font-weight: 600;*/ }
+    .mandatoryLabel:after { color: #b8253f; content: ' *'; }
+.readOnlyTextBox { width: 150px; height: 15px; border-color: #D8D8D8; background-color: #F0F0F0 !important; color: #3e5667; }
+
+.ContractDropDownListBox { width: 225px; height: 25px; }
+.MaintainceDropDownListBox { width: 160px; height: 25px; }
+.MaintainceTextbox { width: 150px; height: 15px; }
+.loginTextBox { width: 300px; font-size: 8pt; font-family: Verdana, Arial, serif; }
+.coaHeaderTitle { font-size: 14pt; font-weight: bold; vertical-align: top; height: auto; padding: 20px 40px 0px 40px; color: #336; }
+.welcomeuser { padding: 8px 0px 5px 0px; width: 98%; color: #fff; vertical-align: middle; vertical-align: top; text-align: right; }
+
+/*Billing Line Screen*/
+.billingLineDescription { width: 700px; font-size: 1em; /*font-weight: 600;*/ }
+
+.button { font-weight: 700; }
+a.button { color: White; }
+
+#gridResult tbody > tr, .webGrid tbody > tr { background-color: #d3dce0; background-image: none; }
+
+.datepicker { width: 150px; height: 15px; /*width: 100px;*/ }
+
+.right-align { text-align: right; }
+.center-align { text-align: center; }
+
+/*div .spinner { display: none; width: 100%; height: 100%; position: fixed; text-align: center; border: 0px; vertical-align: central; left: 0; top: 0; z-index: 1000;  background: rgb(255,255,255) url('/Images/Loading.gif') 50% 50% no-repeat; -ms-filter:'alpha(opacity = 50)'; filter: alpha(opacity=50); opacity:0.6; }*/
+
+/*.spinnerclass { display: none; width: 100%; height: 100%; position: fixed; text-align: center; border: 0px; vertical-align: central; left: 0; top: 0; z-index: 1000;  background: rgb(255,255,255) url('/Images/Loading.gif') 50% 50% no-repeat; -ms-filter:'alpha(opacity = 50)'; filter: alpha(opacity=50); opacity:0.6; }*/
+
+select { font-size: 8pt; font-family: Verdana, Arial, serif; }
+
+.labelforDropdownList { font-family: Verdana, Arial, serif; font-size: 10pt; padding: 0px 5px; }
+
+.DropdownListStyle { width:250px;height:25px; }
+
+.DatatableGridButtonStyle { margin-top: 15px; clear: both; float: right; }
+
+.redText { color: #e80c4d; font-weight:bold; }
+
+.billingLines {
+    margin: 1px;
+    padding: 0px;
+    width: 400px;
+    
+}
+
+.dataTables_filter ::-ms-clear
+{
+    display: none;
+}
+
+input[type="radio"]
+{
+    width: auto;
+    border: inherit;
+    border-style: none;
+    background: transparent;
+    padding: 0px 0px 0px 0px; 
+    vertical-align:middle;
+}
+
+ td input[type="radio"] { margin: 0px 0px 0px 0px; }
+
+.group
+{
+    font-weight:bold;        
+}
+
+.MaintenanceBillingTR TR
+{
+    /*white-space: nowrap;*/
+	border:1px solid #DAD4DA;
+    text-align: left;
+	width:15%;
+}
+
+.MaintenanceBillingHeader TH
+{
+    white-space: nowrap;
+	border:1px solid #DAD4DA;
+    text-align: left;
+	width:10%;
+}
+
+.BillingLine
+{
+	border:1px solid #DAD4DA;
+	width:10%;
+	vertical-align:top;
+}
+
+.BillingLine1
+{
+	width:400px;
+	vertical-align:top;
+	overflow-x:auto;
+	white-space:nowrap;
+}
+
+.OtherDetails
+{
+	border:1px solid #DAD4DA;
+	width:10%;
+	vertical-align:top;
+}
+
+.NoData
+{
+	border-bottom:1px solid #DAD4DA;
+}

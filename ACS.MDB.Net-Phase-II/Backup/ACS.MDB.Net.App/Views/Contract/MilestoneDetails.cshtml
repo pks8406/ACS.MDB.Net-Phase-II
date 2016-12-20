@@ -1,0 +1,93 @@
+﻿@model ACS.MDB.Net.App.Models.Milestone
+@{
+    ViewBag.Title = "Milestone";
+}
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+<div style="background: #F9F7FB;">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+
+        //hidden field
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.ContractID)
+        @Html.HiddenFor(m => m.ContractLineID)
+        @Html.HiddenFor(m => m.ContractMaintenanceID)
+        @Html.HiddenFor(m => m.RenewalEndDate)
+        @Html.HiddenFor(m => m.IsApproved)
+
+        <table style="width: 100%">
+            <tr>
+                <td colspan="4">
+                    <table style="width: 100%">
+
+                        <tr>
+                            <td>
+                                @Html.LabelFor(m => m.InvoiceDate, new { style = "width:250px", @class = "mandatoryLabel" })
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => m.InvoiceDate, string.Format(@ACS.MDB.Net.App.Common.Constants.DATE_FORMAT_FOR_VIEWPAGE, Model.InvoiceDate), new { style = "width:100px;height:15px", @readonly = true, @id = "txtInvoiceDate", @class = "readOnlyTextBox" })
+                            </td>
+
+                            <td colspan="2">
+                                @Html.LabelFor(m => m.RenewalStartDate, new { style = "width:250px; padding-left:20px", @class = "mandatoryLabel" })
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => m.RenewalStartDate, string.Format(@ACS.MDB.Net.App.Common.Constants.DATE_FORMAT_FOR_VIEWPAGE, Model.RenewalStartDate), new { style = "width:100px;height:15px", @readonly = true, @id = "txtRenewalStartDate", @class = "readOnlyTextBox" })
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                @Html.LabelFor(m => m.Amount, new { @class = "mandatoryLabel" })
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => m.Amount, new { @maxlength = "11", style = "width:100px", @id = "txtAmount" })
+                            </td>
+
+                            <td colspan="2">
+                                @Html.LabelFor(m => m.MilestoneStatus, new { style = "width:250px; padding-left:20px", @class = "mandatoryLabel" })
+                            </td>
+                            <td colspan="2">
+                                @Html.DropDownListFor(m => m.MilestoneStatusID, new SelectList(Model.MilestoneStatusList, "ID", "Description", Model.MilestoneStatusID), "Select Milestone status", new { @id = "ddlMilestoneStatus", style = "width:165px; height:25px" })
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td></td>
+                            <td colspan="2">
+                                @Html.ValidationMessageFor(m => m.Amount)
+                            </td>
+
+                            <td style="padding-left: 90px" colspan="2">
+                                @Html.ValidationMessageFor(m => m.MilestoneStatusID)
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+        <table style="width: 100%">
+            <tr>
+                <td rowspan="15" colspan="2" style="vertical-align: top">
+                    @Html.Partial("_MilestoneBillingLines")
+                </td>
+            </tr>
+        </table>
+    }
+</div>
+
+<script type="text/javascript">
+
+    SetFocus('#ddlMilestoneStatus');
+    DisableEnterKeyForControl('#txtAmount');
+    DisableBackspaceKeyForControl('#txtInvoiceDate');
+    DisableBackspaceKeyForControl('#txtRenewalStartDate');
+
+    //Disable Save button of pop up for viewer
+    DisableSaveButton();
+</script>

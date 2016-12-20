@@ -1,0 +1,632 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7E9DCEBA-DA74-4581-B478-EAEC324B1F07}</ProjectGuid>
+    <ProjectTypeGuids>{E3E379DF-F4C6-4180-9B81-6769533ABE47};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ACS.MDB.Net.App</RootNamespace>
+    <AssemblyName>ACS.MDB.Net.App</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+    <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <RegisterForComInterop>false</RegisterForComInterop>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\WebGrease.1.1.0\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.AspNet">
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\DotNetOpenAuth.AspNet.4.0.3.12153\lib\net40-full\DotNetOpenAuth.AspNet.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.Core">
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\DotNetOpenAuth.Core.4.0.3.12153\lib\net40-full\DotNetOpenAuth.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.OAuth">
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\DotNetOpenAuth.OAuth.Core.4.0.3.12153\lib\net40-full\DotNetOpenAuth.OAuth.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.OAuth.Consumer">
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\DotNetOpenAuth.OAuth.Consumer.4.0.3.12153\lib\net40-full\DotNetOpenAuth.OAuth.Consumer.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.OpenId">
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\DotNetOpenAuth.OpenId.Core.4.0.3.12153\lib\net40-full\DotNetOpenAuth.OpenId.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.OpenId.RelyingParty">
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\DotNetOpenAuth.OpenId.RelyingParty.4.0.3.12153\lib\net40-full\DotNetOpenAuth.OpenId.RelyingParty.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus, Version=3.1.3.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.ReportViewer.Common, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.ReportViewer.WebForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio 11.0\ReportViewer\Microsoft.ReportViewer.WebForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebPages.OAuth, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\Microsoft.AspNet.WebPages.OAuth.2.0.20710.0\lib\net40\Microsoft.Web.WebPages.OAuth.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\Newtonsoft.Json.4.5.6\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\Microsoft.AspNet.WebApi.Client.4.0.20710.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\Microsoft.AspNet.WebApi.Core.4.0.20710.0\lib\net40\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\Microsoft.AspNet.WebApi.WebHost.4.0.20710.0\lib\net40\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\Microsoft.AspNet.Mvc.4.0.20710.0\lib\net40\System.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Optimization, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\Microsoft.AspNet.Web.Optimization.1.0.0\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\Microsoft.AspNet.Razor.2.0.20710.0\lib\net40\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WebGrease, Version=1.5.2.14234, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\WebGrease.1.1.0\lib\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="WebMatrix.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\Microsoft.AspNet.WebPages.Data.2.0.20710.0\lib\net40\WebMatrix.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WebMatrix.WebData, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Projects\MDB\Source\MDB\ACS.MDB.Net\packages\Microsoft.AspNet.WebPages.WebData.2.0.20710.0\lib\net40\WebMatrix.WebData.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\AuthConfig.cs" />
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\GetDatabaseConnectionString.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Common\ApplicationConfiguration.cs" />
+    <Compile Include="Common\Constants.cs" />
+    <Compile Include="Common\HttpStatusCodeAndErrorResult.cs" />
+    <Compile Include="Common\SearchEnum.cs" />
+    <Compile Include="Common\SessionHelper.cs" />
+    <Compile Include="Controllers\AdministrationController.BillingLineTag.cs" />
+    <Compile Include="Controllers\AdministrationController.Currency.cs" />
+    <Compile Include="Controllers\AdministrationController.Division.cs" />
+    <Compile Include="Controllers\AdministrationController.InflationIndex.cs" />
+    <Compile Include="Controllers\AdministrationController.Product.cs" />
+    <Compile Include="Controllers\AdministrationController.ProfitLoss.cs" />
+    <Compile Include="Controllers\AdministrationController.SubProduct.cs" />
+    <Compile Include="Controllers\AdministrationController.User.cs" />
+    <Compile Include="Controllers\AdministrationController.InflationIndexRate.cs" />
+    <Compile Include="Controllers\AdministrationController.AuditReason.cs" />
+    <Compile Include="Controllers\ChangePasswordController.cs" />
+    <Compile Include="Controllers\ContractController.ApproveMaintenance.cs" />
+    <Compile Include="Controllers\ContractController.ContractLine.cs" />
+    <Compile Include="Controllers\ContractController.ContractMaintenance.cs" />
+    <Compile Include="Controllers\ContractController.ContractMaintenanceGroup.cs" />
+    <Compile Include="Controllers\ContractController.CustomerComment.cs" />
+    <Compile Include="Controllers\ContractController.EndUserMaintenance.cs" />
+    <Compile Include="Controllers\ContractController.Milestone.cs" />
+    <Compile Include="Controllers\ContractController.OpenAccount.cs" />
+    <Compile Include="Controllers\ForgotPasswordController.cs" />
+    <Compile Include="Controllers\HelpController.cs" />
+    <Compile Include="Controllers\ReportController.OutdatedRiskDate.cs" />
+    <Compile Include="Controllers\ReportController.OutdatedStartDate.cs" />
+    <Compile Include="Controllers\ReportController.ActualRevenueForecast.cs" />
+    <Compile Include="Controllers\ReportController.CompletedContracts.cs" />
+    <Compile Include="Controllers\ReportController.DueYearCustomerQuery.cs" />
+    <Compile Include="Controllers\ReportController.InflationIndexUplift.cs" />
+    <Compile Include="Controllers\ReportController.MonthForecast.cs" />
+    <Compile Include="Controllers\ReportController.DueYearDetail.cs" />
+    <Compile Include="Controllers\ContractController.Contract.cs" />
+    <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\AdministrationController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ContractController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Common\MDBException.cs" />
+    <Compile Include="Controllers\ReportController.cs" />
+    <Compile Include="Controllers\ReportController.TheoreticalRevenueForecast.cs" />
+    <Compile Include="Controllers\ReportController.UnapprovedItems.cs" />
+    <Compile Include="FileUtility\ExcelUtility.cs" />
+    <Compile Include="FileUtility\TextFileUtility.cs" />
+    <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AboutUs.cs" />
+    <Compile Include="Models\Account.cs" />
+    <Compile Include="Models\ActivityCategory.cs" />
+    <Compile Include="Models\ActivityCode.cs" />
+    <Compile Include="Models\ApproveMaintenance.cs" />
+    <Compile Include="Models\AuditReason.cs" />
+    <Compile Include="Models\BaseModel.cs" />
+    <Compile Include="Models\BillingLineTag.cs" />
+    <Compile Include="Models\ChargeFrequency.cs" />
+    <Compile Include="Models\Company.cs" />
+    <Compile Include="Models\Contract.cs" />
+    <Compile Include="Models\ContractDetails.cs" />
+    <Compile Include="Models\ContractLine.cs" />
+    <Compile Include="Models\ContractMaintenance.cs" />
+    <Compile Include="Models\ContractMaintenanceGroup.cs" />
+    <Compile Include="Models\CostCentre.cs" />
+    <Compile Include="Models\CreateReason.cs" />
+    <Compile Include="Models\Currency.cs" />
+    <Compile Include="Models\CustomerComment.cs" />
+    <Compile Include="Models\Division.cs" />
+    <Compile Include="Models\EndUser.cs" />
+    <Compile Include="Models\InflationIndex.cs" />
+    <Compile Include="Models\InflationIndexRate.cs" />
+    <Compile Include="Models\InvoiceAdvanced.cs" />
+    <Compile Include="Models\InvoiceCustomer.cs" />
+    <Compile Include="Models\JobCode.cs" />
+    <Compile Include="Models\jQueryDataTableParamModel.cs" />
+    <Compile Include="Models\OpenAccount.cs" />
+    <Compile Include="Models\ProfitLoss.cs" />
+    <Compile Include="Models\Recalculation.cs" />
+    <Compile Include="Models\ReportModel.cs" />
+    <Compile Include="Models\UserCompanyMapping.cs" />
+    <Compile Include="Models\UserModel.cs" />
+    <Compile Include="Models\MaintenanceBillingLine.cs" />
+    <Compile Include="Models\Milestone.cs" />
+    <Compile Include="Models\MilestoneBillingLine.cs" />
+    <Compile Include="Models\MilestoneLine.cs" />
+    <Compile Include="Models\MilestoneStatus.cs" />
+    <Compile Include="Models\Product.cs" />
+    <Compile Include="Models\SubProduct.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reports\CompletedContracts.aspx.cs">
+      <DependentUpon>CompletedContracts.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\CompletedContracts.aspx.designer.cs">
+      <DependentUpon>CompletedContracts.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\OutdatedRiskDate.aspx.cs">
+      <DependentUpon>OutdatedRiskDate.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\OutdatedRiskDate.aspx.designer.cs">
+      <DependentUpon>OutdatedRiskDate.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\OutdatedStartDate.aspx.cs">
+      <DependentUpon>OutdatedStartDate.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\OutdatedStartDate.aspx.designer.cs">
+      <DependentUpon>OutdatedStartDate.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\DueYearCustomerQuery.aspx.cs">
+      <DependentUpon>DueYearCustomerQuery.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\DueYearCustomerQuery.aspx.designer.cs">
+      <DependentUpon>DueYearCustomerQuery.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\DueYearDetail.aspx.cs">
+      <DependentUpon>DueYearDetail.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\DueYearDetail.aspx.designer.cs">
+      <DependentUpon>DueYearDetail.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\InflationIndexUplift.aspx.cs">
+      <DependentUpon>InflationIndexUplift.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\InflationIndexUplift.aspx.designer.cs">
+      <DependentUpon>InflationIndexUplift.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\MonthForecast.aspx.cs">
+      <DependentUpon>MonthForecast.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\MonthForecast.aspx.designer.cs">
+      <DependentUpon>MonthForecast.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\UnapprovedItems.aspx.cs">
+      <DependentUpon>UnapprovedItems.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\UnapprovedItems.aspx.designer.cs">
+      <DependentUpon>UnapprovedItems.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Services\ActivityCategoryService.cs" />
+    <Compile Include="Services\ActivityCodeService.cs" />
+    <Compile Include="Services\ActualRevenueReportService.cs" />
+    <Compile Include="Services\ApproveMaintenanceService.cs" />
+    <Compile Include="Services\BaseService.cs" />
+    <Compile Include="Services\BillingLineTagService.cs" />
+    <Compile Include="Services\ChargingFrequencyService.cs" />
+    <Compile Include="Services\CompanyService.cs" />
+    <Compile Include="Services\ContractLineService.cs" />
+    <Compile Include="Services\ContractMaintenanceGroupService.cs" />
+    <Compile Include="Services\ContractMaintenanceService.cs" />
+    <Compile Include="Services\ContractService.cs" />
+    <Compile Include="Services\AuditReasonService.cs" />
+    <Compile Include="Services\CustomerCommentService.cs" />
+    <Compile Include="Services\GenerateInvoiceService.cs" />
+    <Compile Include="Services\InflationIndexRateService.cs" />
+    <Compile Include="Services\CostCenterService.cs" />
+    <Compile Include="Services\CurrencyService.cs" />
+    <Compile Include="Services\DivisionService.cs" />
+    <Compile Include="Services\InflationIndexService.cs" />
+    <Compile Include="Services\EndUserService.cs" />
+    <Compile Include="Services\InvoiceCustomerService.cs" />
+    <Compile Include="Services\JobCodeService.cs" />
+    <Compile Include="Services\MilestoneService.cs" />
+    <Compile Include="Services\MilestoneStatusService.cs" />
+    <Compile Include="Services\OpenAccountService.cs" />
+    <Compile Include="Services\ProductService.cs" />
+    <Compile Include="Services\ProfitLossService.cs" />
+    <Compile Include="Services\ReleaseNoteService.cs" />
+    <Compile Include="Services\TheoreticalRevenueReportService.cs" />
+    <Compile Include="Services\SubProductService.cs" />
+    <Compile Include="Services\UNCAccessWithCredentialService.cs" />
+    <Compile Include="Services\UserService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\demo_page.css" />
+    <Content Include="Content\demo_table.css" />
+    <Content Include="Content\demo_table_jui.css" />
+    <Content Include="Content\jqsimplemenu.css" />
+    <Content Include="Content\MDBSite.css" />
+    <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\themes\base\images\ui-icons_222222_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_454545_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_888888_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\themes\base\jquery-ui.css" />
+    <Content Include="Content\themes\base\jquery.ui.accordion.css" />
+    <Content Include="Content\themes\base\jquery.ui.all.css" />
+    <Content Include="Content\themes\base\jquery.ui.autocomplete.css" />
+    <Content Include="Content\themes\base\jquery.ui.base.css" />
+    <Content Include="Content\themes\base\jquery.ui.button.css" />
+    <Content Include="Content\themes\base\jquery.ui.core.css" />
+    <Content Include="Content\themes\base\jquery.ui.datepicker.css" />
+    <Content Include="Content\themes\base\jquery.ui.dialog.css" />
+    <Content Include="Content\themes\base\jquery.ui.progressbar.css" />
+    <Content Include="Content\themes\base\jquery.ui.resizable.css" />
+    <Content Include="Content\themes\base\jquery.ui.selectable.css" />
+    <Content Include="Content\themes\base\jquery.ui.slider.css" />
+    <Content Include="Content\themes\base\jquery.ui.tabs.css" />
+    <Content Include="Content\themes\base\jquery.ui.theme.css" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\themes\base\minified\images\ui-icons_222222_256x240.png" />
+    <Content Include="Content\themes\base\minified\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\themes\base\minified\images\ui-icons_454545_256x240.png" />
+    <Content Include="Content\themes\base\minified\images\ui-icons_888888_256x240.png" />
+    <Content Include="Content\themes\base\minified\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\themes\base\minified\jquery-ui.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.accordion.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.autocomplete.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.button.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.core.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.datepicker.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.dialog.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.progressbar.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.resizable.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.selectable.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.slider.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
+    <Content Include="favicon.ico" />
+    <Content Include="Global.asax" />
+    <Content Include="ARBSHelp\ARBS-Help.docx" />
+    <None Include="Properties\PublishProfiles\ARBS-II.pubxml" />
+    <None Include="Properties\PublishProfiles\ARBS.pubxml" />
+    <Content Include="Images\about_us.png" />
+    <Content Include="Images\ChangePassword.png" />
+    <Content Include="Images\contactus.png" />
+    <Content Include="Images\details_close.png" />
+    <Content Include="Images\details_open.png" />
+    <Content Include="Images\Loading.gif" />
+    <Content Include="Lib\EPPlus.dll" />
+    <Content Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </Content>
+    <None Include="Scripts\jquery-1.7.1.intellisense.js" />
+    <Content Include="Images\about24.png" />
+    <Content Include="Images\acs-logo.png" />
+    <Content Include="Images\calendar.png" />
+    <Content Include="Images\Calender1.png" />
+    <Content Include="Images\Help24.png" />
+    <Content Include="Images\Logout24.png" />
+    <Content Include="Images\MDB.jpg" />
+    <Content Include="Images\PageHelp24.png" />
+    <Content Include="ReleaseNotes\ReleaseNote.txt" />
+    <Content Include="Reports\CompletedContracts.aspx" />
+    <Content Include="Reports\OutdatedRiskDate.aspx" />
+    <Content Include="Reports\OutdatedStartDate.aspx" />
+    <Content Include="Reports\DueYearCustomerQuery.aspx" />
+    <Content Include="Reports\DueYearDetail.aspx" />
+    <Content Include="Reports\InflationIndexUplift.aspx" />
+    <Content Include="Reports\MonthForecast.aspx" />
+    <Content Include="Reports\UnapprovedItems.aspx" />
+    <Content Include="Scripts\CustomModeDialog.MDB.js" />
+    <Content Include="Scripts\CustomMDB.js" />
+    <Content Include="Scripts\jqsimplemenu.js" />
+    <Content Include="Scripts\jquery-1.7.1.js" />
+    <Content Include="Scripts\jquery-1.7.1.min.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-ui-1.8.20.js" />
+    <Content Include="Scripts\jquery-ui-1.8.20.min.js" />
+    <Content Include="Scripts\jQuery.dataTable.editTable.js" />
+    <Content Include="Scripts\jquery.dataTables.js" />
+    <Content Include="Scripts\jquery.tooltip.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\knockout-2.1.0.debug.js" />
+    <Content Include="Scripts\knockout-2.1.0.js" />
+    <Content Include="Scripts\modernizr-2.5.3.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Content\Site.css" />
+    <Content Include="Scripts\_references.js" />
+    <Content Include="Images\accent.png" />
+    <Content Include="Images\bullet.png" />
+    <Content Include="Images\heroAccent.png" />
+    <Content Include="Images\orderedList0.png" />
+    <Content Include="Images\orderedList1.png" />
+    <Content Include="Images\orderedList2.png" />
+    <Content Include="Images\orderedList3.png" />
+    <Content Include="Images\orderedList4.png" />
+    <Content Include="Images\orderedList5.png" />
+    <Content Include="Images\orderedList6.png" />
+    <Content Include="Images\orderedList7.png" />
+    <Content Include="Images\orderedList8.png" />
+    <Content Include="Images\orderedList9.png" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Home\About.cshtml" />
+    <Content Include="Views\Home\Contact.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\Contract\ContractDetails.cshtml" />
+    <Content Include="Views\Contract\ContractMaintenanceDetails.cshtml" />
+    <Content Include="Views\Contract\ContractIndex.cshtml" />
+    <Content Include="Views\Contract\_MaintainceBillingLines.cshtml" />
+    <Content Include="Views\Shared\WithoutMenu_Layout.cshtml" />
+    <Content Include="Views\Administration\CurrencyDetails.cshtml" />
+    <Content Include="Views\Login\Login.cshtml" />
+    <Content Include="Views\Administration\UserDetails.cshtml" />
+    <Content Include="Views\Administration\BillingLineTagIndex.cshtml" />
+    <Content Include="Views\Administration\CurrencyIndex.cshtml" />
+    <Content Include="Views\Administration\UserIndex.cshtml" />
+    <Content Include="Views\Administration\DivisionIndex.cshtml" />
+    <Content Include="Views\Administration\DivisionDetails.cshtml" />
+    <Content Include="Views\Administration\ProfitLossIndex.cshtml" />
+    <Content Include="Views\Administration\ProfitLossDetails.cshtml" />
+    <Content Include="Views\Administration\ProductIndex.cshtml" />
+    <Content Include="Views\Administration\ProductDetails.cshtml" />
+    <Content Include="Views\Administration\SubProductDetails.cshtml" />
+    <Content Include="Views\Administration\InflationIndex.cshtml" />
+    <Content Include="Views\Administration\InflationIndexDetails.cshtml" />
+    <Content Include="Views\Administration\InflationIndexRateDetails.cshtml" />
+    <Content Include="Views\Shared\CompanyList.cshtml" />
+    <Content Include="Views\Report\DueYearDetail.cshtml" />
+    <Content Include="Views\Report\MonthForecast.cshtml" />
+    <Content Include="Views\Contract\ContractLineIndex.cshtml" />
+    <Content Include="Views\Contract\ContractLineDetails.cshtml" />
+    <Content Include="Views\Contract\ContractMaintenanceIndex.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Views\Contract\EndUserDetails.cshtml" />
+    <Content Include="Views\Contract\EndUserIndex.cshtml" />
+    <Content Include="Views\Contract\CustomerCommentDetails.cshtml" />
+    <Content Include="Views\Contract\CustomerCommentIndex.cshtml" />
+    <Content Include="Views\Report\CompletedContracts.cshtml" />
+    <Content Include="Views\Report\DueYearCustQuery.cshtml" />
+    <Content Include="Views\Report\InflationIndex.cshtml" />
+    <Content Include="Views\Report\UnapprovedItems.cshtml" />
+    <Content Include="Views\Contract\MilestoneIndex.cshtml" />
+    <Content Include="Views\Contract\MilestoneDetails.cshtml" />
+    <Content Include="Views\Contract\_MilestoneBillingLines.cshtml" />
+    <Content Include="Views\Contract\ApproveMaintenanceIndex.cshtml" />
+    <Content Include="Views\Contract\ApproveMaintenanceDetail.cshtml" />
+    <Content Include="Views\Shared\Unauthorise.cshtml" />
+    <Content Include="Views\ChangePassword\ChangePasswordIndex.cshtml" />
+    <Content Include="Views\ForgotPassword\ForgotPasswordIndex.cshtml" />
+    <Content Include="Views\Administration\AuditReasonIndex.cshtml" />
+    <Content Include="Views\Administration\AuditReasonDetails.cshtml" />
+    <Content Include="Views\Contract\_BillingLines.cshtml" />
+    <Content Include="Views\Contract\OpenAccountIndex.cshtml" />
+    <Content Include="Views\Report\TheoreticalRevenueForecast.cshtml" />
+    <Content Include="Views\Report\ActualRevenueForecast.cshtml" />
+    <Content Include="Views\Contract\ContractMaintenanceGroupIndex.cshtml" />
+    <Content Include="Views\Report\OutdatedStartDate.cshtml" />
+    <Content Include="Views\Report\OutdatedRiskDate.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ACS.MDB.Library\ACS.MDB.Library.csproj">
+      <Project>{67dd7c08-be27-4627-a58c-cf723ed63911}</Project>
+      <Name>ACS.MDB.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ACS.MDB.Sync.Library\ACS.MDB.Sync.Library.csproj">
+      <Project>{9f3bd847-8a4c-4bf1-8d12-50d0c1e28e33}</Project>
+      <Name>ACS.MDB.Sync.Library</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>49384</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:51921/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

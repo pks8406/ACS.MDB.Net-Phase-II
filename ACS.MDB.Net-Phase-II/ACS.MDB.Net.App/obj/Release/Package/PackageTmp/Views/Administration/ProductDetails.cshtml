@@ -1,0 +1,46 @@
+﻿@model ACS.MDB.Net.App.Models.Product
+
+@{
+    ViewBag.Title = "Product Details";
+}
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+<div style="background: #F9F7FB">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+
+        //hidden field
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.ProductId)
+
+        <table style="width: 100%">
+
+            <tr>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.ProductName, new { @class = "mandatoryLabel" })
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.ProductName, new { @maxlength = "50", style = "width:200px", @id = "txtProductName" })
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    @Html.ValidationMessageFor(model => model.ProductName)
+                </td>
+            </tr>
+        </table>
+    }
+</div>
+
+<script type="text/javascript">
+
+    SetFocus('#txtProductName');
+    DisableEnterKeyForControl('#txtProductName');
+</script>

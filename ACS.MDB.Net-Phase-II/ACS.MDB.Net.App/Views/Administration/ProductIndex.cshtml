@@ -1,0 +1,286 @@
+﻿@model IEnumerable<ACS.MDB.Net.App.Models.Product>
+
+@{
+    ViewBag.Title = "MDB::Product & Sub Product";
+}
+
+@section Scripts {
+    <script src="/Scripts/jquery.dataTables.js" type="text/javascript"></script>
+    <script src="/Scripts/jquery.dataTable.editTable.js" type="text/javascript"></script>
+
+
+    <script type="text/javascript" charset="utf-8">
+        // The product data table
+        var productTbl = null;
+        // The Sub product data table
+        var subProductTbl = null;
+
+        var selectedProductId = -1;
+        var selectedProductName = '';
+        var rowId = 0;
+
+        var columnDefsProductTbl = [
+                { sWidth: '1%', bSortable: false, aTargets: [0] },
+                { bVisible: false, aTargets: [1] },
+                {
+                    aTargets: [2], "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                        OpenEditDialog(productTbl, iRow, nTd, sData);
+                    }
+                }
+        ];
+
+        var columnDefsSubProductTbl = [
+               { sWidth: '1%', bSortable: false, aTargets: [0] },
+               { sWidth: '10%', bVisible: false, aTargets: [1] },
+               {
+                   sWidth: '60%', bSortable: true, aTargets: [2], "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                       OpenEditDialog(subProductTbl, iRow, nTd, sData);
+                   }
+               }
+        ];
+
+        //setup the table and other features required for this page
+        $(document).ready(function () {
+
+            //Disable cache
+            $.ajaxSetup({ cache: false });
+
+            productTbl = $('#product_tbl').editTable({
+                sListURL: '/Administration/ProductList',
+                sDeleteURL: '/Administration/ProductDelete',
+                sAddURL: '/Administration/ProductSave',
+                sUpdateURL: '/Administration/ProductSave',
+                sNewDialogLoadURL: '/Administration/ProductCreate',
+                sEditDialogLoadURL: '/Administration/ProductEdit',
+                sDialogDivId: 'product_dialog',
+                sToolbarSelector: '#div_toolbar_product',
+                sAddButtonId: 'btn_newproduct',
+                sEditButtonId: 'btn_editproduct',
+                sDeleteButtonId: 'btn_deleteproduct',
+                iDialogWidth: 450,
+                iDialogHeight: 200,
+                bAutoWidth: false,
+                oColumnDefs: columnDefsProductTbl,
+                fnRowSelected: UpdateSubProducts,
+                fnAfterDelete: UpdateSubProductsAfterDelete,
+                sEntityName: 'Product',
+                sCheckBoxItemSelector: '#selectProduct',
+                fnServerData: ProductListParameter,
+                sDeleteMessage: '@ACS.MDB.Net.App.Common.Constants.DELETE_MESSAGE_FOR_PRODUCT'
+            });
+
+            //Set default focus on search text box and Disable invalid keys for search text box (Keys like <,>,~)
+            SetFocus('#product_tbl_filter label input:text');
+            DisableInvalidKeyForControl('#product_tbl_filter label input:text');
+
+
+            ///For SubProudct Table
+            subProductTbl = $('#subProduct_tbl').editTable({
+                sListURL: '/Administration/GetSubProductListById',
+                fnServerData: SubProductListParameter,
+                sDeleteURL: '/Administration/SubProductDelete',
+                sAddURL: '/Administration/SubProductSave',
+                sUpdateURL: '/Administration/SubProductSave',
+                sNewDialogLoadURL: '/Administration/SubProductCreate/',
+                sEditDialogLoadURL: '/Administration/SubProductEdit',
+                sDialogDivId: 'subProduct_dialog',
+                sToolbarSelector: '#div_toolbar_subProduct',
+                sAddButtonId: 'btn_newsubProduct',
+                sEditButtonId: 'btn_editsubProduct',
+                sDeleteButtonId: 'btn_deletesubProduct',
+                iDialogWidth: 500,
+                iDialogHeight: 230,
+                bAutoWidth: false,
+                oColumnDefs: columnDefsSubProductTbl,
+                sEntityName: 'Sub Product',
+                sCheckBoxItemSelector: '#selectSubProduct',
+                sDeleteMessage: '@ACS.MDB.Net.App.Common.Constants.DELETE_MESSAGE_FOR_SUBPRODUCT'
+            });
+
+            subProductTbl.fnShowToolBar(false);
+            //Disable invalid keys for search text box (Keys like <,>,~)
+            DisableInvalidKeyForControl('#subProduct_tbl_filter label input:text');
+
+            //$('#tblProductDescription').hide();
+
+            // This function returns the index of the row selected from
+            // the datatable.
+            function fnGetSelectedRowIndex() {
+                var index = -1;
+                var aTrs = productTbl.fnGetNodes();
+
+                for (var i = 0; i < aTrs.length; i++) {
+                    if ($(aTrs[i]).hasClass('row_selected')) {
+                        index = i;
+                        break;
+                    }
+                }
+                return index;
+            }
+
+            /// Updates the SubProduct grid when product gets selected
+            function UpdateSubProducts() {
+
+                //rowId = $('#product_tbl').find('tr.row_selected').index();// || $('#product_tbl').find('tr').index();
+
+                rowId = fnGetSelectedRowIndex();
+                //Set default focus on search text box
+                if (rowId != -1) {
+                    SetFocus('#subProduct_tbl_filter label input:text');
+
+                    //$('#tblProductDescription').show();
+
+                    subProductTbl.fnPageChange(0, false);
+                    subProductTbl.fnShowToolBar(true);
+
+                    selectedProductId = productTbl.fnGetData(rowId, 1);
+                    selectedProductName = productTbl.fnGetData(rowId, 2);
+                }
+
+                //$('#txtProduct').html(selectedProductName);
+
+                var newDialaogUrl = '/Administration/SubProductCreate?productId=' + selectedProductId + '&productName=' + escape(selectedProductName);
+                subProductTbl.fnSetNewDialogURL(newDialaogUrl);
+                subProductTbl.fnDraw(false);
+            }
+
+            ///Updates the SubProduct grid when product gets deleted
+            function UpdateSubProductsAfterDelete() {
+
+                //Set default focus on search text box
+                $('#product_tbl_filter label input:text').focus();
+
+                subProductTbl.fnShowToolBar(false);
+                subProductTbl.fnDraw(false);
+            }
+
+            ///add the additional data to be sent to the server
+            function SubProductListParameter(sSource, aoData, fnCallBack) {
+                //add the additional data to be sent to the server
+                aoData.push({ "name": "productId", "value": selectedProductId });
+                $.getJSON(sSource, aoData, function (json) {
+                }).done(function (json) {
+
+                    fnCallBack(json);
+
+                    //To set checkbox column header selector to false
+                    subProductTbl.fnSetCheckBoxItemSelector();
+
+                }).fail(function (json) {
+                    DisplayErrorMessage(json, false);
+                });
+            }
+
+            //Function to set checkbox column header selector to false
+            //Call after we do sorting,paging,searching, save (create/edit) of record
+            function ProductListParameter(sSource, aoData, fnCallBack) {
+
+                $.getJSON(sSource, aoData, function (json) {
+                }).done(function (json) {
+                    fnCallBack(json);
+
+                    //To set checkbox column header selector to false
+                    productTbl.fnSetCheckBoxItemSelector();
+
+                    //To set checkbox column header selector to false
+                    //productTbl.fnUpdate(json.aoData, 0, 2, true, true);
+
+                    //Clear SubProduct table
+                    ClearSubProductTable(aoData);
+                }).fail(function (json) {
+                    DisplayErrorMessage(json, false);
+                });
+            }
+
+            //Function to clear SubProduct table
+            function ClearSubProductTable(aoData) {
+
+                selectedProductId = 0;
+                //$.getJSON('/Administration/GetSubProductListById?productId=' + selectedProductId, aoData, function (json) {
+                //    subProductTbl.fnShowToolBar(false);
+                //});
+                subProductTbl.fnClearTable(true);
+                subProductTbl.fnShowToolBar(false);
+            }
+        });
+
+        //Set the menu item as selected
+        HighlightSelectedMenuItem("AdminMenu")
+    </script>
+}
+
+<div class="pageTitle">
+    Product & Sub Product
+    <hr />
+</div>
+
+@*<table id="tblProductDescription">
+    <tr>
+        <td style="padding-left:720px">
+            <b>@Html.Label("Product Name :", new { @id = "lblProduct" }) </b>
+        </td>
+        <td>
+            <div id="txtProduct" style="color: #004bff" />
+        </td>
+    </tr>
+</table>*@
+
+<table style="width: 100%">
+    <tr>
+        <td style="vertical-align: top; width: 50%">
+            <div id='div_toolbar_product' class="DatatableGridButtonStyle" style="margin-bottom: 10px; vertical-align: top; margin-top: 0px;"></div>
+            <div id="product_dialog" title="Add Product"></div>
+
+            <div id="Product" style="width: auto; vertical-align: top;">
+                <table cellpadding="0" cellspacing="0" border="0" class="display" id="product_tbl" width="100%">
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="selectProduct" />
+                            </th>
+
+                            <th>@Html.DisplayNameFor(model => model.ID) </th>
+                            <th>@Html.DisplayNameFor(model => model.ProductName) </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </td>
+
+        <td style="vertical-align: top">
+            <table cellpadding="0" cellspacing="0" border="0" class="display" width="100%">
+                <tr>
+                    <td style="vertical-align: top; width: 50%">
+                        <div id='div_toolbar_subProduct' class="DatatableGridButtonStyle" style="margin-bottom: 10px; margin-top: 0px;"></div>
+                        <div id="subProduct_dialog" title="Add Sub Product"></div>
+                        <div id="SubProduct" style="margin-left: 40px; width: auto">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="subProduct_tbl" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <input type="checkbox" id="selectSubProduct" />
+                                        </th>
+
+                                        <th>@Html.DisplayNameFor(model => model.ID) </th>
+                                        <th>@Html.DisplayNameFor(model => model.SubProductList[2].Version) </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+
+        @*For SubProudct Table*@
+
+        @*        <td style="vertical-align: top; width: auto">
+            <div style="margin-left: 20px; width: auto">
+            </div>
+        </td>*@
+    </tr>
+</table>

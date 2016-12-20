@@ -1,0 +1,909 @@
+﻿@model ACS.MDB.Net.App.Models.ApproveMaintenance
+@using ACS.MDB.Net.App.Common
+
+@{
+    ViewBag.Title = "ARBS::Approve Maintenance";
+}
+
+<div class="pageTitle">
+    Approve Maintenance
+    <hr />
+</div>
+
+
+<script src="~/Scripts/jquery.dataTables.js" type="text/javascript"></script>
+<script src="~/Scripts/jquery.dataTable.editTable.js" type="text/javascript"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script type="text/javascript" charset="utf-8">
+
+    var approveMaintenanceTbl = null;
+
+    //the company whose divisions need to be listed
+    var selectedCompanyId = -1;
+    var selectedCompanyName = '';
+    var startDate = '';
+    var endDate = '';
+    var anOpen = [];
+    var sImageUrl = "/Images/";
+
+    var columnDefs = [
+        { sWidth: '1%', bSortable: false, bVisible: true, aTargets: [0] },
+        { sWidth: '1%', bSortable: false, bVisible: false, aTargets: [1] },
+        {
+            sWidth: '8%', bSortable: true, aTargets: [2], "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                OpenEditDialog(approveMaintenanceTbl, iRow, nTd, sData);
+            }
+        },
+        { sWidth: '10%', bSortable: true, aTargets: [3] },
+        { sWidth: '7%', bSortable: true, aTargets: [4] },
+        {
+            sWidth: '4%', bSortable: true, aTargets: [5]
+        },
+        {
+            sWidth: '3%', bSortable: true, aTargets: [6], sClass: 'right-align', "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                if (sData < "0") {
+                    $(nTd).addClass('redText');
+                }
+            }
+        },
+        { sWidth: '3%', bSortable: true, aTargets: [7] },
+        {
+            sWidth: '5%', bSortable: true, aTargets: [8]
+        }
+    ];
+
+    $(document).ready(function () {
+
+        //Disable cache
+
+        $.ajaxSetup({ cache: false });
+        approveMaintenanceTbl = $('#approveMaintenance_Tbl').editTable({
+            sListURL: '/Contract/GetApproveMaintenanceMilestonesList',
+            fnServerData: ApproveMaintenanceListParameter,
+            sDeleteURL: '/Contract/ApproveMaintenanceDelete',
+            //sAddURL: '/Contract/ContractSave',
+            sUpdateURL: '/Contract/ApproveMaintenanceSave/',
+            //sNewDialogLoadURL: '/Contract/ContractCreate',
+            sEditDialogLoadURL: '/Contract/ApproveMaintenanceEdit',
+            //sApproveAllURL:'/Contract/ApproveAll',
+            sDialogDivId: 'approveMaintenance_dialog',
+            sToolbarSelector: '#div_toolbar_approveMaintenance',
+            //sAddButtonId: 'btn_newcontract',
+            sEditButtonId: 'btn_editapproveMaintenance',
+            sDeleteButtonId: 'btn_deleteapproveMaintenance',
+            fnRowSelected: GetMilestoneLine,
+            //sApproveAllButtonId : 'btn_approveall',
+            iDialogWidth: 660,
+            iDialogHeight: 250,
+            iDialogOffset: 300,
+            bAutoWidth: false,
+            oColumnDefs: columnDefs,
+            sEntityName: 'Approve Maintenance',
+            iDisplayLength: 100,
+            sScrollY: 180,
+            bScrollCollapse: true,
+            bPaginate: true
+        });
+
+        // Setup an event handler for select all check box click for the specified selector.
+        $(this).find('td :checkbox').live('click', function () {
+            var checkAll = true;
+            if (this.checked === false) {
+                checkAll = false;
+            }
+            else {
+                approveMaintenanceTbl.find('td :checkbox').each(function () {
+                    if (this.checked === false) {
+                        checkAll = false;
+                    }
+                });
+            }
+
+            $('#approveMaintenance_Tbl_wrapper').find('th :checkbox').each(function () {
+                this.checked = checkAll;
+            });
+        });
+
+        //Disable Invalid keys for Search Text box
+        DisableInvalidKeyForControl('#approveMaintenance_Tbl_filter label input:text');
+
+        //If no invoice customer is associated with company
+        if ('@Model.InvoiceCustomerList.Count' > 0) {
+            $("#ddlInvCustomer").children('option').filter(':selected').text('ALL');
+            $('#btnSearch').prop('disabled', false);
+        }
+        else {
+            $("#ddlInvCustomer").children('option').filter(':selected').text('No customer exists');
+            $('#btnSearch').prop('disabled', true);
+        }
+
+        //If no Division is associated with company
+        if ('@Model.DivisionList.Count' > 0) {
+            $("#ddlDivision").children('option').filter(':selected').text('ALL');
+            $('#btnSearch').prop('disabled', false);
+        }
+        else {
+            $("#ddlDivision").children('option').filter(':selected').text('No division exists');
+            $('#btnSearch').prop('disabled', true);
+        }
+
+        //Disable dialog-message
+        $('#BillingDetails-dialog-message').hide();
+        $('#BillToOA-dialog-message').hide();
+        $('#invoiceDateConfirmDialogue').hide();
+
+        $("#SearchCriteria").click(function () {
+
+            $('#accordion').slideToggle("slow");
+            $("#title").text($('#title').text() == "Collapse Search" ? "Expand Search" : "Collapse Search");
+
+            if ($("#title").text() == "Expand Search") {
+                document.getElementById('imgExpandCollapse').src = "../Images/details_open.png";
+            }
+            else if ($("#title").text() == "Collapse Search") {
+                document.getElementById('imgExpandCollapse').src = "../Images/details_close.png";
+                //document.getElementById('imgExpandCollapse').setAttribute('src', "~/Images/details_open.png");
+            }
+        });
+
+
+        //disable action buttons on first load
+        $('#btnApproveAll').prop('disabled', true);
+        $('#btnUnApproveAll').prop('disabled', true);
+        $('#BillingLines').prop('disabled', true);
+        $('#txtComment').prop('disabled', true);
+        $('#btnSave').prop('disabled', true);
+
+        $('#txtComment').css('resize', 'none');
+        $('#txtComment').css('width', '500px');
+        $('#txtComment').css('height', '25px');
+
+        //Set text area properties for Viewer
+        if ('@SessionHelper.GetUserType(Session)' == 'Viewer') {
+            $('#txtComment').addClass('readOnlyTextBox');
+        }
+
+        //change Edit button to View for viewer
+        ChangeEditCaptionToView('#btn_editapproveMaintenance');
+
+        //Set default focus on company drop down list
+        SetFocus('#ddlCompany');
+
+        // This function returns the index of the row selected from
+        // the datatable.
+        function fnGetSelectedRowIndex() {
+            var index = -1;
+            var aTrs = approveMaintenanceTbl.fnGetNodes();
+
+            for (var i = 0; i < aTrs.length; i++) {
+                if ($(aTrs[i]).hasClass('row_selected')) {
+                    index = i;
+                    break;
+                }
+            }
+            return index;
+        }
+
+        /// Updates the SubProduct grid when product gets selected
+        function GetMilestoneLine() {
+            var rowId = fnGetSelectedRowIndex();
+            if (rowId != -1) {
+                var selectedMilestoneId = approveMaintenanceTbl.fnGetData(rowId, 1);
+                var postData = { id: selectedMilestoneId };
+
+                $.ajax({
+                    url: '/Contract/GetMilestoneBillingLines',
+                    type: 'POST',
+                    data: postData,
+                    traditional: true,
+                    success: function (response) {
+                        $("#BillingLines").html(response);
+
+                        //Disable control for User type Viewer
+                        if ('@SessionHelper.GetUserType(Session)' != 'Viewer') {
+                            $('#BillingLines').prop('disabled', false);
+                            $('#txtComment').prop('disabled', false);
+                            $('#btnSave').prop('disabled', false);
+                            $('#txtComment').css('resize', 'none');
+                            $('#txtComment').css('width', '500px');
+                            $('#txtComment').css('height', '25px');
+                        }
+                        else if ('@SessionHelper.GetUserType(Session)' == 'Viewer') {
+                            $("#frmBillingLine :input").prop('disabled', true);
+                            $('#BillingLines').prop('disabled', true);
+                            $('#txtComment').prop('disabled', true);
+                            $('#btnSave').prop('disabled', true);
+                            $('#txtComment').addClass('readOnlyTextBox');
+                            $('#txtComment').css('width', '500px');
+                            $('#txtComment').css('height', '25px');
+                            $('#txtComment').css('resize', 'none');
+                        }
+
+                    },
+                    error: function (response, status, error) {
+                        $('#BillingLines').prop('disabled', true);
+                        $('#txtComment').prop('disabled', true);
+                        $('#btnSave').prop('disabled', true);
+
+                        //Display error message
+                        DisplayErrorMessage(response, true);
+                    }
+                });
+            }
+        }
+        
+
+
+        $('.datepicker').datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '-20:+20',
+            onClose: function () { $(this).valid(); }
+        });
+
+        // function called to handle the change in selection
+        // of a company.
+        $("#ddlCompany").change(function () {
+
+            selectedCompanyId = $(this).val();
+            if ($("#ddlCompany option:selected").text() == "Select Company") {
+                selectedCompanyId = -1;
+            }
+            var companyID = { companyId: selectedCompanyId };
+
+            //Get list of divisions associated with company
+            GetDivisionList(companyID);
+
+            //Get list of customers associated with company
+            GetInvoiceCustomer(companyID);
+        });
+
+    });
+
+    //Set the menu item as selected
+    HighlightSelectedMenuItem("ContractsMenu");
+
+    //function to approve selected milestones
+    function ApproveAll() {
+        //var answer = confirm(properties.sDeleteMessage);
+        var selectedIds = fnGetSelectedIds();
+        if (selectedIds.length <= 0) {
+            alert("Please select record(s).");
+        } else {
+            var postData = { ids: selectedIds };
+
+            $.ajax({
+                url: '/Contract/ApproveAll',
+                type: 'POST',
+                data: postData,
+                traditional: true,
+                success: function (response) {
+                    approveMaintenanceTbl.fnDraw(false);
+                },
+                error: function (response, status, error) {
+
+                    //Display error message
+                    DisplayErrorMessage(response, true);
+                }
+            });
+        }
+    }
+
+    //Function to unpprove selected milestones
+    function UnApproveAll() {
+        //var answer = confirm(properties.sDeleteMessage);
+        var selectedIds = fnGetSelectedIds();
+        if (selectedIds.length <= 0) {
+            alert("Please select record(s).");
+        } else {
+            var postData = { ids: selectedIds };
+
+            $.ajax({
+                url: '/Contract/UnApproveAll',
+                type: 'POST',
+                data: postData,
+                traditional: true,
+                success: function (response) {
+                    approveMaintenanceTbl.fnDraw(false);
+                },
+                error: function (response, status, error) {
+
+                    //Display error message
+                    DisplayErrorMessage(response, true);
+                }
+            });
+        }
+    }
+
+    // Function that returns an array of IDs for rows whose
+    // check boxes have been checked.
+    function fnGetSelectedIds() {
+        var selectedIds = new Array();
+
+        //get all the nodes whose check boxes have been checked
+        var inputCheckBoxes = $('input:checked', approveMaintenanceTbl.fnGetNodes());
+        if (inputCheckBoxes != null) {
+            //iterate over the checkboxes and set the return the row id
+            for (var i = 0; i < inputCheckBoxes.length; i++) {
+                selectedIds[i] = $(inputCheckBoxes[i]).val();
+            }
+        }
+
+        return selectedIds;
+    }
+
+    var selectedDivisionId = -1;
+    var selectedInvoiceCustomerId = -1;
+    var selectedMilestoneStatusId = -1;
+
+    //Get division list based on company selection
+    function GetDivisionList(companyID) {
+        $.post("/Contract/GetDivisionList", companyID, function (response) {
+
+            $("#spinnerApproveMaintenance").show();
+            ShowProgress("spinnerApproveMaintenance");
+
+            $("#ddlDivision").empty();
+            $("#ddlDivision").length = -1;
+
+            if (response != null) {
+
+                if (response != '') {
+                    AddOption("ALL", "-1", "#ddlDivision");
+                    $('#btnSearch').prop('disabled', false);
+                }
+                else if (response == '') {
+                    AddOption("No division exists", "-1", "#ddlDivision");
+                    $('#btnSearch').prop('disabled', true);
+                }
+                for (var i in response) {
+                    AddOption(response[i].DivisionName, response[i].DivisionId, "#ddlDivision");
+                }
+            } else {
+                AddOption("ALL", "-1", "#ddlDivision");
+            }
+        });
+    }
+
+    //Get invoice customer list based on company selection
+
+    function GetInvoiceCustomer(companyID) {
+        $.post("/Contract/GetInvoiceCustomerList", companyID, function (response) {
+            $("#ddlInvCustomer").empty();
+            $("#ddlInvCustomer").length = -1;
+
+            if (response != null) {
+
+                if (response != '') {
+                    AddOption("ALL", "-1", "#ddlInvCustomer");
+                    $('#btnSearch').prop('disabled', false);
+                }
+                else if (response == '') {
+                    AddOption("No customer exists", "-1", "#ddlInvCustomer");
+                    $('#btnSearch').prop('disabled', true);
+                }
+                for (var i in response) {
+                    AddOption(response[i].Name, response[i].InvoiceCustomerId, "#ddlInvCustomer");
+                }
+            } else {
+                AddOption("ALL", "-1", "#ddlInvCustomer");
+                $("#spinnerApproveMaintenance").hide();
+                HideProgress("spinnerApproveMaintenance");
+            }
+            $("#spinnerApproveMaintenance").hide();
+            HideProgress("spinnerApproveMaintenance");
+        });
+    }
+
+    //Convert date to DD/MM/YYYY Format
+    function ConvertDate(inputFormat) {
+
+        var dateArray = inputFormat.split("/");
+
+        var sDate = (dateArray[1] + "/" + dateArray[0] + "/" + dateArray[2]);
+
+        // Convert date to 20th century date 
+        var formatedDate = new Date(sDate.replace(/\/(\d\d)$/, "/20$1"));
+
+        formatedDate = [formatedDate.getMonth() + 1,
+                        formatedDate.getDate(),
+                        formatedDate.getFullYear()].join('/');
+
+        return new Date(formatedDate.replace(/\/(\d\d)$/, "/20$1"));
+
+    }
+
+    // Get all the milestone details based on filtered criteria
+    function GetApproveMaintenance() {
+
+        var $form = $('#frmApproveMaintenance');
+
+        if ($form.valid()) {
+
+            startDate = $('#txtFromDate').val();
+            endDate = $('#txtToDate').val();
+
+            var sDate = ConvertDate(startDate);
+            var eDate = ConvertDate(endDate);
+
+            // CR-ARBS-74
+            var currentDate = new Date();
+
+            //Get last day of current month
+            var lastDate = 32 - new Date(currentDate.getFullYear(), currentDate.getMonth(), 32).getDate();
+            var month = currentDate.getMonth() + 1;
+            var year = currentDate.getFullYear();
+
+            var monthEndDate = lastDate + "/" + month + "/" + year;
+            var currentMonthEndDate = ConvertDate(monthEndDate);
+
+            if (startDate.match(/^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[1,3-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/)
+                && endDate.match(/^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[1,3-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/)) {
+
+                if (sDate <= eDate) {
+                    //setTimeout(function () { approveMaintenanceTbl.fnAdjustColumnSizing(); }, 1);
+                    if ((sDate > currentMonthEndDate) || (eDate > currentMonthEndDate)) {
+                        var confirmation = confirm("Are you sure you want to select items that are due for billing beyond the Current Period? ");
+                        if (confirmation == true) {
+                            approveMaintenanceTbl.fnPageChange(0, false);
+                            approveMaintenanceTbl.fnDraw(false);
+                        }
+                    } else {
+                        approveMaintenanceTbl.fnPageChange(0, false);
+                        approveMaintenanceTbl.fnDraw(false);
+                    }
+                } else {
+                    $("#txtFromDate").focus();
+                    alert("From date should not be greater than To date.");
+                }
+            } else {
+                alert("Date should be in dd/MM/yyyy format.");
+            }
+        }
+    }
+
+    // Function used to pass any additional parameters required
+    // for the List function
+    function ApproveMaintenanceListParameter(sSource, aoData, fnCallBack) {
+
+        selectedCompanyId = $("#ddlCompany").val();
+        selectedDivisionId = $("#ddlDivision").val();
+        selectedInvoiceCustomerId = $("#ddlInvCustomer").val();
+        selectedMilestoneStatusId = $("#ddlMilestoneStatus").val();
+        startDate = $('#txtFromDate').val();
+        endDate = $('#txtToDate').val();
+
+
+        //if (startDate != "" && endDate != "") {
+        //add the additional data to be sent to the server
+        aoData.push({ "name": "companyId", "value": selectedCompanyId == "" ? -1 : selectedCompanyId });
+        aoData.push({ "name": "invoiceCustomerId", "value": selectedInvoiceCustomerId == "" ? -1 : selectedInvoiceCustomerId });
+        aoData.push({ "name": "divisionId", "value": selectedDivisionId == "" ? -1 : selectedDivisionId });
+        aoData.push({ "name": "milestoneStatusId", "value": selectedMilestoneStatusId == "" ? -1 : selectedMilestoneStatusId });
+        aoData.push({ "name": "startDate", "value": startDate });
+        aoData.push({ "name": "endDate", "value": endDate });
+
+        // Show please wait spinner
+        $("#spinnerApproveMaintenance").show();
+        ShowProgress("spinnerApproveMaintenance");
+
+        $('#BillingLines').prop('disabled', true);
+        $("#frmBillingLine :input").prop('disabled', true);
+
+        // Clear all the value from Billing line text boxes
+        $("#frmBillingLine :input").val("");
+        $('#btnSave').prop('disabled', true);
+
+        $.getJSON(sSource, aoData, function (json) {
+        }).done(function (json) {
+            fnCallBack(json);
+
+            //To set checkbox column header selector to false
+            approveMaintenanceTbl.fnSetCheckBoxItemSelector();
+
+            // Hide please wait after processing
+            HideProgress("spinnerApproveMaintenance");
+            $("#spinnerApproveMaintenance").hide();
+
+            if (json.iTotalRecords > 0) {
+                SetFocus('#approveMaintenance_Tbl_filter label input:text');
+                approveMaintenanceTbl.fnShowToolBar(true);
+
+                // Enable/Disable buttons based in milestone status
+                if (selectedMilestoneStatusId != 9) {
+                    $('#btn_deleteapproveMaintenance').prop('disabled', true);
+                } else {
+                    $('#btn_deleteapproveMaintenance').prop('disabled', false);
+                }
+
+                $('#btnUnApproveAll').prop('disabled', false);
+
+                // Enable/Disable buttons based in milestone status
+                if (selectedMilestoneStatusId == 1) {
+                    $('#btnApproveAll').prop('disabled', true);
+                    $('#btnBillToOA').prop('disabled', false);
+                } else {
+                    $('#btnApproveAll').prop('disabled', false);
+                    $('#btnBillToOA').prop('disabled', true);
+                }
+
+                //disable controls for viewer
+                DisableButton('#btnApproveAll');
+                DisableButton('#btnUnApproveAll');
+                DisableButton('#btnBillToOA');
+                DisableButton('#btn_deleteapproveMaintenance');
+
+            } else {
+                approveMaintenanceTbl.fnShowToolBar(false);
+                $('#btnApproveAll').prop('disabled', true);
+                $('#btnUnApproveAll').prop('disabled', true);
+                $('#btnBillToOA').prop('disabled', true);
+            }
+
+        }).fail(function (json) {
+            HideProgress("spinnerApproveMaintenance");
+            $("#spinnerApproveMaintenance").hide();
+
+            //Display error message
+            DisplayErrorMessage(json, false);
+        });
+    }
+
+    /// Generate flat file based on filtered criteria - Bill To OA
+    function GenerateInvoice(invDate) {
+
+        selectedCompanyId = $("#ddlCompany").val();
+        selectedDivisionId = $("#ddlDivision").val();
+        selectedInvoiceCustomerId = $("#ddlInvCustomer").val();
+        selectedMilestoneStatusId = $("#ddlMilestoneStatus").val();
+        startDate = $('#txtFromDate').val();
+        endDate = $('#txtToDate').val();
+
+        // Send paramater to controller
+        var postData = {
+            companyId: selectedCompanyId,
+            divisionId: selectedDivisionId == "" ? -1 : selectedDivisionId,
+            invoiceCustomerId: selectedInvoiceCustomerId == "" ? -1 : selectedInvoiceCustomerId,
+            startDate: startDate,
+            endDate: endDate,
+            invoiceDate: invDate
+        };
+
+        // Show please wait spinner
+        $("#spinnerApproveMaintenance").show();
+        ShowProgress("spinnerApproveMaintenance");
+
+        $.ajax({
+            url: '/Contract/GenerateInvoice',
+            type: 'POST',
+            data: postData,
+            traditional: true,            
+            success: function (response) {
+                //alert(response);
+                OpenDialog("BillToOA-dialog-message", 350, 100, null);                
+                HideProgress("spinnerApproveMaintenance");
+                $("#spinnerApproveMaintenance").hide();
+                approveMaintenanceTbl.fnDraw(false);
+            },
+            error: function (response, status, error) {
+                HideProgress("spinnerApproveMaintenance");
+                $("#spinnerApproveMaintenance").hide();
+
+
+                if (response.statusText == '@Constants.INVALID_MILESTONE_BILL_TO_OA') {
+                    var r=confirm("The Bill To OA file generation failed due to invalid milestone(s). Click ok to download error log file");
+                if (r==true) {
+             
+                    var DownloadURL = "/Contract/DownloadErrorLog";
+                    window.open(DownloadURL);
+                }
+            } else {
+                //Display error message                    
+                DisplayErrorMessage(response, false);
+                }
+
+  
+            }
+            
+        });
+    }
+
+    function SaveBillingLines() {
+        var $form = $('#frmBillingLine');
+        if ($form.valid()) {
+            $.ajax({
+                url: '/Contract/SaveBillingLines',
+                data: $form.serialize(),
+                type: 'GET',
+                dataType: 'JSON',
+                success: function (response) {
+                    //alert("Billing line saved successfully.");
+                    //Show success message as dialogue
+                    OpenDialog("BillingDetails-dialog-message", 300, 150, null);
+                },
+                error: function (response, status, error) {
+                    alert(response.statusText);
+                }
+            });
+        };
+    }
+    
+    /// Return date in DD/MM/YYYY format
+    function fnConvertDateToDDMMYYYY(inputDate) {
+
+        var day = inputDate.getDate();
+        var month = inputDate.getMonth() + 1;
+        var year = inputDate.getFullYear();
+
+        if (day <= 9) {
+            day = "0" + day;
+        }
+        
+        if (month <= 9) {
+            month = "0" + month;
+        }
+
+        return day + "/" + month + "/" + year;
+    }
+
+    //script for Contact Us modal dialog
+    function ConfirmInvoiceDate() {
+
+        var invDate = $('#invoiceDateConfirmDialogue').find('input[type="text"]')[0];
+        var date = new Date();
+        
+        invDate.value = fnConvertDateToDDMMYYYY(date);
+
+        var invoiceDateDlg = $('#invoiceDateConfirmDialogue').dialog({
+            autoOpen: false,
+            resizable: false,
+            title: "Confirm Invoice Date",
+            width: 300,
+            height: 150,
+            modal: true,
+            open: function (event, ui) {
+                DisableEnterKeyForControl('#txtInvoiceDate');
+              $.ajaxSetup({ cache: false });
+                //this is to avoid having scroll bars when the dialog opens
+                //Note : Comment it to avoid scroll bars.
+                
+                $('body').css('overflow', 'hidden');
+                $('.ui-widget-overlay').css('width', '100%');
+
+                // prevent wihte space 
+                $("#txtInvoiceDate").keypress(function(e) {
+                    if (e.keyCode == 32)
+                        e.preventDefault();
+                });
+
+            },
+            close: function(event, ui) {
+                $('body').css('overflow', 'auto');
+            },
+            buttons: {
+                'Ok': function() {
+
+                    var invoiceDate = $('#invoiceDateConfirmDialogue').find('input[type="text"]')[0].value;
+
+                    if (fnValidateDateFormat(invoiceDate)) {
+
+                        invoiceDate = ConvertDate(invoiceDate);
+                        invoiceDate = fnConvertDateToDDMMYYYY(invoiceDate);
+
+                        var todayDate = new Date();
+                        todayDate = fnConvertDateToDDMMYYYY(todayDate);
+                        var currentDate = new Date();
+                        currentDate.setDate(currentDate.getDate() - 13);
+
+                        var before14DaysDate = fnConvertDateToDDMMYYYY(currentDate);
+
+                        var regExp = /(\d{1,2})\/(\d{1,2})\/(\d{2,4})/;
+
+                        // if date not future date
+                        if (parseInt(invoiceDate.replace(regExp, "$3$2$1")) > parseInt(todayDate.replace(regExp, "$3$2$1"))) {
+                            //if(invoiceDate>todayDate){
+                            alert("Invoice date should not exceed today");
+                        }
+                            // Invoice date cannot be less then 14 days from today date
+                        else if (parseInt(invoiceDate.replace(regExp, "$3$2$1")) < parseInt(before14DaysDate.replace(regExp, "$3$2$1"))) {
+                            //else if (invoiceDate < before14DaysDate) {                            
+                            alert("Invoice date cannot be less than 14 days from today's date");
+                        } else {
+                            // If invoice is same as todays date then for confirmation message
+                            if (parseInt(invoiceDate.replace(regExp, "$3$2$1")) != parseInt(todayDate.replace(regExp, "$3$2$1"))) {
+                                //if (invoiceDate != todayDate) {
+                                var r = confirm("The invoice date is not today's date. Do you want to continue?");
+                                if (r == true) {
+                                    GenerateInvoice(invoiceDate);
+                                    invoiceDateDlg.dialog('close');
+                                }
+                            } else {
+                                GenerateInvoice(invoiceDate);
+                                invoiceDateDlg.dialog('close');
+                            }
+                        }
+
+                    } else {
+                        alert("Please enter valid invoice date");
+                    }
+                },
+            }
+        });
+        $('#invoiceDateConfirmDialogue').dialog('open');
+    };
+</script>
+
+<form id="frmApproveMaintenance">
+    @if (Model != null && Model.OAcompanyList != null)
+    {
+        
+        @Html.ValidationSummary(true)
+
+
+        <div id="accordion" style="border: 1px">
+
+            <table style="width: 100%; border: solid 1px">
+                <tr style="padding: 0px">
+                    <td style="width: 60px; text-align: left">@Html.LabelFor(model => model.CompanyName, new { @class = "mandatoryLabel" })</td>
+                    <td style="width: 10px; text-align: left">
+                        @Html.DropDownListFor(x => x.CompanyId, new SelectList(Model.OAcompanyList, "ID", "Name", Model.CompanyId),
+                                              "Select Company", new { @id = "ddlCompany", style = "width:240px;height:25px", @tabindex = "1" })
+
+                    </td>
+                    <td style="width: 100px; text-align: left;">
+                        @Html.LabelFor(model => model.InvoiceCustomer)
+                    </td>
+                    <td style="width: 20px; text-align: left">
+                        @Html.DropDownListFor(model => model.InvoiceCustomerId, new SelectList(Model.InvoiceCustomerList, "ID", "Name", Model.InvoiceCustomerId), "ALL",
+                                              new { @id = "ddlInvCustomer", style = "width:240px;height:25px", @tabindex = "3" })
+                    </td>
+                    <td style="width: 60px;">
+                        @Html.LabelFor(model => model.FromDate, new { @class = "mandatoryLabel" })
+                    </td>
+                    <td style="text-align: left">
+                        @Html.TextBoxFor(model => model.FromDate, string.Format(@ACS.MDB.Net.App.Common.Constants.DATE_FORMAT_FOR_VIEWPAGE, Model.FromDate),
+                                         new { style = "width:150px", @class = "datepicker", @id = "txtFromDate", @tabindex = "5" })
+
+                    </td>
+                    <td style="width: 3px" />
+                </tr>
+                <tr style="padding: 0px">
+                    <td></td>
+                    <td colspan="4">
+                        @Html.ValidationMessageFor(model => model.CompanyId)
+                    </td>
+                    <td colspan="2">
+                        @Html.ValidationMessageFor(model => model.FromDate)
+                    </td>
+                </tr>
+                <tr style="padding: 0px">
+                    <td style="text-align: left">
+                        @Html.LabelFor(model => model.DivisionId)
+                    </td>
+                    <td style="text-align: left">
+                        @Html.DropDownListFor(model => model.DivisionId, new SelectList(Model.DivisionList, "ID", "DivisionName"), "ALL",
+                                              new { Id = "ddlDivision", style = "width:240px;height:25px", @tabindex = "2" })
+                    </td>
+                    <td style="">
+                        @Html.LabelFor(model => model.MilestoneStatusId)
+                    </td>
+                    <td>
+                        @Html.DropDownListFor(model => model.MilestoneStatusId, new SelectList(Model.MilestoneStatusList, "ID", "MilestoneStatusName"),
+                                              new { Id = "ddlMilestoneStatus", style = "width:240px;height:25px", @tabindex = "4" })
+                    </td>
+                    <td style="width: 10px">
+                        @Html.LabelFor(model => model.ToDate, new { @class = "mandatoryLabel" })
+                    </td>
+                    <td style="width: 10px">
+                        @Html.TextBoxFor(model => model.ToDate, string.Format(@ACS.MDB.Net.App.Common.Constants.DATE_FORMAT_FOR_VIEWPAGE, Model.ToDate),
+                                         new { style = "width:150px", @class = "datepicker", @id = "txtToDate", @tabindex = "6" })
+                    </td>
+                    <td style="width: 3px">
+                        @*<input type="submit" id="btnSearch" value="Search" onclick=" GetApproveMaintenance(); return false; " tabindex="7" />*@
+                        <button id="btnSearch" onclick="GetApproveMaintenance();return false; " tabindex="7"
+                            style="padding-right: 5px;" value="Search">
+                            Search
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5"></td>
+                    <td colspan="2">
+                        @Html.ValidationMessageFor(model => model.ToDate)
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    }
+</form>
+
+<div id="invoiceDateConfirmDialogue" title="Confirm Invoice Date" style="overflow: hidden;">
+    <label id="InvoiceDate">Invoice Date </label>
+    <input id="txtInvoiceDate" type="text" value="" maxlength="10" />
+</div>
+
+<div id="BillingDetails-dialog-message" title="Billing line text and Comment">
+    <p>
+        Billing line text and Comment saved successfully
+    </p>
+</div>
+
+@*<div id="divInvoiceDateConfirmDialogue" title="Bill To OA">
+    @ACS.MDB.Net.App.Common.Constants.INVOICE_DATE_CONFIRM_DATE
+</div>*@
+
+<div id="BillToOA-dialog-message" title="Bill To OA">
+    @ACS.MDB.Net.App.Common.Constants.OPEN_ACCOUNT_FILE_GENERATE
+</div>
+
+<table id="buttonBar" style="width: 100%; margin-top: 0px; clear: both; float: right">
+
+    <tr>
+        <td style="text-align: left">
+            <div id="SearchCriteria" style="cursor: pointer; width: 40%">
+                <img id="imgExpandCollapse" src="~/Images/details_close.png">
+                <b><a id="title">Collapse Search</a></b>
+            </div>
+        </td>
+        <td>
+            <div id='div_toolbar_approveMaintenance' class="DatatableGridButtonStyle" style="margin-bottom: 5px;">
+                <button id="btnBillToOA" style="margin-top: 0px; float: right;" onclick="ConfirmInvoiceDate(); " value="Bill To OA">
+                    Bill To OA
+                </button>
+                <button id="btnUnApproveAll" style="margin-top: 0px; float: right;" onclick=" UnApproveAll(); " value="Unapprove All">
+                    Unapprove All 
+                </button>
+                <button id="btnApproveAll" style="margin-top: 0px; float: right;" onclick=" ApproveAll(); " value="Approve All">
+                    Approve All
+                </button>
+            </div>
+            <div id="approveMaintenance_dialog" title="Add Approve Maintenance"></div>
+        </td>
+    </tr>
+</table>
+<table border="0" class="display" id="approveMaintenance_Tbl" style="width: 100%; overflow-y: auto">
+    <thead>
+        <tr>
+            <th>
+                <input type="checkbox" id="selectall" />
+            </th>
+            <th>@Html.DisplayNameFor(model => model.ID) </th>
+            <th>@Html.DisplayNameFor(model => model.DivisionName) </th>
+            <th>@Html.DisplayNameFor(model => model.InvoiceCustomer) </th>
+            <th>@Html.DisplayNameFor(model => model.ContractNumber) </th>
+            <th>@Html.DisplayNameFor(model => model.InvoiceDate) </th>
+            <th>@Html.DisplayNameFor(model => model.Amount) </th>
+            <th>@Html.DisplayNameFor(model => model.IsApproved) </th>
+            <th>@Html.DisplayNameFor(model => model.MilestoneDescription) </th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<table>
+    <tr>
+        <td>
+            @if (Model != null)
+            {
+                <div id="BillingLines">
+                    @Html.Partial("_BillingLines", Model.milestone)
+                </div>            
+            }
+        </td>
+        <td style="vertical-align: top; padding-left: 10px; padding-top: 18px;">
+            <button id="btnSave" onclick="SaveBillingLines()"
+                style="padding-right: 5px;" value="Save">
+                Save
+            </button>
+
+        </td>
+    </tr>
+</table>
+
+
+<div id="spinnerApproveMaintenance" style="display: none; width: 100%; height: 100%; position: fixed; text-align: center; border: 0px; vertical-align: central; left: 0; top: 0; z-index: 1000; background: rgb(255,255,255) url('/Images/Loading.gif') 50% 50% no-repeat; -ms-filter: 'alpha(opacity = 50)'; filter: alpha(opacity=50); opacity: 0.6; }" />
+@* <input type="button" id="btnBillToOA" value="Bill To OA" />*@

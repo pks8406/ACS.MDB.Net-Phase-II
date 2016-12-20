@@ -1,0 +1,681 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="ARBS_Service" Class="MDBDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=(local);Initial Catalog=ARBS_Service;Integrated Security=True" SettingsObjectName="ACS.MDB.Library.Properties.Settings" SettingsPropertyName="ARBS_ServiceConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.ActivityRestriction" Member="ActivityRestrictions">
+    <Type Name="ActivityRestriction">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ActivityCategory" Type="System.String" DbType="NVarChar(12)" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(60)" CanBeNull="true" />
+      <Column Name="StartCode" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="EndCode" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Association Name="ActivityRestriction_ContractLine" Member="ContractLines" ThisKey="ID" OtherKey="ActivityCategoryID" Type="ContractLine" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Audit" Member="Audits">
+    <Type Name="Audit">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TableName" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="OldValue" Type="System.String" DbType="NVarChar(4000)" CanBeNull="true" />
+      <Column Name="NewValue" Type="System.String" DbType="NVarChar(4000)" CanBeNull="true" />
+      <Column Name="FieldName" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Action" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="UserID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="AuditDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="User_Audit" Member="User" ThisKey="UserID" OtherKey="ID" Type="User" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AuditReason" Member="AuditReasons">
+    <Type Name="AuditReason">
+      <Column Name="ReasonCode" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ReasonDescription" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="AuditReason_ContractMaintenance" Member="ContractMaintenances" ThisKey="ReasonCode" OtherKey="ReasonCode" Type="ContractMaintenance" />
+    </Type>
+  </Table>
+  <Table Name="dbo.BillingLineTags" Member="BillingLineTags">
+    <Type Name="BillingLineTag">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TagName" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.BusinessPartner" Member="BusinessPartners">
+    <Type Name="BusinessPartner">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="OldBPID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="InvoiceCustomerID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CompanyID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DatabaseID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="BusinessPartner_EndUser" Member="EndUsers" ThisKey="ID" OtherKey="BusinessPartnerID" Type="EndUser" />
+      <Association Name="OACompany_BusinessPartner" Member="OACompany" ThisKey="CompanyID" OtherKey="ID" Type="OACompany" IsForeignKey="true" />
+      <Association Name="OACustomer_BusinessPartner" Member="OACustomer" ThisKey="InvoiceCustomerID" OtherKey="ID" Type="OACustomer" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ChargeFrequency" Member="ChargeFrequencies">
+    <Type Name="ChargeFrequency">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Frequency" Type="System.String" DbType="NVarChar(2)" CanBeNull="true" />
+      <Column Name="FrequencyName" Type="System.String" DbType="NVarChar(40)" CanBeNull="true" />
+      <Association Name="ChargeFrequency_ContractMaintenance" Member="ContractMaintenances" ThisKey="ID" OtherKey="ChargeFrequencyID" Type="ContractMaintenance" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ChargingIndex" Member="ChargingIndexes">
+    <Type Name="ChargingIndex">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="OldChargingID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ChargingIndex" Member="ChargingIndex1" Type="System.String" DbType="NVarChar(6)" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(60)" CanBeNull="true" />
+      <Column Name="IndexUsed" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DatabaseID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="ChargingIndex_ChargingUplift" Member="ChargingUplifts" ThisKey="ID" OtherKey="IndexId" Type="ChargingUplift" />
+      <Association Name="ChargingIndex_ContractMaintenance" Member="ContractMaintenances" ThisKey="ID" OtherKey="InflationIndexID" Type="ContractMaintenance" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ChargingUplift" Member="ChargingUplifts">
+    <Type Name="ChargingUplift">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="OldChargingUpliftID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ChargingUpliftDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UpliftIndex" Type="System.String" DbType="NVarChar(6)" CanBeNull="true" />
+      <Column Name="IndexId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ProposedRate" Type="System.Decimal" DbType="Decimal(8,3)" CanBeNull="true" />
+      <Column Name="ActualRate" Type="System.Decimal" DbType="Decimal(5,4)" CanBeNull="true" />
+      <Column Name="RateConfirmed" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IndexRate" Type="System.Decimal" DbType="Decimal(6,2)" CanBeNull="true" />
+      <Column Name="DatabaseID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="ChargingIndex_ChargingUplift" Member="ChargingIndex" ThisKey="IndexId" OtherKey="ID" Type="ChargingIndex" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ContractLines" Member="ContractLines">
+    <Type Name="ContractLine">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="OldContractLineID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ContractID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="LineStatus" Type="System.String" DbType="NVarChar(2)" CanBeNull="true" />
+      <Column Name="LineDescription" Type="System.String" DbType="NVarChar(60)" CanBeNull="true" />
+      <Column Name="ActivityCategory" Type="System.String" DbType="NVarChar(40)" CanBeNull="true" />
+      <Column Name="ActivityCategoryID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ActivityCodeID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="QTY" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="JobCodeID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="AccountCodeID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CostCentreID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DatabaseID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="ContractLine_ContractMaintenance" Member="ContractMaintenances" ThisKey="ID" OtherKey="ContractLineID" Type="ContractMaintenance" />
+      <Association Name="ContractLine_Milestone" Member="Milestones" ThisKey="ID" OtherKey="ContractLineID" Type="Milestone" />
+      <Association Name="ActivityRestriction_ContractLine" Member="ActivityRestriction" ThisKey="ActivityCategoryID" OtherKey="ID" Type="ActivityRestriction" IsForeignKey="true" />
+      <Association Name="Contract_ContractLine" Member="Contract" ThisKey="ContractID" OtherKey="ID" Type="Contract" IsForeignKey="true" />
+      <Association Name="OAAccountCode_ContractLine" Member="OAAccountCode" ThisKey="AccountCodeID" OtherKey="ID" Type="OAAccountCode" IsForeignKey="true" />
+      <Association Name="OAActivityCode_ContractLine" Member="OAActivityCode" ThisKey="ActivityCodeID" OtherKey="ID" Type="OAActivityCode" IsForeignKey="true" />
+      <Association Name="OACostCentre_ContractLine" Member="OACostCentre" ThisKey="CostCentreID" OtherKey="ID" Type="OACostCentre" IsForeignKey="true" />
+      <Association Name="OAJobCode_ContractLine" Member="OAJobCode" ThisKey="JobCodeID" OtherKey="ID" Type="OAJobCode" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ContractMaintenance" Member="ContractMaintenances">
+    <Type Name="ContractMaintenance">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="OldMaintenanceID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ContractID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ContractLineID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="QTY" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="FixedPeriod" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="NumberOfPeriod" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PeriodFrequency" Type="System.String" DbType="NVarChar(2)" CanBeNull="true" />
+      <Column Name="ChargeFrequencyID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="QuoteRequired" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="InvoiceInAdvance" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SeparateInvoice" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="BillInArears" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="FirstPeriodStartDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="FirstPeriodAmount" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
+      <Column Name="FirstRenewalDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UpliftRequired" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="FirstAnnualUpliftDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="BaseAnnualAmount" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
+      <Column Name="InflationIndexName" Type="System.String" DbType="NVarChar(6)" CanBeNull="true" />
+      <Column Name="InflationIndexID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="FixedUpliftRequired" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="InflationFixedAdditional" Type="System.Decimal" DbType="Decimal(5,4)" CanBeNull="true" />
+      <Column Name="TerminationReason" Type="System.String" DbType="NVarChar(4000)" CanBeNull="true" />
+      <Column Name="Comment" Type="System.String" DbType="NVarChar(4000)" CanBeNull="true" />
+      <Column Name="EndDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="FinalRenewalStartDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="FinalRenewalEndDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="EndAmount" Type="System.Decimal" DbType="Decimal(10,2)" CanBeNull="true" />
+      <Column Name="LastMilestoneBilled" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ProductID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SubProductID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="InvoiceAdvancedArrears" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="LatestVersionDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IncludeInForecast" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ReasonCode" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ReasonDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DeleteReason" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DeleteDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ForecastBillingStartDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DatabaseID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="GroupId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="GroupName" Type="System.String" DbType="NVarChar(40)" CanBeNull="true" />
+      <Column Name="IsGrouped" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDefaultLineInGroup" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="DocumentTypeID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="ContractMaintenance_MaintenanceBillingLine" Member="MaintenanceBillingLines" ThisKey="ID" OtherKey="MaintenanceID" Type="MaintenanceBillingLine" />
+      <Association Name="ContractMaintenance_Milestone" Member="Milestones" ThisKey="ID" OtherKey="MaintenanceID" Type="Milestone" />
+      <Association Name="AuditReason_ContractMaintenance" Member="AuditReason" ThisKey="ReasonCode" OtherKey="ReasonCode" Type="AuditReason" IsForeignKey="true" />
+      <Association Name="ChargeFrequency_ContractMaintenance" Member="ChargeFrequency" ThisKey="ChargeFrequencyID" OtherKey="ID" Type="ChargeFrequency" IsForeignKey="true" />
+      <Association Name="ChargingIndex_ContractMaintenance" Member="ChargingIndex" ThisKey="InflationIndexID" OtherKey="ID" Type="ChargingIndex" IsForeignKey="true" />
+      <Association Name="ContractLine_ContractMaintenance" Member="ContractLine" ThisKey="ContractLineID" OtherKey="ID" Type="ContractLine" IsForeignKey="true" />
+      <Association Name="Contract_ContractMaintenance" Member="Contract" ThisKey="ContractID" OtherKey="ID" Type="Contract" IsForeignKey="true" />
+      <Association Name="Product_ContractMaintenance" Member="Product" ThisKey="ProductID" OtherKey="ID" Type="Product" IsForeignKey="true" />
+      <Association Name="SubProduct_ContractMaintenance" Member="SubProduct" ThisKey="SubProductID" OtherKey="ID" Type="SubProduct" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Contracts" Member="Contracts">
+    <Type Name="Contract">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="OldContractID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ContractNumber" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="EndUserID" Type="System.String" DbType="NVarChar(40)" CanBeNull="true" />
+      <Column Name="InvoiceCustomerID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="OldCustomerID" Type="System.String" DbType="NVarChar(40)" CanBeNull="true" />
+      <Column Name="CompanyID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DivisionID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CurrencyID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="POReferenceNo" Type="System.String" DbType="NVarChar(60)" CanBeNull="true" />
+      <Column Name="CurrencyName" Type="System.String" DbType="NVarChar(8)" CanBeNull="true" />
+      <Column Name="AtRisk" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="EarlyTerminationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DatabaseID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="Contract_ContractLine" Member="ContractLines" ThisKey="ID" OtherKey="ContractID" Type="ContractLine" />
+      <Association Name="Contract_ContractMaintenance" Member="ContractMaintenances" ThisKey="ID" OtherKey="ContractID" Type="ContractMaintenance" />
+      <Association Name="Contract_Milestone" Member="Milestones" ThisKey="ID" OtherKey="ContractID" Type="Milestone" />
+      <Association Name="Contract_MilestoneBillingLine" Member="MilestoneBillingLines" ThisKey="ID" OtherKey="ContractID" Type="MilestoneBillingLine" />
+      <Association Name="Currency_Contract" Member="Currency" ThisKey="CurrencyID" OtherKey="ID" Type="Currency" IsForeignKey="true" />
+      <Association Name="Division_Contract" Member="Division" ThisKey="DivisionID" OtherKey="ID" Type="Division" IsForeignKey="true" />
+      <Association Name="OACompany_Contract" Member="OACompany" ThisKey="CompanyID" OtherKey="ID" Type="OACompany" IsForeignKey="true" />
+      <Association Name="OACustomer_Contract" Member="OACustomer" ThisKey="InvoiceCustomerID" OtherKey="ID" Type="OACustomer" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Currency" Member="Currencies">
+    <Type Name="Currency">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CurrencyName" Type="System.String" DbType="NVarChar(8)" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="ExchangeRate" Type="System.Decimal" DbType="Decimal(18,4) NOT NULL" CanBeNull="false" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="Currency_Contract" Member="Contracts" ThisKey="ID" OtherKey="CurrencyID" Type="Contract" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CustomerComments" Member="CustomerComments">
+    <Type Name="CustomerComment">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CustomerID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CustomerName" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="Comment" Type="System.String" DbType="NVarChar(440)" CanBeNull="true" />
+      <Column Name="[Group]" Member="Group" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CompanyID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DatabaseID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="OACompany_CustomerComment" Member="OACompany" ThisKey="CompanyID" OtherKey="ID" Type="OACompany" IsForeignKey="true" />
+      <Association Name="OACustomer_CustomerComment" Member="OACustomer" ThisKey="CustomerID" OtherKey="ID" Type="OACustomer" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.DataUploadSheet" Member="DataUploadSheets">
+    <Type Name="DataUploadSheet">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CompanyID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FileName" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="UploadDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="UploadedBy" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Division" Member="Divisions">
+    <Type Name="Division">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CompanyID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DivisionName" Type="System.String" DbType="VarChar(60)" CanBeNull="true" />
+      <Column Name="DivisionID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DefaultInvoiceInAdvanced" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DocumentTypeCR" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="DocumentTypeIN" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="DepositDocumentTypeCR" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="DepositDocumentTypeIN" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="Division_Contract" Member="Contracts" ThisKey="ID" OtherKey="DivisionID" Type="Contract" />
+      <Association Name="OACompany_Division" Member="OACompany" ThisKey="CompanyID" OtherKey="ID" Type="OACompany" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.EndUser" Member="EndUsers">
+    <Type Name="EndUser">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="OldEndUserID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="EndUserName" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="BusinessPartnerID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EndUserOldTextID" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Column Name="EndUserTextID" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Column Name="DatabaseID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="BusinessPartner_EndUser" Member="BusinessPartner" ThisKey="BusinessPartnerID" OtherKey="ID" Type="BusinessPartner" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.MaintenanceBillingLines" Member="MaintenanceBillingLines">
+    <Type Name="MaintenanceBillingLine">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="OldBillingLineID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MaintenanceID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="LineText" Type="System.String" DbType="NVarChar(300)" CanBeNull="true" />
+      <Column Name="LineSequance" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DatabaseID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="ContractMaintenance_MaintenanceBillingLine" Member="ContractMaintenance" ThisKey="MaintenanceID" OtherKey="ID" Type="ContractMaintenance" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Milestone" Member="Milestones">
+    <Type Name="Milestone">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="OldMilestoneID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ContractID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ContractLineID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(60)" CanBeNull="true" />
+      <Column Name="MilestoneStatus" Type="System.String" DbType="NVarChar(4)" CanBeNull="true" />
+      <Column Name="MilestoneStatusID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EstimatedDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Amount" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Percentage" Type="System.Decimal" DbType="Decimal(6,2)" CanBeNull="true" />
+      <Column Name="ChargingUpliftID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="UpliftRate" Type="System.Decimal" DbType="Decimal(5,4)" CanBeNull="true" />
+      <Column Name="UpliftFixedRate" Type="System.Decimal" DbType="Decimal(5,4)" CanBeNull="true" />
+      <Column Name="Uplift" Type="System.Decimal" DbType="Decimal(5,4)" CanBeNull="true" />
+      <Column Name="UpliftPercentage" Type="System.Decimal" DbType="Decimal(5,4)" CanBeNull="true" />
+      <Column Name="IndexRate" Type="System.Decimal" DbType="Decimal(6,2)" CanBeNull="true" />
+      <Column Name="PreviousValue" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
+      <Column Name="PreviousLine" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsApprovalRequired" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="ApprovedStatus" Type="System.String" DbType="NVarChar(2)" CanBeNull="true" />
+      <Column Name="IsApproved" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="ApprovedBy" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="ApprovedByCustomer" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="CustomerApprovedStatus" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="ConditionType" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="SLT_OUR_REF_2" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="MaintenanceID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="RenewalEndDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="RenewalStartDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DatabaseID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="BillDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="Milestone_MilestoneBillingLine" Member="MilestoneBillingLines" ThisKey="ID" OtherKey="MilestoneID" Type="MilestoneBillingLine" />
+      <Association Name="Milestone_MilestoneLine" Member="MilestoneLines" ThisKey="ID" OtherKey="MilestoneID" Type="MilestoneLine" />
+      <Association Name="ContractLine_Milestone" Member="ContractLine" ThisKey="ContractLineID" OtherKey="ID" Type="ContractLine" IsForeignKey="true" />
+      <Association Name="ContractMaintenance_Milestone" Member="ContractMaintenance" ThisKey="MaintenanceID" OtherKey="ID" Type="ContractMaintenance" IsForeignKey="true" />
+      <Association Name="Contract_Milestone" Member="Contract" ThisKey="ContractID" OtherKey="ID" Type="Contract" IsForeignKey="true" />
+      <Association Name="MilestoneStatus_Milestone" Member="MilestoneStatus1" ThisKey="MilestoneStatusID" OtherKey="ID" Type="MilestoneStatus" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.MilestoneBillingLines" Member="MilestoneBillingLines">
+    <Type Name="MilestoneBillingLine">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ContractID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MilestoneID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DescriptionID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LineSequance" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LineText" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="DatabaseID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="Milestone_MilestoneBillingLine" Member="Milestone" ThisKey="MilestoneID" OtherKey="ID" Type="Milestone" IsForeignKey="true" />
+      <Association Name="Contract_MilestoneBillingLine" Member="Contract" ThisKey="ContractID" OtherKey="ID" Type="Contract" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.MilestoneLines" Member="MilestoneLines">
+    <Type Name="MilestoneLine">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="MilestoneLineID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ContractID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ContractLineID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MilestoneID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MaintenanceID" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
+      <Column Name="Percentage" Type="System.Decimal" DbType="Decimal(6,2)" CanBeNull="true" />
+      <Column Name="Value" Type="System.Decimal" DbType="Decimal(10,2)" CanBeNull="true" />
+      <Column Name="UpliftRate" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="UpliftFixedRate" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="UpliftID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Uplift" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="QuoteRequired" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="QuoteApproval" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="PreviousValue" Type="System.Decimal" DbType="Decimal(10,2)" CanBeNull="true" />
+      <Column Name="PreviousLine" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IndexRate" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DatabaseID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="Milestone_MilestoneLine" Member="Milestone" ThisKey="MilestoneID" OtherKey="ID" Type="Milestone" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.MilestoneStatus" Member="MilestoneStatus">
+    <Type Name="MilestoneStatus">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="StatusName" Type="System.String" DbType="NVarChar(4)" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="[Order]" Member="Order" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Association Name="MilestoneStatus_Milestone" Member="Milestones" ThisKey="ID" OtherKey="MilestoneStatusID" Type="Milestone" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OAAccountCode" Member="OAAccountCodes">
+    <Type Name="OAAccountCode">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="AccountID" Type="System.String" DbType="NVarChar(60)" CanBeNull="true" />
+      <Column Name="AccountName" Type="System.String" DbType="NVarChar(160)" CanBeNull="true" />
+      <Column Name="CompanyID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="OAAccountCode_ContractLine" Member="ContractLines" ThisKey="ID" OtherKey="AccountCodeID" Type="ContractLine" />
+      <Association Name="OAAccountCode_OAActivityCode" Member="OAActivityCodes" ThisKey="ID" OtherKey="AccountCodeID" Type="OAActivityCode" />
+      <Association Name="OACompany_OAAccountCode" Member="OACompany" ThisKey="CompanyID" OtherKey="ID" Type="OACompany" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OAActivityCode" Member="OAActivityCodes">
+    <Type Name="OAActivityCode">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ActivityID" Type="System.String" DbType="NVarChar(60)" CanBeNull="true" />
+      <Column Name="ActivityName" Type="System.String" DbType="NVarChar(160)" CanBeNull="true" />
+      <Column Name="AccountCode" Type="System.String" DbType="NVarChar(60)" CanBeNull="true" />
+      <Column Name="AccountCodeID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CompanyID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="OAActivityCode_ContractLine" Member="ContractLines" ThisKey="ID" OtherKey="ActivityCodeID" Type="ContractLine" />
+      <Association Name="OAAccountCode_OAActivityCode" Member="OAAccountCode" ThisKey="AccountCodeID" OtherKey="ID" Type="OAAccountCode" IsForeignKey="true" />
+      <Association Name="OACompany_OAActivityCode" Member="OACompany" ThisKey="CompanyID" OtherKey="ID" Type="OACompany" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OACompany" Member="OACompanies">
+    <Type Name="OACompany">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="CompanyName" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="OACompany_BusinessPartner" Member="BusinessPartners" ThisKey="ID" OtherKey="CompanyID" Type="BusinessPartner" />
+      <Association Name="OACompany_Contract" Member="Contracts" ThisKey="ID" OtherKey="CompanyID" Type="Contract" />
+      <Association Name="OACompany_CustomerComment" Member="CustomerComments" ThisKey="ID" OtherKey="CompanyID" Type="CustomerComment" />
+      <Association Name="OACompany_Division" Member="Divisions" ThisKey="ID" OtherKey="CompanyID" Type="Division" />
+      <Association Name="OACompany_OAAccountCode" Member="OAAccountCodes" ThisKey="ID" OtherKey="CompanyID" Type="OAAccountCode" />
+      <Association Name="OACompany_OAActivityCode" Member="OAActivityCodes" ThisKey="ID" OtherKey="CompanyID" Type="OAActivityCode" />
+      <Association Name="OACompany_OACostCentre" Member="OACostCentres" ThisKey="ID" OtherKey="CompanyID" Type="OACostCentre" />
+      <Association Name="OACompany_OACustomer" Member="OACustomers" ThisKey="ID" OtherKey="CompanyID" Type="OACustomer" />
+      <Association Name="OACompany_OAJobCode" Member="OAJobCodes" ThisKey="ID" OtherKey="CompanyID" Type="OAJobCode" />
+      <Association Name="OACompany_OAPeriod" Member="OAPeriods" ThisKey="ID" OtherKey="CompanyID" Type="OAPeriod" />
+      <Association Name="OACompany_P_LMapping" Member="P_LMappings" ThisKey="ID" OtherKey="CompanyID" Type="P_LMapping" />
+      <Association Name="OACompany_UserCompanyMapping" Member="UserCompanyMappings" ThisKey="ID" OtherKey="CompanyID" Type="UserCompanyMapping" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OACostCentre" Member="OACostCentres">
+    <Type Name="OACostCentre">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CostCentreID" Type="System.String" DbType="NVarChar(60)" CanBeNull="true" />
+      <Column Name="CostCentreName" Type="System.String" DbType="NVarChar(160)" CanBeNull="true" />
+      <Column Name="CompanyID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="OACostCentre_ContractLine" Member="ContractLines" ThisKey="ID" OtherKey="CostCentreID" Type="ContractLine" />
+      <Association Name="OACostCentre_P_LMapping" Member="P_LMappings" ThisKey="ID" OtherKey="CostCentreID" Type="P_LMapping" />
+      <Association Name="OACompany_OACostCentre" Member="OACompany" ThisKey="CompanyID" OtherKey="ID" Type="OACompany" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OACustomer" Member="OACustomers">
+    <Type Name="OACustomer">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CustomerID" Type="System.String" DbType="NVarChar(40)" CanBeNull="true" />
+      <Column Name="CustomerName" Type="System.String" DbType="NVarChar(160)" CanBeNull="true" />
+      <Column Name="CompanyID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="VatCode" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="ShortName" Type="System.String" DbType="NVarChar(60)" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CurrencyID" Type="System.String" DbType="NVarChar(8)" CanBeNull="true" />
+      <Association Name="OACustomer_BusinessPartner" Member="BusinessPartners" ThisKey="ID" OtherKey="InvoiceCustomerID" Type="BusinessPartner" />
+      <Association Name="OACustomer_Contract" Member="Contracts" ThisKey="ID" OtherKey="InvoiceCustomerID" Type="Contract" />
+      <Association Name="OACustomer_CustomerComment" Member="CustomerComments" ThisKey="ID" OtherKey="CustomerID" Type="CustomerComment" />
+      <Association Name="OACustomer_OAJobCode" Member="OAJobCodes" ThisKey="ID" OtherKey="CustomerID" Type="OAJobCode" />
+      <Association Name="OACompany_OACustomer" Member="OACompany" ThisKey="CompanyID" OtherKey="ID" Type="OACompany" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OAJobCode" Member="OAJobCodes">
+    <Type Name="OAJobCode">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="JobCodeID" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="JobCodeName" Type="System.String" DbType="NVarChar(160)" CanBeNull="true" />
+      <Column Name="CompanyID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Customer" Type="System.String" DbType="NVarChar(40)" CanBeNull="true" />
+      <Column Name="CustomerID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="OAJobCode_ContractLine" Member="ContractLines" ThisKey="ID" OtherKey="JobCodeID" Type="ContractLine" />
+      <Association Name="OACompany_OAJobCode" Member="OACompany" ThisKey="CompanyID" OtherKey="ID" Type="OACompany" IsForeignKey="true" />
+      <Association Name="OACustomer_OAJobCode" Member="OACustomer" ThisKey="CustomerID" OtherKey="ID" Type="OACustomer" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OAPeriod" Member="OAPeriods">
+    <Type Name="OAPeriod">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CompanyID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="NotesID" Type="System.String" DbType="NVarChar(48)" CanBeNull="true" />
+      <Column Name="PYear" Type="System.Decimal" DbType="Decimal(4,0) NOT NULL" CanBeNull="false" />
+      <Column Name="PDates" Type="System.String" DbType="NVarChar(4000)" CanBeNull="true" />
+      <Column Name="YearDescription" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="EndDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="NoOfWeeks" Type="System.String" DbType="NVarChar(300)" CanBeNull="true" />
+      <Column Name="NoOfDays" Type="System.String" DbType="NVarChar(300)" CanBeNull="true" />
+      <Column Name="MaxPeriod" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="PeriodName" Type="System.String" DbType="NVarChar(4000)" CanBeNull="true" />
+      <Association Name="OACompany_OAPeriod" Member="OACompany" ThisKey="CompanyID" OtherKey="ID" Type="OACompany" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OATransaction" Member="OATransactions">
+    <Type Name="OATransaction">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CompanyId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MilestoneId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="InvoiceNo" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="RecordType" Type="System.String" DbType="NVarChar(32)" CanBeNull="true" />
+      <Column Name="AccountId" Type="System.String" DbType="NVarChar(60)" CanBeNull="true" />
+      <Column Name="DocumentId" Type="System.String" DbType="NVarChar(24)" CanBeNull="true" />
+      <Column Name="DocumentDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DocumentNumber" Type="System.Decimal" DbType="Decimal(18,0) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.[P&amp;LMappings]" Member="P_LMappings">
+    <Type Name="P_LMapping">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CostCentreID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="[P&amp;L]" Member="P_L" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="CompanyID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="OACompany_P_LMapping" Member="OACompany" ThisKey="CompanyID" OtherKey="ID" Type="OACompany" IsForeignKey="true" />
+      <Association Name="OACostCentre_P_LMapping" Member="OACostCentre" ThisKey="CostCentreID" OtherKey="ID" Type="OACostCentre" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ProductRange" Member="ProductRanges">
+    <Type Name="ProductRange">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CoreProduct" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="StartRange" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="EndRange" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="DatabaseID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Products" Member="Products">
+    <Type Name="Product">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="OldProductID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ProductName" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="DatabaseID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="Product_ContractMaintenance" Member="ContractMaintenances" ThisKey="ID" OtherKey="ProductID" Type="ContractMaintenance" />
+      <Association Name="Product_SubProduct" Member="SubProducts" ThisKey="ID" OtherKey="ProductID" Type="SubProduct" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Recalculation" Member="Recalculations">
+    <Type Name="Recalculation">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IndexIds" Type="System.String" DbType="NVarChar(400)" CanBeNull="true" />
+      <Column Name="IsForUpliftRequired" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Status" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Date" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="UserId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="LogFilePath" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.SubProduct" Member="SubProducts">
+    <Type Name="SubProduct">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="OldSubProductID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ProductID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Version" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Activity" Type="System.String" DbType="NVarChar(30)" CanBeNull="true" />
+      <Column Name="DatabaseID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="SubProduct_ContractMaintenance" Member="ContractMaintenances" ThisKey="ID" OtherKey="SubProductID" Type="ContractMaintenance" />
+      <Association Name="Product_SubProduct" Member="Product" ThisKey="ProductID" OtherKey="ID" Type="Product" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.UserCompanyMappings" Member="UserCompanyMappings">
+    <Type Name="UserCompanyMapping">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CompanyID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="OACompany_UserCompanyMapping" Member="OACompany" ThisKey="CompanyID" OtherKey="ID" Type="OACompany" IsForeignKey="true" />
+      <Association Name="User_UserCompanyMapping" Member="User" ThisKey="UserID" OtherKey="ID" Type="User" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Users" Member="Users">
+    <Type Name="User">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Username" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Password" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="EmailID" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="UserType" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsPasswordTemporary" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CanExecuteReport" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DefaultCompany" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastLoginTime" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastUpdatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastUpdatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="User_Audit" Member="Audits" ThisKey="ID" OtherKey="UserID" Type="Audit" />
+      <Association Name="User_UserCompanyMapping" Member="UserCompanyMappings" ThisKey="ID" OtherKey="UserID" Type="UserCompanyMapping" />
+    </Type>
+  </Table>
+</Database>

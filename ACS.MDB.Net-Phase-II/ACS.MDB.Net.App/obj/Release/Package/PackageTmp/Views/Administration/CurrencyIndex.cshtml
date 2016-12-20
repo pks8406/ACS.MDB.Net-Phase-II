@@ -1,0 +1,106 @@
+﻿@model IEnumerable<ACS.MDB.Net.App.Models.Currency>
+
+@{
+    ViewBag.Title = "MDB::Currency Exchange Rate";
+}
+
+@section Scripts {
+    <script src="/Scripts/jquery.dataTables.js" type="text/javascript"></script>
+    <script src="/Scripts/jquery.dataTable.editTable.js" type="text/javascript"></script>
+
+    <script type="text/javascript" charset="utf-8">
+
+        var currencyTbl = null;
+        var columnDefs = [
+                { sWidth: '1%', bSortable: false, bVisible: false, aTargets: [0] },
+                { sWidth: '1%', bVisible: false, aTargets: [1] },
+                {
+                    sWidth: '5%', bSortable: true, aTargets: [2], "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                        OpenEditDialog(currencyTbl, iRow, nTd, sData);
+                    }
+                },
+                { sWidth: '15%', bSortable: true, aTargets: [3] },
+                { sWidth: '5%', sClass: 'right-align', aTargets: [4] },
+                { sWidth: '5%', bSortable: true, aTargets: [5] }
+        ];
+
+        //setup the table and other features required for this page
+        $(document).ready(function () {
+            //Disable cache
+            $.ajaxSetup({ cache: false });
+
+            currencyTbl = $('#currency_tbl').editTable({
+                sListURL: '/Administration/CurrencyList',
+                fnServerData: CurrencyListParameter,
+                //sDeleteURL: '',
+                sAddURL: '/Administration/CurrencySave',
+                sUpdateURL: '/Administration/CurrencySave',
+                sNewDialogLoadURL: '/Administration/CurrencyCreate',
+                sEditDialogLoadURL: '/Administration/CurrencyEdit',
+                sDialogDivId: 'currency_dialog',
+                sToolbarSelector: '#div_toolbar',
+                sAddButtonId: 'btn_newcurrency',
+                sEditButtonId: 'btn_editcurrency',
+                //sDeleteButtonId: 'btn_deletecurrency',
+                iDialogWidth: 400,
+                iDialogHeight: 300,
+                iDialogOffset: 450,
+                bAutoWidth: false,
+                oColumnDefs: columnDefs,
+                sEntityName: 'Currency'
+            });
+
+            //Set default focus on search text box and Disable invalid keys for search text box (Keys like <,>,~)
+            SetFocus('#currency_tbl_filter label input:text');
+            DisableInvalidKeyForControl('#currency_tbl_filter label input:text');
+        });
+
+        //Function to set checkbox column header selector to false
+        //Call after we do sorting,paging,searching, save (create/edit) of record
+        function CurrencyListParameter(sSource, aoData, fnCallBack) {
+
+            $.getJSON(sSource, aoData, function (json) {
+            }).done(function (json) {
+                fnCallBack(json);
+
+            }).fail(function (json) {
+                DisplayErrorMessage(json, false);
+            });
+        }
+
+        //Set the menu item as selected
+        HighlightSelectedMenuItem("AdminMenu")
+    </script>
+}
+
+<div class="pageTitle">
+    Currency Exchange Rate
+    <hr />
+</div>
+
+<table style="width: 100%">
+    <tr>
+        <td>
+            <div id='div_toolbar' class="DatatableGridButtonStyle" style="margin-bottom: 10px; margin-top: 0px;"></div>
+            <div id="currency_dialog" title="Add Currency"></div>
+            <div>
+                <table cellpadding="0" cellspacing="0" border="0" class="display" id="currency_tbl" width="100%">
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="selectall" />
+                            </th>
+                            <th>@Html.DisplayNameFor(model => model.ID) </th>
+                            <th>@Html.DisplayNameFor(model => model.CurrencyName) </th>
+                            <th>@Html.DisplayNameFor(model => model.Description) </th>
+                            <th>@Html.DisplayNameFor(model => model.ExchangeRate) </th>
+                            <th>@Html.DisplayNameFor(model => model.IsActive) </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </td>
+    </tr>
+</table>

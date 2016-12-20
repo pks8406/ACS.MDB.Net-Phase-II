@@ -1,0 +1,192 @@
+﻿@model ACS.MDB.Net.App.Models.Milestone
+
+<form id="frmBillingLine">
+    
+     @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CompanyID)
+        @Html.HiddenFor(m => m.ContractID)
+        @Html.HiddenFor(m => m.ContractMaintenanceID)
+        @Html.HiddenFor(m => m.ID)
+
+    <table style="width: 100%;">
+        <tr>
+            <td >
+                
+                <fieldset style="width: 95%; border: 1px solid black">
+                    <legend>@Html.Label("Billing Lines", new { style = "color: #23487d" }) </legend>
+                    <div id="gridResult" style="padding-bottom: 1.75em; overflow: auto; width: 425px; height: 120px" >
+
+                        <table class="" id="grid" style="margin-top: 0px; padding: 0px 0px 0px 0px; overflow: auto; width: 100%" data-swhgajax="true" data-swhgcontainer="grid" data-swhgcallback="">
+                            <tbody>
+
+                                <tr>
+                                    <td style="background-color: #9FAFD1; padding-bottom: 0px; padding-top: 0px">
+                                        @Html.TextBoxFor(m => m.billingText1, 
+                                                         new { @id = "txtBillingLine1", @maxlength = 50, @class="billingLines" })
+                                        @Html.HiddenFor(m => m.billingTextID1)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: #9FAFD1; padding-bottom: 0px; padding-top: 0px">
+                                        @Html.TextBoxFor(m => m.billingText2, 
+                                                         new { @id = "txtBillingLine2", @maxlength = 50,@class="billingLines" })
+                                        @Html.HiddenFor(m => m.billingTextID2)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: #9FAFD1; padding-bottom: 0px; padding-top: 0px">
+                                        @Html.TextBoxFor(m => m.billingText3, 
+                                                         new { @id = "txtBillingLine3", @maxlength = 50, @class="billingLines" })
+                                        @Html.HiddenFor(m => m.billingTextID3)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: #9FAFD1; padding-bottom: 0px; padding-top: 0px">
+                                        @Html.TextBoxFor(m => m.billingText4, 
+                                                         new { @id = "txtBillingLine4", @maxlength = 50, @class="billingLines" })
+                                        @Html.HiddenFor(m => m.billingTextID4)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: #9FAFD1; padding-bottom: 0px; padding-top: 0px">
+                                        @Html.TextBoxFor(m => m.billingText5, 
+                                                         new { @id = "txtBillingLine5", @maxlength = 50, @class="billingLines" })
+                                        @Html.HiddenFor(m => m.billingTextID5)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: #9FAFD1; padding-bottom: 0px; padding-top: 0px">
+                                        @Html.TextBoxFor(m => m.billingText6, 
+                                                         new { @id = "txtBillingLine6", @maxlength = 50, @class="billingLines" })
+                                        @Html.HiddenFor(m => m.billingTextID6)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: #9FAFD1; padding-bottom: 0px; padding-top: 0px">
+                                        @Html.TextBoxFor(m => m.billingText7, 
+                                                         new { @id = "txtBillingLine7", @maxlength = 50, @class="billingLines" })
+                                        @Html.HiddenFor(m => m.billingTextID7)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: #9FAFD1; padding-bottom: 0px; padding-top: 0px">
+                                        @Html.TextBoxFor(m => m.billingText8, 
+                                                         new { @id = "txtBillingLine8", @maxlength = 50, @class="billingLines" })
+                                        @Html.HiddenFor(m => m.billingTextID8)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: #9FAFD1; padding-bottom: 0px; padding-top: 0px">
+                                        @Html.TextBoxFor(m => m.billingText9, 
+                                                         new { @id = "txtBillingLine9", @maxlength = 50, @class="billingLines" })
+                                        @Html.HiddenFor(m => m.billingTextID9)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: #9FAFD1; padding-bottom: 0px; padding-top: 0px">
+                                        @Html.TextBoxFor(m => m.billingText10, 
+                                                         new { @id = "txtBillingLine10", @maxlength = 50, @class="billingLines" })
+                                        @Html.HiddenFor(m => m.billingTextID10)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: #9FAFD1; padding-bottom: 0px; padding-top: 0px">
+                                        @Html.TextBoxFor(m => m.billingText11, 
+                                                         new { @id = "txtBillingLine11", @maxlength = 50, @class="billingLines" })
+                                        @Html.HiddenFor(m => m.billingTextID11)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: #9FAFD1; padding-bottom: 0px; padding-top: 0px">
+                                        @Html.TextBoxFor(m => m.billingText12, 
+                                                         new { @id = "txtBillingLine12", @maxlength = 50, @class="billingLines" })
+                                        @Html.HiddenFor(m => m.billingTextID12)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: #9FAFD1; padding-bottom: 0px; padding-top: 0px">
+                                        @Html.TextBoxFor(m => m.billingText13, 
+                                                         new { @id = "txtBillingLine13", @maxlength = 50, @class="billingLines" })
+                                        @Html.HiddenFor(m => m.billingTextID13)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: #9FAFD1; padding-bottom: 0px; padding-top: 0px">
+                                        @Html.TextBoxFor(m => m.billingText14, 
+                                                         new { @id = "txtBillingLine14", @maxlength = 50, @class="billingLines" })
+                                        @Html.HiddenFor(m => m.billingTextID14)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: #9FAFD1; padding-bottom: 0px; padding-top: 0px">
+                                        @Html.TextBoxFor(m => m.billingText15, 
+                                                         new { @id = "txtBillingLine15", @maxlength = 50, @class="billingLines" })
+                                        @Html.HiddenFor(m => m.billingTextID15)
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+        
+                    </div>
+                    <div id="CounterMilestone"></div>
+                </fieldset>  
+            </td>
+            <td></td>
+            <td style="vertical-align: top">
+                <fieldset style="width: 95%; padding-right:20px;  border: 1px solid black">
+        <legend>@Html.Label("Comment", new { style = "color: #23487d" }) </legend>
+                @Html.TextAreaFor(m => m.Comments, 
+                                  new { @id = "txtComment", @maxlength = 300, Modelstyle = "width:500px;  resize: none", })
+                      </fieldset>
+                
+            </td>
+        </tr>
+        
+        </table>
+    </form>
+<script type="text/javascript">
+
+    //Prevent user to enter | sign in billing line text
+    DisablePipeKeyForControl('#txtBillingLine1');
+    DisablePipeKeyForControl('#txtBillingLine2');
+    DisablePipeKeyForControl('#txtBillingLine3');
+    DisablePipeKeyForControl('#txtBillingLine4');
+    DisablePipeKeyForControl('#txtBillingLine5');
+    DisablePipeKeyForControl('#txtBillingLine6');
+    DisablePipeKeyForControl('#txtBillingLine7');
+    DisablePipeKeyForControl('#txtBillingLine8');
+    DisablePipeKeyForControl('#txtBillingLine9');
+    DisablePipeKeyForControl('#txtBillingLine10');
+    DisablePipeKeyForControl('#txtBillingLine11');
+    DisablePipeKeyForControl('#txtBillingLine12');
+    DisablePipeKeyForControl('#txtBillingLine13');
+    DisablePipeKeyForControl('#txtBillingLine14');
+    DisablePipeKeyForControl('#txtBillingLine15');
+
+    var counter = "CounterMilestone";
+    var characters = 50;
+
+    $(document).ready(function () {
+
+        $("#CounterMilestone").append("You have <strong>" + 0 + "</strong> characters remaining").css("color", "blue");
+        CountCharacter("txtBillingLine1");
+        CountCharacter("txtBillingLine2");
+        CountCharacter("txtBillingLine3");
+        CountCharacter("txtBillingLine4");
+        CountCharacter("txtBillingLine5");
+        CountCharacter("txtBillingLine6");
+        CountCharacter("txtBillingLine7");
+        CountCharacter("txtBillingLine8");
+        CountCharacter("txtBillingLine9");
+        CountCharacter("txtBillingLine10");
+        CountCharacter("txtBillingLine11");
+        CountCharacter("txtBillingLine12");
+        CountCharacter("txtBillingLine13");
+        CountCharacter("txtBillingLine14");
+        CountCharacter("txtBillingLine15");
+
+    });
+
+
+
+</script>

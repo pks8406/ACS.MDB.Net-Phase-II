@@ -1,0 +1,127 @@
+﻿@model IEnumerable<MVCRazor.Models.Contract>
+
+@{
+    ViewBag.Title = "Contract Page";
+}
+
+<html>
+<head>
+    <title></title>
+</head>
+<body onload="SelectMenuItem()">
+    <br />
+    <div style="padding: 0px 0px 0px 10px">
+        <a href="/Home/Index" title="Home" class="parentPageLink">Home</a>
+        <a href="#" class="currentPage">-> Contract</a>
+    </div>
+
+    <hr />
+    <div style="width: 97%; padding: 0px 0px 0px 10px">
+        <table style="width: 100%">
+            <tr>
+                <td>
+                    @Html.TextBox("searchText", "Hello", new { style = "width:500px;color:blue;border:2px" })
+                    <input type="button" id="txtSearch" name="Search" onclick="SearchContracts(); return false" />
+                </td>
+                <td>
+                    @Html.RadioButton("searchGroup", "rbByContractNumber", true, new { id = "rbByContractNumber" })
+                    @Html.Label("searchGroup", "By Contract Number")
+                </td>
+                <td>
+                    @Html.RadioButton("searchGroup", "rbByCompany", new { id = "rbByCompany" })
+                    @Html.Label("searchGroup", "By Company")
+                </td>
+                <td>
+                    @Html.RadioButton("searchGroup", "rbByEndUser", new { id = "rbByEndUser" })
+                    @Html.Label("searchGroup", "By End User")
+                </td>
+            </tr>
+        </table>
+    </div>
+    <hr />
+    <div id="gridResult">
+        @{
+            if (Model != null)
+            {
+
+                var grid = new WebGrid(Model, canPage: true, rowsPerPage: 10, canSort: true, ajaxUpdateContainerId: "grid");
+                grid.Pager(WebGridPagerModes.All);
+                
+                @grid.GetHtml(htmlAttributes: new { id = "DataTable" },
+                                tableStyle: "webGrid",
+                                headerStyle: "webGridHeader",
+                                alternatingRowStyle: "webGridAlt",
+                columns: grid.Columns(
+                grid.Column("ContractNumber", header: "Contract Number", canSort: true, style: "name"),
+                grid.Column("InvoiceCustomer", header: "Invoice Customer", canSort: true, style: "invoiceCustomer"),
+                grid.Column("EndUser", header: "EndUser", canSort: true, style: "enduser"),
+                grid.Column(format: (item) => Html.ActionLink("Edit", "Edit", new { ContractID = item.ContractID }), style: "edit")
+        ));
+            }
+        }
+    </div>
+
+</body>
+</html>
+
+<script type="text/javascript">
+    function SelectMenuItem() {
+
+        if (document.getElementById("ContractsMenu") != null) {
+            document.getElementById("ContractsMenu").style.backgroundColor = "blue";
+        }
+    }
+
+    function SearchContracts() {
+
+        var searchtext = document.getElementById("txtSearch").value;
+        alert(document.getElementById("txtSearch").textContent);
+        alert($("#txtSearch").val());
+        var searchby = 3;
+        var url = '@Url.Action("GetContracts", "Contract")';
+
+        if (document.getElementById("rbByContractNumber").checked) {
+
+            searchby = 1;
+            //alert(url);
+            $.getJSON(url, { searchBy: searchby, searchText: searchtext }, function (data) {
+                {
+
+                    //$("#DataTable").remove();
+                    $("#DataTable").html(data.Data);
+                        //$("body").append(d.data);
+                    //var grdPipeline = document.getElementById("gridResult");
+                    //grdPipeline.html(data);
+                    //alert(d);
+                    
+                }
+            });
+
+            //$.post(url, { searchBy: searchby, searchText: searchtext },
+            // function (data) {
+            //     $("#gridResult").html(data);
+            // });
+        }
+        else if (document.getElementById("rbByCompany").checked) {
+            {
+                searchby = 2;
+                $.post(url, { searchBy: searchby, searchText: searchtext },
+                   function (data) {
+
+                       $("#gridResult").html(data);
+                   });
+            }
+        }
+        else {
+            $.post(url, { searchBy: searchby, searchText: searchtext },
+               function (data) {
+                   $("#gridResult").html(data);
+               });
+        }
+    }
+
+   
+
+</script>
+
+

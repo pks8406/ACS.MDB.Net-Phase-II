@@ -1,0 +1,133 @@
+﻿@model MVCRazor.Models.ContractLine
+@{
+    Layout = "~/Views/Shared/Popup_Layout.cshtml";
+}
+
+<div style="background: skyblue">
+    
+    @using (Html.BeginForm("SaveContractLine", "Contract", FormMethod.Post))
+    {
+        @Html.ValidationSummary(true)
+
+        //hidden field
+        @Html.HiddenFor(m => m.ContractLineID)
+        @Html.HiddenFor(m => m.ContractID)
+        
+        <table style="width: 100%">
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.ActivityCategoryId, new { @class = "mandatoryLabel" })
+                    @Html.DropDownListFor(m => m.ActivityCategoryId, new SelectList(Model.ActivityCategoryList, "ID", "Name", Model.ActivityCategoryId), ".. Select Activity Category..")
+                    @Html.ValidationMessageFor(model => model.ActivityCategoryId)
+                </td>
+        
+               
+            </tr>
+            <tr></tr>
+            <tr>
+                 <td>
+                    @Html.LabelFor(m => m.ActivityCodeId, new { @class = "mandatoryLabel" })
+                    @Html.DropDownListFor(m => m.ActivityCodeId, new SelectList(Model.ActivityCodeList, "ID", "Name", Model.ActivityCodeId), ".. Select Activity Code..")
+                    @Html.ValidationMessageFor(model => model.ActivityCodeId)
+                </td>
+            </tr>
+                <tr></tr>
+            <tr>
+                <td colspan="2">
+                    @Html.LabelFor(m => m.Account, new { @class = "mandatoryLabel" })
+                    @Html.TextBoxFor(m => m.Account, new { @class = "contractLargeTextbox" })
+                </td>
+            </tr>
+     <tr></tr>
+            <tr>
+                <td colspan="2">
+                    @Html.LabelFor(m => m.JobCodeId, new { @class = "contractLabel" })
+                    @Html.DropDownListFor(m => m.JobCodeId, new SelectList(Model.JobCodeList, "ID", "Name", Model.JobCodeId), ".. Select Job Code..")
+                </td>
+            </tr>
+                <tr></tr>
+
+            <tr>
+                <td colspan="2">
+                    @Html.LabelFor(m => m.CostCenterId, new { @class = "contractLabel" })
+                    @Html.DropDownListFor(m => m.CostCenterId, new SelectList(Model.CostCentrerList, "ID", "Name", Model.CostCenterId), ".. Select Cost Code..")
+                </td>
+            </tr>
+                <tr></tr>
+            <tr>
+                <td colspan="2">
+                    @Html.LabelFor(m => m.QTY, new { @class = "mandatoryLabel" })
+                    @Html.TextBoxFor(m => m.QTY, new { @class = "contractLargeTextbox" })
+                    @Html.ValidationMessageFor(model => model.QTY)
+                </td>
+            </tr>
+
+        </table>
+    
+        
+        <div style="text-align: right; padding: 0px 45px 0px 10px;" >
+            <input type="submit" id="btnSubmit" value="Save" />
+            <input type="button" id="btnCancel" value="close" onclick="ClosePopup(this)" />
+        </div>
+    }
+
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+<script type="text/javascript">
+
+    function confirmDelete(message, callback) {
+        var $closeDialog = $('<div>Are you sure you want to close ?</div>');
+
+        $closeDialog
+            .dialog({
+                resizable: false,
+                height: 160,
+                title: "Confirm",
+                modal: true,
+                buttons: {
+                    "NO": function () {
+                        $(this).dialog("close");
+                        callback.apply();
+                    },
+                    Yes: function () {
+                        window.location.href = "@Url.Action("ContractDetails", "Contract", new { contractId = @ViewBag.contractId })";
+                    }
+                }
+            });
+    };
+
+    function ClosePopup() {
+        //document.getElementById("aboutlDialog");
+        //document.getElementById("aboutlDialog").style.visibility = "hidden";
+
+        confirmDelete('', 
+            function () {
+                $(this).dialog(parent).dialog("close");
+            });
+
+         $(this).closest(".dialog").dialog("close");
+
+        //redirect to contract details page
+        //window.location.href = "@Url.Action("ContractDetails", "Contract", new { contractId = @ViewBag.contractId })";
+    }
+
+    $("#btnCancel").live('click', function (event) {
+        event.preventDefault();
+
+        //alert($(this).close());
+        // $("#aboutdialog").add("style", "display:none");
+        //var $btn = $(this);
+        //var $msg = $(this).attr("title");
+
+        //confirmDelete($msg, 
+        //    function () {
+        //        $(this).dialog(parent).dialog("close");
+        //    });
+
+        // $(this).closest(".dialog").dialog("close");
+    });
+</script>

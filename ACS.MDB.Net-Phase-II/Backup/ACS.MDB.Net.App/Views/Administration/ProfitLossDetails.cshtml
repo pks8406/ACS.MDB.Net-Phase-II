@@ -1,0 +1,112 @@
+﻿@model ACS.MDB.Net.App.Models.ProfitLoss
+
+@{
+    ViewBag.Title = "MDB::P & L";
+}
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+<div style="background: #F9F7FB">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+
+        //hidden field
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CompanyId)
+
+        <table style="width: 100%">
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.CompanyName)
+                </td>
+                <td>
+                    <b>@Html.DisplayFor(m => m.CompanyName, new { style = "width:250px" })</b>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+            </tr>
+
+            @if (Model.ID != 0)
+            {
+                <tr>
+
+                    <td>
+                        @Html.LabelFor(m => m.CostCenterName)
+                    </td>
+                    <td>
+
+                        @Html.HiddenFor(m => m.CostCenterId)
+                        <b>@Html.DisplayFor(m => m.CostCenterName, new { style = "width:300px" })</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                </tr>
+            }
+
+            else
+            {
+                <tr>
+                    <td>
+                        @Html.LabelFor(m => m.CostCenterName, new { @class = "mandatoryLabel" })
+                    </td>
+                    <td>
+                        @Html.DropDownListFor(x => x.CostCenterId, new SelectList(Model.costcenterList, "ID", "CostCenterName", Model.CostCenterId), "Select Cost centre", new { @id = "ddlCostcenter", style = "width:250px;height:25px" })
+                    </td>
+                </tr>
+
+            }
+
+            <tr>
+                <td></td>
+                <td colspan="2">
+                    @Html.ValidationMessageFor(model => model.CostCenterId)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.ProfitLossName, new { @class = "mandatoryLabel" })
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.ProfitLossName, new { @maxlength = "50", style = "width:200px", @id = "txtProfitLossnName" })
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    @Html.ValidationMessageFor(model => model.ProfitLossName)
+                </td>
+            </tr>
+        </table>
+    }
+</div>
+
+<script type="text/javascript">
+
+    SetFocus('#ddlCostcenter');
+    
+    if('@Model.ID' > 0)
+    {
+        SetFocus('#txtProfitLossnName');
+    }
+
+    DisableEnterKeyForControl('#txtProfitLossnName');
+</script>

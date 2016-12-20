@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <parameter name="MDBConnectionString-Web.config Connection String" description="MDBConnectionString Connection String used in web.config by the application to access the database." defaultValue="Data Source=ASHISH-PC;Initial Catalog=ARBS_Service;Integrated Security=false;uid=sa; pwd=oakadmin;" tags="SqlConnectionString">
+    <parameterEntry kind="XmlFile" scope="E:\\Projects\\Source\\ACS\.MDB\.Net-Phase-II\\ACS\.MDB\.Net\.App\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='MDBConnectionString']/@connectionString" />
+  </parameter>
+  <parameter name="OAConnectionString-Web.config Connection String" description="OAConnectionString Connection String used in web.config by the application to access the database." defaultValue="DSN=oalive;UID=admin;PWD=admin;" tags="SqlConnectionString">
+    <parameterEntry kind="XmlFile" scope="E:\\Projects\\Source\\ACS\.MDB\.Net-Phase-II\\ACS\.MDB\.Net\.App\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='OAConnectionString']/@connectionString" />
+  </parameter>
+</parameters>

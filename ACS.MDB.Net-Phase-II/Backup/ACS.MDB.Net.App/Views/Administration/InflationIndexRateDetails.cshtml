@@ -1,0 +1,98 @@
+﻿@model ACS.MDB.Net.App.Models.InflationIndexRate
+@{
+    ViewBag.Title = "Inflation Index Rate Details";
+}
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+<div style="background: #F9F7FB">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+
+        //hidden field
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.InflationIndexRateId)
+        @Html.HiddenFor(m => m.IndexName)
+        @Html.HiddenFor(m => m.InflationIndexId)
+
+        <table style="width: 100%">
+
+            <tr>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.chargingUpliftDate, new { @class = "mandatoryLabel" })
+                    @Html.Label("(dd/mm/yyyy)")
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.chargingUpliftDate, string.Format(@ACS.MDB.Net.App.Common.Constants.DATE_FORMAT_FOR_VIEWPAGE, Model.chargingUpliftDate), new { style = "width:200px", @class = "datepicker", @id = "txtchargingUpliftDate" })
+                </td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td>
+                    @Html.ValidationMessageFor(m => m.chargingUpliftDate)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.IndexRate)
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.IndexRate, new { @maxlength = "7", style = "width:200px" })
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    @Html.ValidationMessageFor(m => m.IndexRate)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.IndexRatePerAnnum)
+                </td>
+
+                <td>
+                    @Html.TextBoxFor(m => m.IndexRatePerAnnum, @ACS.MDB.Net.App.Common.Constants.STRING_FORMAT_FOR_NUMERIC_VALUE, new { @maxlength = "5", style = "width:200px" })
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    @Html.ValidationMessageFor(m => m.IndexRatePerAnnum)
+                </td>
+            </tr>
+        </table>
+    }
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.datepicker').datepicker({
+            showOn: 'button',
+            buttonImage: '../../images/Calendar.png',
+            buttonImageOnly: true,
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '-20:+20',
+            dateFormat: 'dd/mm/yy',
+            onClose: function () { $(this).valid(); },
+            //showOptions: { speed: 'fast' },
+            //changeDate: true,
+            //showStatus: true,
+            //onSelect: function () { $('#txtIndexRate').focus(); },
+            //showAnim: "fadeIn",
+            //showAnim: "slideDown",
+            //showButtonPanel: true,
+        });
+    });
+
+    SetFocus('#txtchargingUpliftDate');
+    DisableEnterKeyForControl('#txtchargingUpliftDate');
+</script>

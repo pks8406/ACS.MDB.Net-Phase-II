@@ -1,0 +1,73 @@
+﻿@model ACS.MDB.Net.App.Models.OpenAccount
+@{
+    ViewBag.Title = "OpenAccountIndex";
+}
+
+<style type="text/css">
+    /* Start by setting display:none to make this hidden.
+   Then we position it in relation to the viewport window
+   with position:fixed. Width, height, top and left speak
+   speak for themselves. Background we set to 80% white with
+   our animation centered, and no-repeating */
+    .spinning { display: none; width: 100%; height: 100%; position: fixed; text-align: center; border: 0px; vertical-align: central; left: 0; top: 0; z-index: 1000; background: rgb(255,255,255) url('/Images/Loading.gif') 50% 50% no-repeat; -ms-filter: 'alpha(opacity = 50)'; filter: alpha(opacity=50); opacity: 0.6; }
+
+    /* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+    body.loading { overflow: hidden; }
+
+        /* Anytime the body has the loading class, our
+   modal element will be visible */
+        body.loading .spinning { display: block; }
+</style>
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("body").on({
+            ajaxStart: function () {
+                $(this).addClass("loading");
+            },
+            ajaxStop: function () {
+                $(this).removeClass("loading");
+            }
+        });
+    });
+
+    function OASyncStart() {
+        var $form = $('#fromOpenAccount');
+        if ($form.valid()) {
+            $.ajax({
+                url: '/Contract/OpenAccountIndex',
+                data: $form.serialize(),
+                sync: true,
+                type: 'POST',
+                dataType: 'text',
+                success: function (entityObj) {
+                    alert('Data synchronisation completed successfully. Please check the log file.');
+                },
+                error: function (response, status, error) {
+                    alert(response.statusText);
+                }
+            });
+        }
+    }
+</script>
+<form id="fromOpenAccount">
+
+    <div class="pageTitle">
+        Open Account & ARBS Synchronisation Service
+    <hr />
+    </div>
+    <input type="button" value="Start" onclick="OASyncStart()" />
+    <div style="background: #F9F7FB">
+        @using (Html.BeginForm())
+        {
+            @Html.ValidationSummary(true)
+        }
+    </div>
+    <div class="spinning">
+        <!-- Place at bottom of page -->
+    </div>
+</form>

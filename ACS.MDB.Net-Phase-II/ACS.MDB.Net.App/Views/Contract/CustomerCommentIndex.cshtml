@@ -1,0 +1,119 @@
+﻿@model ACS.MDB.Net.App.Models.CustomerComment
+
+@{
+    ViewBag.Title = "MDB::Customer Comments";
+}
+
+@section Scripts {
+    <script src="/Scripts/jquery.dataTables.js" type="text/javascript"></script>
+    <script src="/Scripts/jquery.dataTable.editTable.js" type="text/javascript"></script>
+
+    <script type="text/javascript" charset="utf-8">
+
+        // the customerComment data table
+        var customerCommentTbl = null;
+
+        var columnDefs = [
+                { sWidth: '1%', bSortable: false, bVisible: true, aTargets: [0] },
+                { sWidth: '1%', bSortable: false, bVisible: false, aTargets: [1] },
+                {
+                    sWidth: '25%', aTargets: [2], "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                        OpenEditDialog(customerCommentTbl, iRow, nTd, sData);
+                    }
+                },
+                { sWidth: '25%', aTargets: [3] },
+                { sWidth: '35%', aTargets: [4] },
+                { sWidth: '2%', bSortable: false, aTargets: [5] }
+        ];
+
+        //setup the table and other features required for this page
+        $(document).ready(function () {
+
+            //Disable cache
+            $.ajaxSetup({ cache: false });
+
+            customerCommentTbl = $('#CustomerComment_tbl').editTable({
+                sListURL: '/Contract/CustomerCommentList/',
+                sDeleteURL: '/Contract/CustomerCommentDelete',
+                sAddURL: '/Contract/CustomerCommentSave',
+                sUpdateURL: '/Contract/CustomerCommentSave',
+                sNewDialogLoadURL: '/Contract/CustomerCommentCreate/',
+                sEditDialogLoadURL: '/Contract/CustomerCommentEdit',
+                sDialogDivId: 'customercomment_dialog',
+                sToolbarSelector: '#div_toolbar',
+                sAddButtonId: 'btn_newcustomercomment',
+                sEditButtonId: 'btn_editcustomercomment',
+                sDeleteButtonId: 'btn_deletecustomercomment',
+                iDialogWidth: 500,
+                iDialogHeight: 320,
+                bAutoWidth: false,
+                oColumnDefs: columnDefs,
+                sEntityName: 'Comment',
+                fnServerData: CustomerCommentListParameter,
+                sDeleteMessage: '@ACS.MDB.Net.App.Common.Constants.DELETE_MESSAGE_FOR_CUSTOMER_COMMENT'
+            });
+
+
+            //Set default focus on search text box and Disable invalid keys for search text box (Keys like <,>,~)
+            SetFocus('#CustomerComment_tbl_filter label input:text');
+            DisableInvalidKeyForControl('#CustomerComment_tbl_filter label input:text');
+
+            //Disable New and Delete button for Viewer
+            DisableButton("#btn_newcustomercomment");
+            DisableButton("#btn_deletecustomercomment");
+            ChangeEditCaptionToView("#btn_editcustomercomment");
+        });
+
+        //Set the menu item as selected
+        HighlightSelectedMenuItem("ContractsMenu")
+
+        //Function to set checkbox column header selector to false
+        //Call after we do sorting,paging,searching, save (create/edit) of record
+        function CustomerCommentListParameter(sSource, aoData, fnCallBack) {
+            //add the additional data to be sent to the server
+            $.getJSON(sSource, aoData, function (json) {
+            }).done(function (json) {
+
+                fnCallBack(json);
+
+                //To set checkbox column header selector to false
+                customerCommentTbl.fnSetCheckBoxItemSelector();
+
+            }).fail(function (json) {
+                DisplayErrorMessage(json, false);
+            });
+        }
+    </script>
+}
+
+<div class="pageTitle">
+    Manage Customer Comments
+    <hr />
+</div>
+
+<table style="width: 100%">
+    <tr>
+        <td>
+            <div id='div_toolbar' class="DatatableGridButtonStyle" style="margin-top: 0px; margin-bottom: 10px;"></div>
+            <div>
+                <table cellpadding="0" cellspacing="0" border="0" class="display" id="CustomerComment_tbl" width="100%">
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="selectall" />
+                            </th>
+                            <th>@Html.DisplayNameFor(model => model.ID) </th>
+                            <th>@Html.DisplayNameFor(model => model.InvoiceCustomer) </th>
+                            <th>@Html.DisplayNameFor(model => model.Company) </th>
+                            <th>@Html.DisplayNameFor(model => model.Comment) </th>
+                            <th>@Html.DisplayNameFor(model => model.Group) </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div id="customercomment_dialog" title="Add CustomerComment"></div>
+        </td>
+    </tr>
+</table>

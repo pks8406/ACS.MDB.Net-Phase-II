@@ -1,0 +1,6 @@
+E:\Projects\Source\ACS.MDB.Net-Phase-II\ACS.MDB.Library\bin\Release\ACS.MDB.Library.dll.config
+E:\Projects\Source\ACS.MDB.Net-Phase-II\ACS.MDB.Library\bin\Release\ACS.MDB.Library.dll
+E:\Projects\Source\ACS.MDB.Net-Phase-II\ACS.MDB.Library\bin\Release\ACS.MDB.Library.pdb
+E:\Projects\Source\ACS.MDB.Net-Phase-II\ACS.MDB.Library\obj\Release\ACS.MDB.Library.csprojResolveAssemblyReference.cache
+E:\Projects\Source\ACS.MDB.Net-Phase-II\ACS.MDB.Library\obj\Release\ACS.MDB.Library.dll
+E:\Projects\Source\ACS.MDB.Net-Phase-II\ACS.MDB.Library\obj\Release\ACS.MDB.Library.pdb

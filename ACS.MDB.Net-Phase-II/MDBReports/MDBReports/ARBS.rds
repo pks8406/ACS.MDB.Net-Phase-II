@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RptDataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="ARBS">
+  <ConnectionProperties>
+    <Extension>SQL</Extension>
+    <ConnectString>Data Source=GSMAINT02;Initial Catalog=ARBS</ConnectString>
+  </ConnectionProperties>
+  <DataSourceID>ba751ea7-969d-4a43-b226-4f54f06622da</DataSourceID>
+</RptDataSource>

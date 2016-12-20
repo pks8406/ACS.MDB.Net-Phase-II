@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "MDBReports", "MDBReports\MDBReports.rptproj", "{E617539D-C620-4C53-8D88-12E013449333}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Default = Debug|Default
+		DebugLocal|Default = DebugLocal|Default
+		Release|Default = Release|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E617539D-C620-4C53-8D88-12E013449333}.Debug|Default.ActiveCfg = Debug
+		{E617539D-C620-4C53-8D88-12E013449333}.Debug|Default.Build.0 = Debug
+		{E617539D-C620-4C53-8D88-12E013449333}.Debug|Default.Deploy.0 = Debug
+		{E617539D-C620-4C53-8D88-12E013449333}.DebugLocal|Default.ActiveCfg = DebugLocal
+		{E617539D-C620-4C53-8D88-12E013449333}.DebugLocal|Default.Build.0 = DebugLocal
+		{E617539D-C620-4C53-8D88-12E013449333}.Release|Default.ActiveCfg = Release
+		{E617539D-C620-4C53-8D88-12E013449333}.Release|Default.Build.0 = Release
+		{E617539D-C620-4C53-8D88-12E013449333}.Release|Default.Deploy.0 = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

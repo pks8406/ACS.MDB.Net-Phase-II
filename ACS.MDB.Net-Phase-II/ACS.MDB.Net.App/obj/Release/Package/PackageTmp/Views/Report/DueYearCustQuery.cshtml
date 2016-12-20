@@ -1,0 +1,185 @@
+﻿@model ACS.MDB.Net.App.Models.ReportModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+@*@Html.HiddenFor(m=>m.CompanyID)
+@Html.HiddenFor(m=>m.InvoiceCustomerID)
+@Html.HiddenFor(m=>m.EndUserID*@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Due Year Customer Query</title>
+    <style type="text/css">
+        /*#reportFrame
+        {
+            width: 1325px;
+            height: 450px;
+        }*/
+    </style>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.datepicker').datepicker({
+                showOptions: { speed: 'fast' },
+                //changeDay: true,
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: 'dd/mm/yy',
+                //gotoCurrent: false,
+                showOn: 'button',
+                onClose: function () { $(this).valid(); },
+                buttonImage: '../../images/Calender1.png',
+                buttonImageOnly: true
+            });
+            
+            // Set focus on first field on page load
+            SetFocus('#txtStartDate');
+
+        });
+
+        //Set the menu item as selected
+        HighlightSelectedMenuItem("ReportsMenu");
+    </script>
+</head>
+
+@{
+    ViewBag.Title = "Reports";
+}
+<body>
+    <div class="pageTitle">
+        Billing Details - Customer
+    <hr />
+    </div>
+    @using (Html.BeginForm("GenerateDueYearCustQueryReport", "Report", FormMethod.Post))
+    {
+        @Html.ValidationSummary(true)
+
+        <div id="InputParametes" style="border: solid; border-width: 1px; width: auto; margin: 0 auto; text-align: center">
+
+            <table style="margin: 0 auto; width: 80%; text-align: left">
+                <tr>
+                    <td>@Html.LabelFor(model => model.StartDate, new { @class = "mandatoryLabel" })</td>
+
+                    <td style="text-align: left; width: 175px">
+                        @Html.TextBoxFor(m => m.StartDate, string.Format(@ACS.MDB.Net.App.Common.Constants.DATE_FORMAT_FOR_VIEWPAGE, Model.StartDate), 
+                        new { style = "width:130px;", @class = "datepicker", @id = "txtStartDate",  @tabindex = "1" })
+                    </td>
+                    <td></td>
+                    <td style="text-align: left; width: 150px" colspan="3">
+                        @Html.ValidationMessageFor(m => m.StartDate)
+                    </td>
+                    <td>@Html.LabelFor(model => model.CompanyName)</td>
+                    <td>
+                        @Html.DropDownListFor(x => x.CompanyID, new SelectList(Model.OAcompanyList, "ID", "NameWithID", Model.CompanyID),
+                             "ALL", new { @id = "ddlCompany",  @class = "DropdownListStyle", @tabindex = "3" ,style="width:400px" })
+                    </td>
+
+                    <td colspan="3" style="text-align: right">
+                        <button value="Generate" type="submit" id="btnGenerate" tabindex="5" /> Generate
+                    </td>
+                </tr>
+                <tr>
+                    <td>@Html.LabelFor(model => model.EndDate, new { @class = "mandatoryLabel" })</td>
+                    <td style="text-align: left; width: 175px">
+                        @Html.TextBoxFor(m => m.EndDate, string.Format(@ACS.MDB.Net.App.Common.Constants.DATE_FORMAT_FOR_VIEWPAGE, Model.EndDate), 
+                        new { style = "width:130px", @class = "datepicker", @tabindex = "2" })
+                    </td>
+                    <td></td>
+                    <td style="text-align: left; width: 150px" colspan="3">
+                        @Html.ValidationMessageFor(m => m.EndDate)
+                    </td>
+                    @*<td>@Html.LabelFor(model => model.EndUserName)</td>
+                               <td>
+                                   @Html.DropDownListFor(x => x.EndUserID, new SelectList(Model.EndUserList, "EndUserId", "Name", Model.EndUserID),
+                                   "ALL", new { @id = "ddlEndUser", style = "width:250px" })
+                               </td>  *@
+
+                    <td>@Html.LabelFor(model => model.InvoiceCustomerName)</td>
+                    <td>
+                        @Html.DropDownListFor(x => x.InvoiceCustomerID, new SelectList(Model.InvoiceCustomerList, "InvoiceCustomerId", "CustomerNameCodeAndShortName", Model.InvoiceCustomerID),
+                                   "ALL", new { @id = "ddlInvoiceCustomer", @class = "DropdownListStyle", @tabindex = "4",style="width:400px" })
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+    <div>
+        @if (Model != null && Model.StartDate != null && Model.EndDate != null)
+        {
+            <iframe id="reportFrame" name="reportFrame" src="~/Reports/DueYearCustomerQuery.aspx?StartDate=@Model.StartDate&EndDate=@Model.EndDate&CompanyID=@Model.CompanyID&InvoiceCustomerID=@Model.InvoiceCustomerID&UserID=@Model.UserID" style="height:64%;width:99%;position:absolute; border:none"></iframe>
+        }
+    </div>
+</body>
+</html>
+
+<script type="text/javascript" charset="utf-8">
+
+    var selectedCompanyId = -1;
+    var selectedInvoiceCustomerId = -1;
+    // var selectedEndUserId = -1;
+    // function called to handle the change in selection
+    // of a company.
+    $("#ddlCompany").change(function () {
+
+        selectedCompanyId = $(this).val();
+        //alert(selectedCompanyId);
+        if ($("#ddlCompany option:selected").text() == "ALL") {
+            selectedCompanyId = -1;
+        }
+
+        if (selectedCompanyId != -1 && selectedCompanyId != 0) {
+            var postData = { companyId: selectedCompanyId };
+
+            //Get Customer List based on selected company id
+            $.post("/Report/GetInvoiceCustomerList", postData, function (response) {
+
+                if (response != null) {
+                    $("#ddlInvoiceCustomer").empty();
+                    $("#ddlInvoiceCustomer").length = -1;
+                    if (response == '') {
+                        AddOption("No customer exists", "-1", "#ddlInvoiceCustomer");
+                        $('#btnGenerate').prop('disabled', true);
+                    } else {
+                        AddOption("ALL", "-1", "#ddlInvoiceCustomer");
+                        $('#btnGenerate').prop('disabled', false);
+                    }
+                    for (var i in response) {
+                        //ARBS-133
+                        AddOption(response[i].CustomerNameCodeAndShortName, response[i].InvoiceCustomerId, "#ddlInvoiceCustomer");
+                    }
+                }
+            });
+        }
+        else {
+            $("#ddlInvoiceCustomer").empty();
+            selectedCompanyId = 0;
+            selectedInvoiceCustomerId = 0;
+            AddOption("ALL", "0", "#ddlInvoiceCustomer");
+        }
+
+        ////Get End User List based on selected customer id and company id
+        //$.post("/Report/GetEndUserList", postData, function (response) {
+
+        //    if (response != null) {
+        //        $("#ddlEndUser").empty();
+        //        $("#ddlEndUser").length = -1;
+        //        AddOptionEndUser("ALL", "-1");
+        //        for (var i in response) {
+        //            AddOptionEndUser(response[i].Name, response[i].EndUserId);
+        //        }
+        //    }
+        //});
+        //}
+
+        //   // $("#ddlEndUser").empty();
+        //   // selectedCompanyId = 0;
+        //   //// selectedInvoiceCustomerId = 0;
+        //   // selectedEndUserId = 0;
+        //   // AddOptionEndUser("ALL", "0");
+        //}
+    });
+</script>

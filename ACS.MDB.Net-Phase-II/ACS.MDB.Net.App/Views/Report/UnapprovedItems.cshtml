@@ -1,0 +1,224 @@
+﻿@model ACS.MDB.Net.App.Models.ReportModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+@*@Html.HiddenFor(m=>m.CompanyID)
+@Html.HiddenFor(m=>m.InvoiceCustomerID)
+@Html.HiddenFor(m=>m.EndUserID*@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Unapproved Items</title>
+    @*  <style type="text/css">
+        #reportFrame
+        {
+            width: 1325px;
+            height: 450px;
+        }
+    </style>*@
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.datepicker').datepicker({
+                showOptions: { speed: 'fast' },
+                //changeDay: true,
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: 'dd/mm/yy',
+                onClose: function () { $(this).valid(); },
+                //gotoCurrent: false,
+                showOn: 'button',
+                buttonImage: '../../images/Calender1.png',
+                buttonImageOnly: true
+            });
+
+            SetFocus('#txtStartDate');
+
+          @*  //If no invoice customer is associated with company        
+            if ('@Model.InvoiceCustomerList.Count' > 0 || $("#ddlCompany option:selected").text() == "ALL")
+            {
+                        $("#ddlInvoiceCustomer").children('option').filter(':selected').text('ALL');
+                    }
+                    else {
+                        $("#ddlInvoiceCustomer").children('option').filter(':selected').text('No customer exists');
+                    }*@
+        });
+
+
+
+        //Set the menu item as selected
+        HighlightSelectedMenuItem("ReportsMenu")
+    </script>
+</head>
+
+@{
+    ViewBag.Title = "Reports";
+}
+<body>
+    <div class="pageTitle">
+        Outstanding Items
+    <hr />
+    </div>
+    @using (Html.BeginForm("GenerateUnapprovedItemsReport", "Report", FormMethod.Post))
+    {
+        @Html.ValidationSummary(true)
+
+        <div id="InputParametes" style="border: solid; border-width: 1px; width: auto; margin: 0 auto; text-align: center">
+
+            <table style="margin: 0 auto; width: 90%; text-align: left">
+                <tr>
+                    <td>@Html.LabelFor(model => model.StartDate, new { @class = "mandatoryLabel" })</td>
+
+                    <td style="text-align: left; width: 175px">
+                        @Html.TextBoxFor(m => m.StartDate, string.Format(@ACS.MDB.Net.App.Common.Constants.DATE_FORMAT_FOR_VIEWPAGE, Model.StartDate), 
+                        new { style = "width:130px", @class = "datepicker", @id="txtStartDate", @tabindex = "1" })
+                         @Html.ValidationMessageFor(m => m.StartDate)
+                    </td>
+                    <td></td>
+                    <td style="padding-left: 15px" >@Html.LabelFor(model => model.CompanyName)</td>
+                    <td>
+                        @Html.DropDownListFor(x => x.CompanyID, new SelectList(Model.OAcompanyList, "ID", "NameWithID", Model.CompanyID),
+                             "ALL", new { @id = "ddlCompany", @class = "DropdownListStyle", @tabindex = "3" })
+                    </td>
+                    <td style="padding-left: 15px">@Html.LabelFor(model => model.InvoiceCustomerName)</td>
+                    <td style="width: 255px" >
+                        @Html.DropDownListFor(x => x.InvoiceCustomerID, new SelectList(Model.InvoiceCustomerList, "InvoiceCustomerId", "CustomerNameCodeAndShortName", Model.InvoiceCustomerID),
+                                   "ALL", new { @id = "ddlInvoiceCustomer", @class = "DropdownListStyle", @tabindex = "5" ,style="width:400px"})
+                    </td>
+                </tr>
+                <tr>
+                    <td>@Html.LabelFor(model => model.EndDate, new { @class = "mandatoryLabel" })</td>
+                    <td style="text-align: left; width: 175px">
+                        @Html.TextBoxFor(m => m.EndDate, string.Format(@ACS.MDB.Net.App.Common.Constants.DATE_FORMAT_FOR_VIEWPAGE, Model.EndDate), 
+                        new { style = "width:130px", @class = "datepicker", @tabindex = "2" })
+                        @Html.ValidationMessageFor(m => m.EndDate)
+                    </td>
+                    <td></td>
+                    <td style="padding-left: 15px">@Html.LabelFor(model => model.DivisionName)</td>
+                    <td>
+                        @Html.DropDownListFor(x => x.DivisionID, new SelectList(Model.DivisionList, "DivisionId", "DivisionName", Model.DivisionID),
+                                   "ALL", new { @id = "ddlDivision", @class = "DropdownListStyle", @tabindex = "4" })
+                    </td>                    
+                    <td></td>
+                    <td colspan="2" style="text-align: right">
+                        <button value="Generate" type="submit" id="btnGenerate" tabindex="6"/>
+                        Generate
+                    </td>
+
+                </tr>
+            </table>
+        </div>
+
+    }    
+    <div>
+        @if (Model != null && Model.StartDate != null && Model.EndDate != null && Model.CompanyID != null && Model.DivisionID != null && Model.InvoiceCustomerID != null)
+        {
+            <iframe id="reportFrame" name="reportFrame" src="~/Reports/UnapprovedItems.aspx?StartDate=@Model.StartDate&EndDate=@Model.EndDate&CompanyID=@Model.CompanyID&DivisionID=@Model.DivisionID&InvoiceCustomerID=@Model.InvoiceCustomerID&UserID=@Model.UserID" style="height:64%;width:99%;position:absolute; border:none"></iframe>
+        }
+    </div>
+
+    <div id="spinnerUnApprovedItems" style="display: none; width: 100%; height: 100%; position: fixed; text-align: center; border: 0px; vertical-align: central; left: 0; top: 0; z-index: 1000; background: rgb(255,255,255) url('/Images/Loading.gif') 50% 50% no-repeat; -ms-filter: 'alpha(opacity = 50)'; filter: alpha(opacity=50); opacity: 0.6; }" />
+</body>
+</html>
+
+<script type="text/javascript" charset="utf-8">
+
+    var selectedCompanyId = -1;
+    var selectedDivisionId = -1;
+    var selectedInvoiceCustomerId = -1;
+    //var selectedEndUserId = -1;
+    // function called to handle the change in selection
+    // of a company.
+    $("#ddlCompany").change(function () {
+
+        selectedCompanyId = $(this).val();
+        if ($("#ddlCompany option:selected").text() == "ALL") {
+            selectedCompanyId = -1;
+        }
+        var companyID = { companyId: selectedCompanyId };        
+
+        if (selectedCompanyId != -1 && selectedCompanyId != 0) {
+            //Get list of divisions associated with company
+            GetDivisionList(companyID);
+
+            //Get list of customers associated with company
+            GetInvoiceCustomer(companyID);
+        }
+        else {
+
+            $("#ddlInvoiceCustomer").empty();
+            selectedCompanyId = 0;
+            selectedInvoiceCustomerId = 0;
+            AddOption("ALL", "0", "#ddlInvoiceCustomer");
+
+            $("#ddlDivision").empty();
+            selectedCompanyId = 0;
+            selectedDivisionId = 0;
+            AddOption("ALL", "0", "#ddlDivision");
+
+        }
+    });
+
+    //Get invoice Customer list based on company selection
+    function GetInvoiceCustomer(companyID) {        
+            $.post("/Report/GetInvoiceCustomerList", companyID, function (response) {
+                $("#ddlInvoiceCustomer").empty();
+                $("#ddlInvoiceCustomer").length = -1;
+
+                if (response != null) {
+
+                    if (response != '') {
+                        AddOption("ALL", "-1", "#ddlInvoiceCustomer");
+                        $('#btnGenerate').prop('disabled', false);
+                    }
+                    else if (response == '') {
+                        AddOption("No customer exists", "-1", "#ddlInvoiceCustomer");
+                        $('#btnGenerate').prop('disabled', true);
+                    }
+                    for (var i in response) {
+                        //ARBS-133
+                        AddOption(response[i].CustomerNameCodeAndShortName, response[i].InvoiceCustomerId, "#ddlInvoiceCustomer");
+                    }
+                } else {
+                    AddOption("ALL", "-1", "#ddlInvoiceCustomer");
+                    $("#spinnerUnApprovedItems").hide();
+                    HideProgress("spinnerUnApprovedItems");
+                }
+                $("#spinnerUnApprovedItems").hide();
+                HideProgress("spinnerUnApprovedItems");
+            });       
+    }
+
+    //Get division list based on company selection
+    function GetDivisionList(companyID) {        
+            $.post("/Report/GetDivisionList", companyID, function (response) {                
+                
+                $("#spinnerUnApprovedItems").show();
+                ShowProgress("spinnerUnApprovedItems");
+
+                $("#ddlDivision").empty();
+                $("#ddlDivision").length = -1;
+
+                if (response != null) {
+
+                    if (response != '') {
+                        AddOption("ALL", "-1", "#ddlDivision");
+                        $('#btnGenerate').prop('disabled', false);
+                    }
+                    else if (response == '') {
+                        AddOption("No division exists", "-1", "#ddlDivision");
+                        $('#btnGenerate').prop('disabled', true);
+                    }
+                    for (var i in response) {
+                        AddOption(response[i].DivisionName, response[i].DivisionId, "#ddlDivision");
+                    }
+                } else {
+                    AddOption("ALL", "-1", "#ddlDivision");
+                }
+            });
+    }
+
+</script>

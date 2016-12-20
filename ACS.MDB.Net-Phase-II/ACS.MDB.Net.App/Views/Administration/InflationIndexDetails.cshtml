@@ -1,0 +1,60 @@
+﻿@model ACS.MDB.Net.App.Models.InflationIndex
+
+@{
+    ViewBag.Title = "Inflation Index Details";
+}
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+<div style="background: #F9F7FB">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+
+        //hidden field
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.InflationIndexId)
+
+        <table style="width: 100%">
+
+            <tr>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.IndexName, new { @class = "mandatoryLabel" })
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.IndexName, new { @maxlength = "3", style = "width:200px", @id = "txtIndexName" })
+                    <br />
+                    @Html.ValidationMessageFor(model => model.IndexName)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.Description, new { @class = "mandatoryLabel", })
+                </td>
+                <td>
+                    @Html.TextAreaFor(m => m.Description, 2, 1, new { @maxlength = 30, style = "width:200px; resize: none" })
+                    <br />
+                    @Html.ValidationMessageFor(m => m.Description)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.UseIndex)
+                </td>
+                <td>
+                    @Html.CheckBoxFor(m => m.UseIndex)
+                </td>
+            </tr>
+        </table>
+    }
+</div>
+
+<script type="text/javascript">
+
+    SetFocus('#txtIndexName');
+    DisableEnterKeyForControl('#txtIndexName');
+</script>

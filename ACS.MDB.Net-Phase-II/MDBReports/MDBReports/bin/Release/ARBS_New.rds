@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RptDataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="ARBS_New">
+  <ConnectionProperties>
+    <Extension>SQL</Extension>
+    <ConnectString>Data Source=QA-PC;Initial Catalog=ARBS_New</ConnectString>
+  </ConnectionProperties>
+  <DataSourceID>1802390b-a0a7-440b-b817-a29c198ff93a</DataSourceID>
+</RptDataSource>

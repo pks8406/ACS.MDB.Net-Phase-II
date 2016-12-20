@@ -1,0 +1,180 @@
+﻿@model ACS.MDB.Net.App.Models.ContractLine
+
+@{
+    ViewBag.Title = "Contract Details";
+}
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+<div style="background: #F9F7FB">
+
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.ContractLineID)
+        @Html.HiddenFor(m => m.ContractID)
+        @Html.HiddenFor(m => m.AccountId, new { @id = "txtAccountId" })
+
+        <table style="width: 100%">
+            <tr>
+                <td>
+                    @if (Model.ID > 0 && Model.IsJobCodeExist == false)
+                    {
+                        @Html.LabelForModel("Note: The Invoice Customer is changed for this Contract, Kindly update the Job Code accordingly.", new { style = "width:1000px;color:#004bff" })
+                    }
+                </td>
+            </tr>
+        </table>
+
+        <table style="width: 100%">
+            <tr></tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.ActivityCategory, new { @class = "mandatoryLabel" })
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.ActivityCategoryId, new SelectList(Model.ActivityCategoryList, "ID", "Description", Model.ActivityCategoryId), "Select Activity category", new { @id = "ddlActivityCategory", style = "width:315px;height:25px" })
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    @Html.ValidationMessageFor(model => model.ActivityCategoryId)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.ActivityCode, new { @class = "mandatoryLabel" })
+                </td>
+                <td>
+
+                    @Html.DropDownListFor(m => m.ActivityCodeId, new SelectList(Model.ActivityCodeList, "ID", "ActivityCodeName", Model.ActivityCodeId), "Select Activity code", new { @id = "ddlActivityCodeList", style = "width:315px;height:25px" })
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    @Html.ValidationMessageFor(model => model.ActivityCodeId)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.Account, new { @class = "mandatoryLabel" })
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.Account, new { @maxlength = "50", style = "width:302px", @id = "txtAccount", @readonly = "true", @class = "readOnlyTextBox" })
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2"></td>
+                @*<td>
+                    @Html.ValidationMessageFor(model => model.Account)
+                </td>*@
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.JobCode, new { @class = "mandatoryLabel" })
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.JobCodeId, new SelectList(Model.JobCodeList, "ID", "JobCodeName", Model.JobCodeId), "Select Job code", new { @id = "ddlJobCode", style = "width:315px;height:25px" })
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    @Html.ValidationMessageFor(model => model.JobCodeId)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.CostCenter, new { @class = "mandatoryLabel" })
+                </td>
+                <td>
+                    @Html.DropDownListFor(x => x.CostCenterId, new SelectList(Model.CostCentreList, "ID", "CostCenterName", Model.CostCenterId), "Select Cost centre", new { @id = "ddlCostcenter", style = "width:315px;height:25px" })
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    @Html.ValidationMessageFor(model => model.CostCenterId)
+                </td>
+            </tr>
+
+            @* <tr>
+                <td>
+                    @Html.LabelFor(m => m.QTY, new { @class = "mandatoryLabel" })
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.QTY, new { @maxlength = 4, style = "width:200px", @id = "txtQty" })
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    @Html.ValidationMessageFor(model => model.QTY)
+                </td>
+            </tr>*@
+        </table>
+
+    }
+</div>
+<script type="text/javascript">
+
+    SetFocus('#ddlActivityCategory');
+    DisableBackspaceKeyForControl('#txtAccount');
+    DisableSaveButton();
+
+    var selectedActivityCode = -1;
+
+    ///Gets the AccountCode based on ActivityCategory Id
+
+    $("#ddlActivityCodeList").change(function () {
+        selectedActivityCode = $(this).val();
+        //SetFocus('#txtAccount');
+
+        //if (selectedActivityCode = '' || selectedActivityCode == null) {
+        //    selectedActivityCode = 0;
+        //    alert(selectedActivityCode);
+        //}
+        if (selectedActivityCode != -1 && selectedActivityCode != 0) {
+            var postData = { ActivityCodeId: selectedActivityCode };
+            //Get account code and account id based on selected activity code
+            $.post("/Contract/GetAccountCode", postData, function (response) {
+                if (response != null) {
+                    $("#txtAccountId").val(response.AccountId);
+                    $("#txtAccount").val(response.AccountCode + "-" + response.OAAccountId);
+                }
+            });
+        }
+        else {
+            selectedActivityCode = 0;
+            $("#txtAccountId").val('0');
+            $("#txtAccount").val("");
+        }
+    })
+
+    //});
+    //var $form = $('#frmContractLineDetails');
+    //$.ajax({
+    //    url: '/Contract/GetAccountCode',
+    //    data: postData,
+    //    type: 'POST',
+    //    datatype: JSON,
+    //    success: function (response) {
+    //        $("#txtAccount").val(response.Account);
+    //        $("#txtAccountId").val(response.AccountId);
+
+    //        //$("#txtAccount").val(entityObj as ContractLine);
+    //    },
+    //    error: function (response, status, error) {
+    //        alert(response.statusText);
+    //    }
+    //});
+</script>

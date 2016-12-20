@@ -1,0 +1,62 @@
+﻿@model ACS.MDB.Net.App.Models.AboutUs
+@{
+    Layout = null;
+    ViewBag.Title = "About";
+}
+<link href="../../Content/themes/base/jquery.ui.all.css" rel="stylesheet" type="text/css" />
+<div>
+    <img src="~/Images/acs-logo.png" />
+    <h4>Advanced Computer Software Group</h4>
+    <hr />
+
+
+    Website : <a href="http://www.advancedcomputersoftware.com/" target="_blank">http://www.advancedcomputersoftware.com</a>
+    @*<br />*@
+    <table style="width: 40%">
+        <tr>
+            <td>
+                @Html.LabelFor(model => model.VersionNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.VersionNumber)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                @Html.LabelFor(model => model.LiveDate)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.LiveDate,string.Format(@ACS.MDB.Net.App.Common.Constants.INVALID_DATE, Model.LiveDate))
+            </td>
+            
+        </tr>
+        <tr>
+            <td>
+                <br/>
+                @Html.LabelFor(model => model.ReleaseNotes)
+            </td>
+            
+        </tr>
+        </table>
+    <div id="releaseNote" style="overflow-y:auto; height:130px;" >
+        <table style="width: 100%; margin: 0px">
+       <tr> 
+                <td>
+                    <ul>
+                        @foreach (var item in @Model.ReleaseNotes)
+                        {
+                            <li>@item.ToString()</li>
+                        }
+                    </ul>
+                </td>       
+            </tr>
+        </table>
+</div>
+
+    <div style="position: absolute; height: 30px; width: 100%; left: 0%; text-align: center;" >
+        <br />
+        <small style="padding-bottom:20%">© Copyright <a href="http://www.advancedcomputersoftware.com/" target="_blank">Advanced Computer Software Group plc</a> - All Rights Reserved  @DateTime.Now.Year
+        </small>
+    </div>
+
+</div>

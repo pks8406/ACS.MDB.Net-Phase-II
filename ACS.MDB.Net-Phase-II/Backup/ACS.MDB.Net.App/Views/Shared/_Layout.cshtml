@@ -1,0 +1,178 @@
+﻿@using ACS.MDB.Net.App.Common
+@using ACS.MDB.Net.App.Controllers
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title></title>
+    <center>
+          <meta charset="text/html; utf-8" />
+      @*  This meta tag will be used to refresh the page after 'sessionTimeOutInSeconds' seconds and redirect to login page if session is expire *@
+@*     <meta charset="text/html; utf-8" HTTP-EQUIV="Refresh" Content="@SessionHelper.SessionTimeOutInSeconds(Session);URL='@Url.Action("Logout", "Login")'" />*@
+    <title>@ViewBag.Title - Advanced Recurring Billing System (ARBS)</title>
+</center>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width" />
+
+    @*Added this tag to disable compatibility view for IE. If user changes browser version explicitly then also compatibiltiy view remains default.*@
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    @*Added this tag to prevent all phone numbers in internet browsers to appear in skype format.*@
+    <meta name="SKYPE_TOOLBAR" content="SKYPE_TOOLBAR_PARSER_COMPATIBLE" />
+
+    <link href="../../Content/themes/base/jquery.ui.all.css" rel="stylesheet" type="text/css" />
+    <link href="../../Content/jqsimplemenu.css" rel="stylesheet" type="text/css" />
+    <link href="/Content/demo_table.css" rel="stylesheet" />
+    <link href="/Content/demo_table_jui.css" rel="stylesheet" />
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script src="../../Scripts/jqsimplemenu.js" type="text/javascript"></script>
+    <script src="../../Scripts/CustomMDB.js" type="text/javascript"></script>
+    <script src="../../Scripts/CustomModeDialog.MDB.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+
+        //Function to disable save button on pop up
+        function DisableSaveButton() {
+            if ('@SessionHelper.GetUserType(Session)' == 'Viewer') {
+                $(".ui-dialog-buttonpane button:contains('Save')").button("disable");
+            }
+        }
+
+        // Function to disable New and Delete button
+        function DisableButton(control) {
+            if ('@SessionHelper.GetUserType(Session)' == 'Viewer') {
+
+                $(control).prop('disabled', true);
+            }
+        }
+
+        // Function to change caption of Edit button to View
+        function ChangeEditCaptionToView(control) {
+            if ('@SessionHelper.GetUserType(Session)' == 'Viewer') {
+
+                $(control).text("View");
+            }
+        }
+
+        //Function to download ARBS-Help.docx file
+        function DownloadARBSHelp() {
+                $.ajax({
+                    url: '/Help/IsHelpFileAvailable',
+                    type: 'POST',
+                    datatype:'text',
+                    success: function () {
+                        var downloadURL = "/Help/DownloadHelpFile";
+                        window.open(downloadURL);
+                    },
+                    error: function (response, status, error) {
+                        alert(response.statusText);
+                    }
+                });
+            }
+
+
+    </script>
+</head>
+
+<body>
+    <header>
+
+        <table style="width: 100%" id="headertable">
+            <tr>
+                <td colspan="2">
+                    <div style="background-color: #23487D; padding: 10px 0px 10px 0px">
+                        <nav>
+                            <ul class="menu">
+                                <li style="overflow: hidden"><a id="HomeMenu" href="/Home/Index">Home</a></li>
+                                @if (SessionHelper.GetUserType(Session).Equals("Admin") || SessionHelper.GetUserType(Session).Equals("SuperUser"))
+                                {
+                                    <li><a id="AdminMenu" href="#">Administration</a>
+                                        <ul style="z-index: 9999999">
+                                            <li><a href="/Administration/BillingLineTagIndex">Billing Lines Tags</a></li>
+                                            <li><a href="/Administration/ProductIndex">Product and Sub Product</a></li>
+                                            <li><a href="/Administration/InflationIndex">Manage Inflation Index</a></li>
+                                            <li><a href="/Administration/CurrencyIndex">Currency Exchange Rates</a></li>
+                                            <li><a href="/Administration/UserIndex">Manage Users</a></li>
+                                            <li><a href="/Administration/DivisionIndex">Manage Divisions</a></li>
+                                            <li><a href="/Administration/ProfitLossIndex">Manage P&L</a></li>
+                                            @*<li><a href="/Administration/OpenAccountIndex">OA Sync Data</a></li>*@
+                                            <li><a href="/Administration/AuditReasonIndex">Manage Audit Reason</a></li>
+                                        </ul>
+                                    </li>
+                                }
+
+                                <li><a id="ContractsMenu" href="#">Contracts</a>
+                                    <ul style="z-index: 9999999">
+                                        <li><a href="/Contract/ContractIndex">Contracts</a></li>
+                                        <li><a href="/Contract/ApproveMaintenanceIndex">Approve Maintenance</a></li>
+                                        <li><a href="/Contract/CustomerCommentIndex">Customer Comments</a></li>
+                                        <li><a href="/Contract/EndUserIndex">End User Maintenance</a></li>                                        
+                                        @if (SessionHelper.GetUserType(Session).Equals("Admin") || SessionHelper.GetUserType(Session).Equals("SuperUser") || SessionHelper.GetUserType(Session).Equals("Normal"))
+                                        { 
+                                            <li><a href="/Contract/OpenAccountIndex">OA Sync Data</a></li>
+                                        }
+                                        
+                                    </ul>
+                                </li>
+                                @if (SessionHelper.GetExecuteReportPermission(Session) == true)
+                                {
+                                    <li><a id="ReportsMenu" href="#">Reports</a>
+                                        <ul style="z-index: 9999999">
+                                            <li><a href="~/Report/DueYearDetail">Billing Detail - Coding</a></li>
+                                            <li><a href="~/Report/DueYearCustQuery">Billing Detail - Customer</a></li>
+                                            <li><a href="~/Report/MonthForecast">Backlog Report</a></li>
+                                            <li><a href="~/Report/CompletedContracts">Completed Contracts</a></li>
+                                            <li><a href="~/Report/InflationIndex">Inflation Report</a></li>
+                                            <li><a href="~/Report/UnapprovedItems">Outstanding Items</a></li>
+                                            <li><a href="~/Report/OutdatedStartDate">Outdated Start Date</a></li>
+                                            <li><a href="~/Report/OutdatedRiskDate">Outdated Risk Date</a></li>
+                                            <li><a href="~/Report/TheoreticalRevenueForecast">Theoretical Revenue Forecast</a></li>
+                                            <li><a href="~/Report/ActualRevenueForecast">Actual Revenue Forecast</a></li>
+                                        </ul>
+                                    </li>
+                                }
+                                @if (!string.IsNullOrEmpty(System.Configuration.ConfigurationManager.AppSettings["IsUATEnviroment"]))
+                                {
+                                    <li style="overflow: hidden">
+                                        <font color="#FF0000" size="+2"><marquee style="width: 300px"  bgcolor="yellow" >UAT/TRAINING </marquee></font>
+                                    </li>
+                                }
+                            </ul>
+                            
+                        </nav>
+                        
+                        <div id="changePasswordDialog" title="Change Password" style="overflow: hidden;"></div>
+                        <div id="aboutUsDialog" title="About Us" style="overflow: hidden;"></div>
+                        <div id="contactUsDialog" title="Contact Us" style="overflow: hidden;"></div>
+                        <div class="welcomeuser" id="divWelcome">
+
+                            <img style="cursor: pointer; margin-right: 4px;" height="13" width="20" border="0px" id="aboutUs" onclick="OpenAboutUs()" title="About Us" src="../../images/about_us.png">
+                            <img style="cursor: pointer; margin-right: 4px;" height="13" width="20" border="0px" id="contactUs" onclick="OpenContactUs()" title="Contact Us" src="../../images/contactus.png">
+                            <img style="cursor: pointer; margin-right: 4px;" height="13" width="20" border="0px" title="Page help" src="../../images/PageHelp24.png">
+                            <img style="cursor: pointer; margin-right: 4px;" height="13" width="20" border="0px" onclick="DownloadARBSHelp()" title="Help" src="../../images/Help24.png" />
+                            <img style="cursor: pointer; margin-right: 4px;" height="13" width="20" border="0px" id="changePassword" onclick="OpenChangePassword()" title="Change Password" src="../../images/ChangePassword.png" />
+                            @if (Request.IsAuthenticated)
+                            {
+                                <strong>User: @Html.Encode(User.Identity.Name)</strong>
+                                <a style="color: #fff; font-weight: bold" href='@Url.Action("Logout", "Login")'>Sign Out</a>
+                            }
+                        </div>
+                    </div>
+                    
+                </td>
+            </tr>
+        </table>
+    </header>
+    <div id="body">
+        @RenderSection("featured", required: false)
+        <section>
+            @RenderBody()
+        </section>
+    </div>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

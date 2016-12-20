@@ -1,0 +1,480 @@
+﻿@model ACS.MDB.Net.App.Models.Contract
+
+@{
+    ViewBag.Title = "MDB::Contract";
+}
+
+@section Scripts {
+    <script src="/Scripts/jquery.dataTables.js" type="text/javascript"></script>
+    <script src="/Scripts/jquery.dataTable.editTable.js" type="text/javascript"></script>
+
+    <script type="text/javascript" charset="utf-8">
+
+        var contractTbl = null;
+        var sImageUrl = "/Images/";
+        var anOpen = [];
+        //the company whose divisions need to be listed
+        var selectedCompanyId = '@ViewBag.companyId';
+        var selectedCompanyName = '';
+        var selectedInvoiceCustomerId = -1;
+        @*var selectedInvoiceCustomerId = '@ViewBag.invoiceCustomerId';*@
+
+        var defaultColumnDefs = [{ bSortable: false, aTargets: [0] }, { bVisible: true, aTargets: [1] }];
+        var columnDefs = [
+                { sWidth: '5%', bSortable: true, bVisible: false, aTargets: [0] },
+                {
+                    sWidth: '15%', bSortable: true, aTargets: [1],
+                    "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                        RedirectToEditContractDetails(contractTbl, iRow, nTd, sData);
+                    }
+                },
+                { sWidth: '30%', bSortable: true, aTargets: [2] },
+                { sWidth: '25%', bSortable: true, aTargets: [3] },
+                { sWidth: '12%', bSortable: true, aTargets: [4] },
+                { sWidth: '16%', bSortable: true, aTargets: [5] },
+                { sWidth: '5%', bSortable: true, aTargets: [6] },
+                 {
+                     sWidth: '1%',
+                     aTargets: [7],
+                     bSortable: false,
+                     sClass: "control center",
+                     sDefaultContent: '<img src="' + sImageUrl + 'details_open.png' + '" title = "Other Details">'
+                 },
+                { sWidth: '2%', bSortable: true, aTargets: [8], bVisible: false }
+        ];
+
+        //setup the table and other features required for this page
+        $(document).ready(function () {
+
+            //Disable cache
+            $.ajaxSetup({ cache: false });
+
+            contractTbl = $('#contract_tbl').editTable({
+                sListURL: '/Contract/ContractList',
+                fnServerData: ContractListParameter,
+                //sDeleteURL: '',
+                //sAddURL: '/Contract/ContractSave',
+                //sUpdateURL: '/Contract/ContractSave',
+                //sNewDialogLoadURL: '/Contract/ContractCreate',
+                //sEditDialogLoadURL: '/Contract/ContractEdit',
+                sDialogDivId: 'contractMaintenance_dialog',
+                //sToolbarSelector: '#div_toolbar',
+                //sAddButtonId: 'btn_newcontract',
+                //sEditButtonId: 'btn_editcontract',
+                //sDeleteButtonId: 'btn_deletecontract',
+                //iDialogWidth: 1000,
+                //iDialogHeight: 300,
+                bAutoWidth: false,
+                oColumnDefs: columnDefs,
+                //bProcessing: true,
+                sEntityName: 'Contract'
+            });
+
+            //Set default focus on search text box and Disable invalid keys for search text box (Keys like <,>,~)
+            SetFocus('#contract_tbl_filter label input:text');
+            DisableInvalidKeyForControl('#contract_tbl_filter label input:text');
+
+            //hide grid toobar, also hide save/cancle button
+            contractTbl.fnShowToolBar(false);
+
+            //If no invoice customer is associated with company
+            if ('@Model.InvoiceCustomerList.Count' <= 0) {
+                $("#ddlInvoiceCustomer").children('option').filter(':selected').text('No customer exists');
+                showToolBar(false);
+            }
+            @*if ('@Model.InvoiceCustomerList.Count' > 0) {
+                $("#ddlInvoiceCustomer").children('option').filter(':selected').text('ALL');
+            }
+            else {
+                $("#ddlInvoiceCustomer").children('option').filter(':selected').text('No customer exists');
+            }*@
+
+            // function called to handle the change in selection
+            // of a company.
+            $("#ddlCompany").change(function () {
+                selectedCompanyId = $(this).val();
+                selectedCompanyName = $(this).children('option').filter(':selected').text();
+
+                if (selectedCompanyName == "Select Company") {
+                    selectedCompanyId = -1;
+                }
+
+                if (selectedCompanyId != -1 && selectedCompanyId != 0) {
+                    showToolBar(true);
+                    var companyID = { companyId: selectedCompanyId };
+
+                    selectedInvoiceCustomerId = -1;
+
+                    //Get list of customers associated with company
+                    GetInvoiceCustomerForContract(companyID);
+
+                    //Redraw table
+                    contractTbl.fnPageChange(0, false);
+                    contractTbl.fnDraw(false);
+                }
+
+                else {
+                    $("#ddlInvoiceCustomer").empty();
+                    selectedCompanyId = 0;
+                    AddOption("Select Invoice Customer", "-1", "#ddlInvoiceCustomer");
+                    selectedInvoiceCustomerId = -1;
+                    showToolBar(false);
+
+                    //Clear the table
+                    contractTbl.fnClearTable();
+                }
+            })
+
+
+            // function called to handle the change in selection
+            // of a invoice Customer.
+            $("#ddlInvoiceCustomer").change(function () {
+
+                selectedInvoiceCustomerId = $(this).val();
+
+                if (selectedInvoiceCustomerId != -1 && selectedInvoiceCustomerId != 0) {
+
+                    //contractTbl.fnShowToolBar(true);
+
+                    //Redraw table
+                    contractTbl.fnPageChange(0, false);
+                    contractTbl.fnDraw(false);
+
+                }
+                else {
+                    //Clear the table
+                    contractTbl.fnClearTable();
+                }
+            });
+        });
+
+        //Get invoice customer list based on company selection
+        function GetInvoiceCustomerForContract(companyID) {
+            $.post("/Contract/GetInvoiceCustomerList", companyID, function (response) {
+                $("#ddlInvoiceCustomer").empty();
+                $("#ddlInvoiceCustomer").length = -1;
+
+                if (response != null) {
+                    if (response != '') {
+                        AddOption("ALL", "-1", "#ddlInvoiceCustomer");
+                        showToolBar(true);
+                    }
+                    else if (response == '') {
+                        AddOption("No customer exists", "-1", "#ddlInvoiceCustomer");
+                        showToolBar(false);
+                    }
+
+                    for (var i in response) {
+                        AddOption(response[i].CustomerNameCodeAndShortName, response[i].InvoiceCustomerId, "#ddlInvoiceCustomer");
+                    }
+                    //Redraw the Table
+                    contractTbl.fnDraw(false);
+                } else {
+                    AddOption("ALL", "-1", "#ddlInvoiceCustomer");
+                }
+            });
+        }
+
+        // Function used to pass any additional parameters required
+        // for the List function
+        function ContractListParameter(sSource, aoData, fnCallBack) {
+
+            selectedInvoiceCustomerId = $("#ddlInvoiceCustomer").val();
+
+            //add the additional data to be sent to the server
+            aoData.push({ "name": "companyId", "value": selectedCompanyId });
+            aoData.push({ "name": "invoiceCustomerId", "value": selectedInvoiceCustomerId == "" ? -1 : selectedInvoiceCustomerId });
+
+            $.getJSON(sSource, aoData, function (json) {
+            }).done(function (json) {
+
+                fnCallBack(json);
+
+            }).fail(function (json) {
+                DisplayErrorMessage(json, false);
+            });
+        }
+
+        //Function to redirect to contract details page to create new contract
+        function RedirectToNewContract() {
+
+            var companyId = $("#ddlCompany").val();
+            var companyName = $("#ddlCompany").children('option').filter(':selected').text();
+
+            if (companyId != -1 && companyId != 0) {
+                window.location.href = "@Url.Action("ContractDetails", "Contract")" + "?companyId=" + companyId;
+        }
+        else {
+            alert("Please select company");
+        }
+    }
+
+    //Function to redirect to contract details page to edit coding lines (cotract lines)
+    function RedirectToEditContract() {
+
+        var companyId = $("#ddlCompany").val();
+        var companyName = $("#ddlCompany").children('option').filter(':selected').text();
+
+        var rowId = fnGetSelectedRowIndex();
+        //var rowId = $('#contract_tbl').find('tr.row_selected').index();
+        var selectedcontractId = rowId;
+
+        if (companyId != -1 && companyId != 0) {
+
+            if (selectedcontractId != -1) {
+                selectedcontractId = contractTbl.fnGetData(rowId, 0);
+                window.location.href = "@Url.Action("ContractDetails", "Contract")" + "?companyId=" + companyId + "&contractId=" + selectedcontractId;
+                return false;
+            }
+            else {
+                alert("Please select record");
+            }
+        }
+        else {
+            alert("Please select company");
+        }
+    }
+
+    //Function to provide hyperlink to open edit contract page on selecting row in datatable
+    function RedirectToEditContractDetails(tbl, iRow, nTd, sData) {
+
+        //var b = $('<a href=' + sData + '>' + sData + '</a>');
+        var b = $('<a href=' + '' + '>' + sData + '</a>');
+
+        //Function called after click on link 
+        b.on('click', function () {
+
+            //remove the selection of the currently selected row
+            tbl.$('tr.row_selected').removeClass('row_selected');
+
+            $(this).closest('tr').addClass('row_selected');
+
+            RedirectToEditContract(iRow);
+            return false;
+        });
+
+        $(nTd).empty();
+        $(nTd).prepend(b);
+    }
+
+    //Set the menu item as selected
+    HighlightSelectedMenuItem("ContractsMenu")
+
+    //Set the company id. Incase we are coming back from details page after save.
+    if (selectedCompanyId != -1) {
+        //if (contractTbl != null) { contractTbl.fnClearTable(true); }
+        $("#ddlCompany").val(selectedCompanyId).selected = true;
+        //$("#ddlInvoiceCustomer").val(selectedInvoiceCustomerId).selected = true;
+        showToolBar(true);
+    }
+    else {
+        showToolBar(false);
+    }
+
+    //Show/hide new and edit button
+    function showToolBar(show) {
+        if (show) {
+            $('#btnNew').prop('disabled', false);
+            $('#btnView').prop('disabled', false);
+            $('#btnDelete').prop('disabled', false);
+
+            //Disable controls for viewer
+            DisableButton("#btnNew");
+            DisableButton("#btnDelete");
+            DisableButton("#btnCopyContract");
+        }
+        else {
+            $('#btnNew').prop('disabled', true);
+            $('#btnView').prop('disabled', true);
+            $('#btnDelete').prop('disabled', true);
+        }
+    }
+
+    function fnGetSelectedRowIndex() {
+        var index = -1;
+        var aTrs = contractTbl.fnGetNodes();
+
+        for (var i = 0; i < aTrs.length; i++) {
+            if ($(aTrs[i]).hasClass('row_selected')) {
+                index = i;
+                break;
+            }
+        }
+        return index;
+    }
+
+    //to display maintenance billing lines of a contract on image click
+    $('#contract_tbl td.control').live('click', function () {
+        var tableRowId = "", nTr = "";
+        nTr = this.parentNode;
+        var i = $.inArray(nTr, anOpen);
+        tableRowId = fnGetSelectedRowIndex();
+        if (i === -1) {
+            MaintenanceDetails(tableRowId, nTr);
+            $('img', this).attr('src', sImageUrl + "details_close.png");
+            tableRowId = "";
+            nTr = "";
+        }
+        else {
+            $('img', this).attr('src', sImageUrl + "details_open.png");
+            $('div.innerDetails', $(nTr).next()[0]).slideUp(function () {
+                contractTbl.fnClose(nTr);
+                anOpen.splice(i, 1);
+                tableRowId = "";
+                nTr = "";
+            });
+        }
+
+    });
+
+    //to get maintenance billing lines based on selected Contract
+    function MaintenanceDetails(tableRowId, nTr) {
+        var data = '';
+        var contractId = contractTbl.fnGetData(tableRowId, 0);
+        var postData = { contractId: contractId };
+        $.ajax({
+            url: '/Contract/GetContractMaintenanceDetailsBasedOnContractId',
+            data: postData,
+            type: 'POST',
+            success: function (response) {
+                data = contractTbl.fnGetData(tableRowId, 8);
+                data = response;
+                var nDetailsRow = contractTbl.fnOpen(nTr, fnFormatDetails(contractTbl, nTr, data), 'details');
+                $('div.innerDetails', nDetailsRow).slideDown();
+                anOpen.push(nTr);
+            },
+
+        });
+    }
+
+
+    //returns billing lines for selected contract
+    function fnFormatDetails(oTable, nTr, data) {
+        var oData = oTable.fnGetData(nTr);
+        var sOut = '<div class="innerDetails" style=" border:none">'
+                    + data +
+                    '</div>';
+        return sOut;
+    }
+
+
+    //Delete contract
+    function DeleteContract() {
+        var rowId = $('#contract_tbl').find('tr.row_selected').index();
+        if (rowId != -1) {
+            var answer = confirm('@ACS.MDB.Net.App.Common.Constants.DELETE_MESSAGE_FOR_CONTRACT');
+            if (answer) {
+
+                var postData = { Ids: contractTbl.fnGetData(rowId, 0) };
+                $.ajax({
+                    url: '/Contract/ContractDelete',
+                    type: 'POST',
+                    data: postData,
+                    traditional: true,
+                    success: function (response) {
+                        contractTbl.fnDraw(false);
+                    },
+                    error: function (response, status, error) {
+                        DisplayErrorMessage(response, true);
+                    }
+                });
+            }
+        }
+        else {
+            alert("Please select record");
+        }
+    }
+
+    //Function to Copy contract and associated details
+    function CopyContract() {
+        var rowId = $('#contract_tbl').find('tr.row_selected').index();
+        var selectedcontractId = rowId;
+
+        $("#spinnerCopyContract").show();
+        ShowProgress("spinnerCopyContract");
+
+        if (selectedcontractId != -1) {
+            var postData = { contractId: contractTbl.fnGetData(rowId, 0) };
+            $.ajax({
+                url: '/Contract/SaveContractCopy',
+                type: 'POST',
+                data: postData,
+                traditional: true,
+                success: function (response) {
+                    HideProgress("spinnerCopyContract");
+                    $("#spinnerCopyContract").hide();
+                    contractTbl.fnDraw(false);
+                },
+                error: function (response, status, error) {
+                    HideProgress("spinnerCopyContract");
+                    $("#spinnerCopyContract").hide();
+                    DisplayErrorMessage(response, true);
+                }
+            });
+        }
+        else {
+            HideProgress("spinnerCopyContract");
+            $("#spinnerCopyContract").hide();
+            alert("Please select record");
+        }
+    }
+
+    </script>
+}
+
+@Html.HiddenFor(m => m.CompanyId)
+@Html.HiddenFor(m => m.ID)
+<div class="pageTitle">
+    Contract<hr />
+</div>
+<table style="width: 100%">
+    <tr>
+        <td colspan="2">
+            <table style="margin-bottom: 10px; margin-top: 0px; width: 100%">
+                <tr>
+                    <td>@Html.Partial("CompanyList")</td>
+
+                    <td>
+                        <div>
+                            @Html.Label("Select Invoice Customer:", new { @class = "labelforDropdownList" })
+
+                            @Html.DropDownListFor(model => model.InvoiceCustomerId, new SelectList(Model.InvoiceCustomerList, "ID", "CustomerNameCodeAndShortName",
+                                             Model.InvoiceCustomerId), "ALL",
+                                             new { @id = "ddlInvoiceCustomer", style = "width:450px;height:25px", @tabindex = "2" })
+                        </div>
+                    </td>
+
+                    <td style="text-align: right;">
+                        <button id="btnCopyContract" value="Copy" onclick="CopyContract(); return false;">Copy</button>
+                        <button id="btnNew" value="New" onclick="RedirectToNewContract(); return false;">New</button>
+                        <button id="btnView" value="New" onclick="RedirectToEditContract(); return false;">Billing Details</button>
+                      @*   Khushboo
+                        ARBS-128-Don't allow user to delete contract
+                        <button id="btnDelete" value="Delete" onclick="DeleteContract(); return false;">Delete</button>*@
+                    </td>
+                </tr>
+            </table>
+            <div>
+                <table cellpadding="0" cellspacing="0" border="0" class="display" id="contract_tbl" width="100%">
+                    <thead>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.ID) </th>
+                            <th>@Html.DisplayNameFor(model => model.ContractNumber) </th>
+                            <th>@Html.DisplayNameFor(model => model.InvoiceCustomer) </th>
+                            <th>@Html.DisplayNameFor(model => model.EndUser) </th>
+                            <th>@Html.DisplayNameFor(model => model.POReferenceNumber) </th>
+                            <th>@Html.DisplayNameFor(model => model.DivisionName) </th>
+                            <th>@Html.DisplayNameFor(model => model.Currency) </th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div id="contractMaintenance_dialog" title="Contract Maintenance Line"></div>
+        </td>
+    </tr>
+</table>
+<div id="spinnerCopyContract" style="display: none; width: 100%; height: 100%; position: fixed; text-align: center; border: 0px; vertical-align: central; left: 0; top: 0; z-index: 1000; background: rgb(255,255,255) url('/Images/Loading.gif') 50% 50% no-repeat; -ms-filter: 'alpha(opacity = 50)'; filter: alpha(opacity=50); opacity: 0.6; }" />

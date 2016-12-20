@@ -1,0 +1,248 @@
+﻿@using ACS.MDB.Net.App.Common
+@model ACS.MDB.Net.App.Models.UserModel
+
+@{
+    ViewBag.Title = "Manage User";
+}
+
+<style type="text/css">
+    td { padding-bottom: 1px; border: 0 none; }
+</style>
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+<style type="text/css">
+    .companyCheckBox { width: auto; }
+</style>
+
+<div id="ManageUser">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true);
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.NewPassword)
+        @Html.HiddenFor(m => m.ConfirmPassword)
+        
+        <table style="width: 100%">
+            <tr>
+                <td style="vertical-align: top; width: 58%; height: 100%">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="width: 100px">
+                                @Html.LabelFor(m => m.EmailId, new { @class = "mandatoryLabel" })
+                            </td>
+                            <td>
+                                @if (Model.ID == 0)
+                                {
+                                    @Html.TextBoxFor(m => m.EmailId, new { @maxlength = "50", style = "width:280px;", @id = "txtEmailId" })
+                                }
+                                else
+                                {
+                                    if (Model.UserType == Constants.SUPER_USER)
+                                    {
+                                        @Html.TextBoxFor(m => m.EmailId, new { @maxlength = "50", style = "width:280px;",  @id = "txtEmailId" })
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBoxFor(m => m.EmailId, new { @maxlength = "50", style = "width:280px;", @readonly = true, @class = "readOnlyTextBox", @id = "txtEmailId" })
+                                    }
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                @Html.ValidationMessageFor(m => m.EmailId)
+                            </td>
+                        </tr>
+
+                        @if (Model.ID == 0)
+                        {
+                            <tr>
+                                <td style="width: 100px">
+                                    @Html.LabelFor(m => m.Password, new { @class = "mandatoryLabel" })
+                                </td>
+                                <td>
+                                    @Html.PasswordFor(m => m.Password, new { @minlength = "6", @maxlength = "15", style = "width:280px;" })
+                                </td>
+                            </tr>
+                
+                            <tr>
+                                <td></td>
+                                <td style="width: auto">@Html.ValidationMessageFor(m => m.Password) </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @Html.HiddenFor(m => m.Password, new { style = "width:300px;" })
+                        }
+                        <tr>
+                            <td style="width: 100px">
+                                @Html.LabelFor(m => m.UserName, new { @class = "mandatoryLabel" })
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => m.UserName, new { @id = "txtUserName", @maxlength = "50", style = "width:280px;" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>@Html.ValidationMessageFor(model => model.UserName)</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 100px">
+                                @Html.LabelFor(m => m.UserType, new { @class = "mandatoryLabel" })
+                            </td>
+                            <td>
+                                @if (Model.UserType == Constants.SUPER_USER)
+                                {
+                                    @Html.HiddenFor(m => m.UserType, new SelectList(Model.UserTypeList))
+                                    @Html.DropDownListFor(m => m.UserType, new SelectList(Model.UserTypeList), new { style = "width:150px;height:25px;margin-bottom:8px",disabled = "disabled"})
+                                }
+                                else
+                                {
+                                    @Html.DropDownListFor(m => m.UserType, new SelectList(Model.UserTypeList), new { style = "width:150px;height:25px;margin-bottom:8px" })
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td style="width: 120px">
+                                @Html.LabelFor(m => m.DefaultCompanyId, new { @class = "mandatoryLabel" })
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(m => m.DefaultCompanyId,
+                                new SelectList(Model.CompanyList, "ID", "Name"), "Select Company", new { @id = "ddlCompany", @style = "width:200px;height:25px" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>@Html.ValidationMessageFor(model => model.DefaultCompanyId)</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="text-align: left">
+                                  @if (Model.UserType == Constants.SUPER_USER)
+                                  {
+                                      @Html.HiddenFor(m => m.IsActive)
+                                      @Html.CheckBoxFor(m => m.IsActive, new { disabled = "disabled" })
+                                      @Html.LabelFor(m => m.IsActive, new { style = "padding-right: 5px;" })
+
+                                      @Html.HiddenFor(m => m.CanExecuteReport)
+                                      @Html.CheckBoxFor(m => m.CanExecuteReport, new { disabled = "disabled" })
+                                      @Html.LabelFor(m => m.CanExecuteReport)
+                                  }
+                                  else
+                                  {
+                                      @Html.CheckBoxFor(m => m.IsActive)
+                                      @Html.LabelFor(m => m.IsActive, new { style = "padding-right: 5px;"})
+
+                                      @Html.CheckBoxFor(m => m.CanExecuteReport)
+                                      @Html.LabelFor(m => m.CanExecuteReport)
+                                  }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="text-align: left"></td>
+                        </tr>
+                    </table>
+                </td>
+
+                <td style="border: solid; border-width: 1px;">
+                    @*                    <table>
+                        <tr>
+                            <td colspan="2" style="background-color: ActiveBorder">Associated Company(s)
+                            </td>
+
+                        </tr>
+                    </table>*@
+
+                    <table style="width: 100%;">
+                        <tr>
+                            @*<td colspan="2" style="background-color: ActiveBorder">Associated Company(s)*@
+                            <td colspan="2" style="background-color: ActiveBorder">Associated Company(s)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                @Html.CheckBoxFor(m => m.IsCheckAll, new { @id = "chkSelectAll", @onclick = "CheckAll();" })
+                                @Html.LabelFor(m => m.IsCheckAll)
+                                <hr />
+                            </td>
+                        </tr>
+                    </table>
+
+                    <div style="height: 220px; width: 100%; overflow-y: auto;">
+                        <table style="width: 100%">
+                            @for (int i = 0; i < Model.CompanyList.Count(); i++)
+                            {
+                                <tr>
+                                    <td colspan="2">
+                                        @Html.CheckBoxFor(m => m.CompanyList[i].IsSelected,
+                                            new { @onclick = "IsAllCompanySelected();", @class = "companyCheckBox", @id = Model.CompanyList[i].ID })
+                                        @Html.HiddenFor(m => m.CompanyList[i].ID)
+                                        @Html.LabelForModel(Model.CompanyList[i].Name)
+                                        @*@Html.Label(Model.CompanyList[i].Name)*@
+                                        <br />
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        
+
+    }
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        if ('@Model.ID' > 0) {
+
+            if ('@Model.UserType' == '@ACS.MDB.Net.App.Common.Constants.SUPER_USER') {
+                SetFocus('#txtEmailId');
+            } else {
+                SetFocus('#txtUserName');
+            }
+        } else {
+            SetFocus('#txtEmailId');
+        }
+    });
+
+    function CheckAll() {
+        var checkAll = document.getElementById("chkSelectAll").checked;
+        $(':checkbox').each(function () {
+            if ((this.className == "companyCheckBox") || (this.className == "companyCheckBox valid")) {
+                this.checked = checkAll;
+            }
+        });
+    }
+
+    // If all comapnies check box are selected then select Select All Company  check box
+    function IsAllCompanySelected() {
+        $(':checkbox').each(function () {
+            if ((this.className == "companyCheckBox") || (this.className == "companyCheckBox valid")) {
+                var select = this.checked;
+                if (!select) {
+                    $('#chkSelectAll').prop('checked', false);
+                    return false;
+                }
+                else {
+                    $('#chkSelectAll').prop('checked', true);
+                }
+            }
+        });
+    }
+</script>

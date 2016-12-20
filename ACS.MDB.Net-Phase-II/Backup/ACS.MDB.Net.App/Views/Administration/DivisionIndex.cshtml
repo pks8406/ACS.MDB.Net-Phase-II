@@ -1,0 +1,148 @@
+﻿@model ACS.MDB.Net.App.Models.Division
+
+@{
+    ViewBag.Title = "MDB:: Manage Divison";
+}
+
+@section Scripts {
+    <script src="/Scripts/jquery.dataTables.js" type="text/javascript"></script>
+    <script src="/Scripts/jquery.dataTable.editTable.js" type="text/javascript"></script>
+
+    <script type="text/javascript" charset="utf-8">
+
+        // the division data table
+        var divisionTbl = null;
+
+        //the company whose divisions need to be listed
+        var selectedCompanyId = -1;
+        var selectedCompanyName = '';
+
+        var columnDefs = [
+                { sWidth: '5%', bSortable: false, bVisible: false, aTargets: [0] },
+                { sWidth: '10%', bSortable: true, bVisible: false, aTargets: [1] },
+                {
+                    sWidth: '30%', aTargets: [2], "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                        OpenEditDialog(divisionTbl, iRow, nTd, sData);
+                    }
+                },
+                { sWidth: '10%', aTargets: [3] },
+                { sWidth: '10%', aTargets: [4] },
+                { sWidth: '10%', aTargets: [5] },
+                { sWidth: '10%', aTargets: [6] },
+                { sWidth: '10%', aTargets: [7] }
+        ];
+
+        //setup the table and other features required for this page
+        $(document).ready(function () {
+
+            //Disable cache
+            $.ajaxSetup({ cache: false });
+            divisionTbl = $('#division_tbl').editTable({
+                sListURL: '/Administration/DivisionList/',
+                fnServerData: DivisionListParameter,
+                sAddURL: '/Administration/DivisionSave',
+                sUpdateURL: '/Administration/DivisionSave',
+                sNewDialogLoadURL: '/Administration/DivisionCreate/',
+                sEditDialogLoadURL: '/Administration/DivisionEdit',
+                sDialogDivId: 'division_dialog',
+                sToolbarSelector: '#div_toolbar',
+                sAddButtonId: 'btn_newdivision',
+                sEditButtonId: 'btn_editdivision',
+                iDialogWidth: 500,
+                iDialogHeight: 450,
+                bAutoWidth: false,
+                oColumnDefs: columnDefs,
+                sEntityName: 'Division',
+                iDialogOffset: 450
+            });
+
+            //Set default focus on search text box and Disable invalid keys for search text box (Keys like <,>,~)
+            SetFocus('#division_tbl_filter label input:text');
+            DisableInvalidKeyForControl('#division_tbl_filter label input:text');
+
+            //Hide datatable toolbar
+            divisionTbl.fnShowToolBar(false);
+
+            // function called to handle the change in selection
+            // of a company.
+            $("#ddlCompany").change(function () {
+                selectedCompanyId = $(this).val();
+                selectedCompanyName = $(this).children('option').filter(':selected').text();
+                divisionTbl.fnPageChange(0, false);
+
+                if (selectedCompanyId != -1 && selectedCompanyId != 0) {
+                    divisionTbl.fnShowToolBar(true);
+                    var newDialaogUrl = '/Administration/DivisionCreate?companyId=' + selectedCompanyId + '&companyName=' + escape(selectedCompanyName);
+                    divisionTbl.fnSetNewDialogURL(newDialaogUrl);
+                    divisionTbl.fnDraw(false);
+                }
+                else {
+                    divisionTbl.fnShowToolBar(false);
+                    divisionTbl.fnDraw(false);
+                }
+            })
+
+        });
+
+        //Set the menu item as selected
+        HighlightSelectedMenuItem("AdminMenu")
+
+        // Function used to pass any additional parameters required
+        // for the List function
+        function DivisionListParameter(sSource, aoData, fnCallBack) {
+            //add the additional data to be sent to the server
+            aoData.push({ "name": "companyId", "value": selectedCompanyId });
+            $.getJSON(sSource, aoData, function (json) {
+            }).done(function (json) {
+                fnCallBack(json);
+
+            }).fail(function (json) {
+
+                DisplayErrorMessage(json, false);
+            });
+        }
+    </script>
+}
+
+<div class="pageTitle">
+    Manage Division
+    <hr />
+</div>
+
+<table style="width: 100%">
+    <tr>
+        <td colspan="2">
+            <table style="margin-bottom: 10px; margin-top: 0px; width: 100%">
+                <tr>
+                    <td>@Html.Partial("CompanyList")  </td>
+                    <td style="text-align: right;">
+                        <div id='div_toolbar' class="DatatableGridButtonStyle" style="margin-top: 0px;"></div>
+                    </td>
+                </tr>
+            </table>
+
+            <div id="division_dialog" title="Add division"></div>
+            <div>
+                <table cellpadding="0" cellspacing="0" border="0" class="display" id="division_tbl" width="100%">
+
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="selectall" />
+                            </th>
+                            <th>@Html.DisplayNameFor(model => model.ID) </th>
+                            <th>@Html.DisplayNameFor(model => model.DivisionName) </th>
+                            <th>@Html.DisplayNameFor(model => model.DocumentTypeCR)</th>
+                            <th>@Html.DisplayNameFor(model => model.DocumentTypeIN)</th>
+                            <th>@Html.DisplayNameFor(model => model.DocumentTypeDepositInvoices)</th>
+                            <th>@Html.DisplayNameFor(model => model.DocumentTypeDepositCredits)</th>
+                            <th>@Html.DisplayNameFor(model => model.IsActive) </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </td>
+    </tr>
+</table>

@@ -1,0 +1,106 @@
+﻿@model ACS.MDB.Net.App.Models.ReportModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Inflation Index Report</title>
+    @*<style type="text/css">
+        #reportFrame
+        {
+            width: 1325px;
+            height: 450px;
+        }
+    </style>*@
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.datepicker').datepicker({
+                showOptions: { speed: 'fast' },
+                //changeDay: true,
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: 'dd/mm/yy',
+                //gotoCurrent: false,
+                showOn: 'button',
+                onClose: function () { $(this).valid(); },
+                buttonImage: '../../images/Calender1.png',
+                buttonImageOnly: true
+            });
+
+            SetFocus('#txtStartDate');
+
+        });
+
+        //Set the menu item as selected
+        HighlightSelectedMenuItem("ReportsMenu")
+    </script>
+</head>
+
+@{
+    ViewBag.Title = "Reports";
+}
+<body>
+    <div class="pageTitle">
+        Inflation Report
+    <hr />
+    </div>
+    @using (Html.BeginForm("GenerateInflationReport", "Report", FormMethod.Post))
+    {
+        @Html.ValidationSummary(true)
+
+        <div id="InputParametes" style="border: solid; border-width: 1px; width: auto; margin: 0 auto; text-align: center">
+
+            <table style="margin: 0 auto; width: 90%; text-align: left">
+                <tr>
+                    <td>@Html.LabelFor(model => model.StartDate, new { @class = "mandatoryLabel" })</td>
+
+                    <td style="text-align: left; width: 175px">
+                        @Html.TextBoxFor(m => m.StartDate, string.Format(@ACS.MDB.Net.App.Common.Constants.DATE_FORMAT_FOR_VIEWPAGE, Model.StartDate), 
+                        new { style = "width:130px", @class = "datepicker", @id= "txtStartDate", @tabindex = "1" })
+                    </td>
+
+                    <td>@Html.LabelFor(model => model.EndDate, new { @class = "mandatoryLabel" })</td>
+
+                    <td style="text-align: left; width: 175px">
+                        @Html.TextBoxFor(m => m.EndDate, string.Format(@ACS.MDB.Net.App.Common.Constants.DATE_FORMAT_FOR_VIEWPAGE, Model.EndDate), 
+                        new { style = "width:130px", @class = "datepicker", @tabindex = "2" })
+                    </td>
+                    <td>@Html.LabelFor(model => model.CompanyName)</td>
+
+                    <td>@Html.DropDownList("CompanyID",
+                         new SelectList(Model.OAcompanyList, "ID", "NameWithID", Model.CompanyID), "ALL",
+                         new { @class = "DropdownListStyle", @tabindex = "3" })</td>
+
+                    <td style="text-align: right">
+                        <button value="Generate" type="submit", tabindex="4" />
+                        Generate
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td style="text-align: left; width: 150px">
+                        @Html.ValidationMessageFor(m => m.StartDate)
+                    </td>
+                    <td></td>
+                    <td style="text-align: left; width: 150px">
+                        @Html.ValidationMessageFor(m => m.EndDate)
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    }
+    <div>
+        @if (Model != null && Model.StartDate != null && Model.EndDate != null)
+        {
+            <iframe id="reportFrame" name="reportFrame" src="~/Reports/InflationIndexUplift.aspx?StartDate=@Model.StartDate&EndDate=@Model.EndDate&CompanyID=@Model.CompanyID&UserID=@Model.UserID" style="height:70%;width:99%;position:absolute; border:none"></iframe>
+        }
+    </div>
+</body>
+</html>

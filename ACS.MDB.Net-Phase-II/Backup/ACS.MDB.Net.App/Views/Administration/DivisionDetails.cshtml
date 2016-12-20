@@ -1,0 +1,132 @@
+﻿@model ACS.MDB.Net.App.Models.Division
+
+@{
+    ViewBag.Title = "Division Details";
+}
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+<div style="background: #F9F7FB">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+
+        //hidden field
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CompanyId)
+
+        <table style="width: 100%">
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.CompanyName)
+                </td>
+                <td>
+                    <b>@Html.DisplayFor(m => m.CompanyName, new { style = "width:200px" })</b>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.DivisionName, new { @class = "mandatoryLabel" })
+                </td>
+                <td style="padding: 0px;">
+                    @Html.TextBoxFor(m => m.DivisionName, new { @maxlength = "50", style = "width:200px", @id = "txtDivisionName" })
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="padding-left: 0px;">
+                    @Html.ValidationMessageFor(model => model.DivisionName)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m =>m.DocumentTypeCR, new { @class = "mandatoryLabel" })
+                </td>
+                <td style="padding: 0px;">
+                    @Html.TextBoxFor(m => m.DocumentTypeCR, new { @maxlength = "10", style = "width:100px", @id = "txtDocumentTypeCR" })
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="padding-left: 0px;">
+                    @Html.ValidationMessageFor(model => model.DocumentTypeCR)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m =>m.DocumentTypeIN, new { @class = "mandatoryLabel" })
+                </td>
+                <td style="padding: 0px;">
+                    @Html.TextBoxFor(m => m.DocumentTypeIN, new { @maxlength = "10", style = "width:100px", @id = "txtDocumentTypeIN" })
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="padding-left: 0px;">
+                    @Html.ValidationMessageFor(model => model.DocumentTypeIN)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.DocumentTypeDepositInvoices, new { @class = "mandatoryLabel" })
+                </td>
+                <td style="padding: 0px;">
+                    @Html.TextBoxFor(m => m.DocumentTypeDepositInvoices, new { @maxlength = "10", style = "width:100px", @id = "txtDocumentTypeDepositIN" })
+                </td>
+            </tr>
+             <tr>
+                <td></td>
+                <td style="padding-left: 0px;">
+                    @Html.ValidationMessageFor(model => model.DocumentTypeDepositInvoices)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.DocumentTypeDepositCredits, new { @class = "mandatoryLabel" })
+                </td>
+                <td style="padding: 0px;">
+                    @Html.TextBoxFor(m => m.DocumentTypeDepositCredits, new { @maxlength = "10", style = "width:100px", @id = "txtDocumentTypeDepositCR" })
+                </td>
+            </tr>
+             <tr>
+                <td></td>
+                <td style="padding-left: 0px;">
+                    @Html.ValidationMessageFor(model => model.DocumentTypeDepositCredits)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.IsActive, new { style = "width:200px" })
+                </td>
+                <td style="padding-top: 5px;padding-left: 0px;padding-bottom: 5px;padding-right: 0px;">
+                    @Html.CheckBoxFor(m => m.IsActive)
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2"></td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.DefaultInvoiceInAdvance, new { @class = "mandatoryLabel" })
+                </td>
+                <td style="padding: 0px;">
+                    @Html.DropDownListFor(m => m.DefaultInvoiceInAdvance, new SelectList(Model.defaultInvoiceInAdvancedList, "ID", "Value", Model.DefaultInvoiceInAdvance), new { @id = "ddlDefaultInvoiceInAdvanceValue", style = "width:50px;height:25px" })
+                    @Html.Label("Months")
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+            </tr>
+        </table>
+    }
+</div>
+
+<script type="text/javascript">
+
+    SetFocus('#txtDivisionName');
+    DisableEnterKeyForControl('#txtDivisionName');
+</script>

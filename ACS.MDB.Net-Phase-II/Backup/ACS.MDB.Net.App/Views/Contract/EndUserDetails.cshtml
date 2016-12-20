@@ -1,0 +1,51 @@
+﻿@model ACS.MDB.Net.App.Models.EndUser
+
+@{
+    ViewBag.Title = "EndUser Details";
+}
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+<div style="background: #F9F7FB">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+
+        //hidden field
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CompanyId)
+        @Html.HiddenFor(m => m.InvoiceCustomerId)
+        @Html.HiddenFor(m => m.EndUserId)
+        @Html.HiddenFor(m => m.IsNewEndUser)
+        <table style="width: 100%">
+
+            <tr>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.Name, new { @class = "mandatoryLabel" })
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.Name, new { @maxlength = "50", style = "width:250px", @id = "txtEndUserName" })
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    @Html.ValidationMessageFor(model => model.Name)
+                </td>
+            </tr>
+        </table>
+    }
+</div>
+
+<script type="text/javascript">
+
+    SetFocus('#txtEndUserName');
+    DisableEnterKeyForControl('#txtEndUserName');
+
+    //Disable Save button of pop up for viewer
+    DisableSaveButton();
+</script>
